@@ -184,12 +184,23 @@ class ClientCore : Core
 
 	private void SaveDeck(DeckPackets.Deck deck)
 	{
-		throw new NotImplementedException();
+		StringBuilder builder = new StringBuilder();
+		builder.Append(deck.player_class);
+		foreach (var card in deck.cards)
+		{
+			builder.Append("\n");
+			builder.Append(card.name);
+			if(card.is_class_ability)
+			{
+				builder.Append("|");
+			}
+		}
+		File.WriteAllText(Path.Combine(Program.config.deck_config!.deck_location, deck.name + ".dek"), builder.ToString());
 	}
 
-	private CardStruct[] FilterCards(List<CardStruct> cards, string v)
+	private List<CardStruct> FilterCards(List<CardStruct> cards, string filter)
 	{
-		throw new NotImplementedException();
+		return cards.Where(x => x.ToString().ToLower().Contains(filter)).ToList();
 	}
 
 	private DeckPackets.Deck FindDeckByName(string name)

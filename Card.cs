@@ -11,12 +11,16 @@ public class Card
 	public int uid, Life, Power, Cost, Position;
 	public int BaseLife, BasePower, BaseCost;
 	public GameConstants.Location Location;
+	public bool IsClassAbility;
+	public int Controller;
 
 	public Card(GameConstants.CardType cardType,
 		GameConstants.PlayerClass cardClass,
 		string Name,
 		string Text,
 		int uid,
+		bool IsClassAbility = false,
+		int Controller = 0,
 		int OriginalCost = 0,
 		int OriginalLife = 0,
 		int OriginalPower = 0,
@@ -33,6 +37,8 @@ public class Card
 		this.BaseCost = OriginalCost;
 		this.Position = OriginalPositon;
 		this.Location = OriginalLocation;
+		this.IsClassAbility = IsClassAbility;
+		this.Controller = Controller;
 	}
 	public virtual CardStruct ToStruct()
 	{
@@ -41,7 +47,9 @@ public class Card
 			card_type: CardType,
 			card_class: CardClass,
 			uid: uid, life: Life, power: Power, cost: Cost,
-			location: Location, position: Position);
+			location: Location, position: Position,
+			is_class_ability: IsClassAbility,
+			controller: Controller);
 	}
 }
 
@@ -76,7 +84,7 @@ public class Spell : Card
 		int uid,
 		int OriginalCost = 0,
 		GameConstants.Location OriginalLocation = GameConstants.Location.UNKNOWN,
-		int OriginalPositon = 0)
+		bool IsClassAbility = false)
 		: base(cardType: GameConstants.CardType.Spell,
 			cardClass: cardClass,
 			Name: Name,
@@ -84,5 +92,5 @@ public class Spell : Card
 			uid: uid,
 			OriginalCost: OriginalCost,
 			OriginalLocation: OriginalLocation,
-			OriginalPositon: OriginalPositon){}
+			IsClassAbility: IsClassAbility){}
 }
