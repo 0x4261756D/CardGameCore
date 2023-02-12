@@ -31,23 +31,38 @@ class ClientCore : Core
 			FetchAdditionalCards();
 		}
 
-		foreach (string deck in deckfiles)
+		foreach (string deckfile in deckfiles)
 		{
-			CardGameUtils.Structs.CardStruct[] cardsArr = DecklistToCards(File.ReadAllLines(deck));
-			decks.Add(new CardGameUtils.Structs.NetworkingStructs.DeckPackets.Deck
+			List<string> decklist = File.ReadAllLines(deckfile).ToList();
+			DeckPackets.Deck deck = new CardGameUtils.Structs.NetworkingStructs.DeckPackets.Deck
 			{
-				cards = cardsArr,
-				name = Path.GetFileNameWithoutExtension(deck)
-			});
+				player_class = Enum.Parse<GameConstants.PlayerClass>(decklist[0]),
+				name = Path.GetFileNameWithoutExtension(deckfile)
+			};
+			decklist.RemoveAt(0);
+
+			deck.cards = DecklistToCards(decklist);
+			decks.Add(deck);
 		}
 		HandleNetworking();
 	}
-	public static CardGameUtils.Structs.CardStruct[] DecklistToCards(string[] decklist)
+
+	//TODO: This could be more elegant
+	public static CardGameUtils.Structs.CardStruct[] DecklistToCards(List<string> decklist)
 	{
 		List<CardGameUtils.Structs.CardStruct> c = new List<CardGameUtils.Structs.CardStruct>();
 		foreach (string line in decklist)
 		{
-			c.Add(cards[cards.FindIndex(x => x.name == line)]);
+			if(line.EndsWith('|'))
+			{
+				CardStruct card = cards[cards.FindIndex(x => x.name == line.Remove(line.Length - 1))];
+				card.is_class_ability = true;
+				c.Add(card);
+			}
+			else
+			{
+				c.Add(cards[cards.FindIndex(x => x.name == line)]);
+			}
 		}
 		return c.ToArray();
 	}
@@ -184,12 +199,23 @@ class ClientCore : Core
 
 	private void SaveDeck(DeckPackets.Deck deck)
 	{
-		throw new NotImplementedException();
+		StringBuilder builder = new StringBuilder();
+		builder.Append(deck.player_class);
+		foreach (var card in deck.cards)
+		{
+			builder.Append("\n");
+			builder.Append(card.name);
+			if(card.is_class_ability)
+			{
+				builder.Append("|");
+			}
+		}
+		File.WriteAllText(Path.Combine(Program.config.deck_config!.deck_location, deck.name + ".dek"), builder.ToString());
 	}
 
-	private CardStruct[] FilterCards(List<CardStruct> cards, string v)
+	private List<CardStruct> FilterCards(List<CardStruct> cards, string filter)
 	{
-		throw new NotImplementedException();
+		return cards.Where(x => x.ToString().ToLower().Contains(filter)).ToList();
 	}
 
 	private DeckPackets.Deck FindDeckByName(string name)
