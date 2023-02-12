@@ -139,4 +139,8 @@ class Program
 		}
 		Log("EXITING");
 	}
+	public static readonly Func<Type, bool> IsCardSubclass = (x) =>
+	{
+		return x.BaseType == typeof(Spell) || x.BaseType == typeof(Creature);
+	};
 }
