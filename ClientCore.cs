@@ -1,0 +1,6 @@
+namespace CardGameCore;
+
+class ClientCore
+{
+	
+}
