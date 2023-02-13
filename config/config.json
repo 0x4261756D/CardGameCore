@@ -5,8 +5,11 @@
 		"deck_config":
 		{
 			"deck_location": ".\\decks",
-			"additional_cards_address": "h2871632.stratoserver.net",
-			"additional_cards_port": 7043,
+			"additional_cards_url":
+			{
+				"cards_address": "127.0.0.1",
+				"cards_port": 7043
+			},
 			"should_fetch_additional_cards": true
 		}
 	},
@@ -16,8 +19,11 @@
 		"deck_config":
 		{
 			"deck_location": "./decks",
-			"additional_cards_address": "127.0.0.1",
-			"additional_cards_port": 7043,
+			"additional_cards_url":
+			{
+				"cards_address": "127.0.0.1",
+				"cards_port": 7043
+			},
 			"should_fetch_additional_cards": true
 		}
 	}	
