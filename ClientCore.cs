@@ -40,7 +40,16 @@ class ClientCore : Core
 				name = Path.GetFileNameWithoutExtension(deckfile)
 			};
 			decklist.RemoveAt(0);
-
+			if(decklist[0].StartsWith("#"))
+			{
+				deck.ability = cards[cards.FindIndex(x => x.name == decklist[0].Substring(1))];
+				decklist.RemoveAt(0);
+			}
+			if(decklist[0].StartsWith("##"))
+			{
+				deck.quest = cards[cards.FindIndex(x => x.name == decklist[0].Substring(1))];
+				decklist.RemoveAt(0);
+			}
 			deck.cards = DecklistToCards(decklist);
 			decks.Add(deck);
 		}
@@ -53,16 +62,7 @@ class ClientCore : Core
 		List<CardGameUtils.Structs.CardStruct> c = new List<CardGameUtils.Structs.CardStruct>();
 		foreach (string line in decklist)
 		{
-			if(line.EndsWith('|'))
-			{
-				CardStruct card = cards[cards.FindIndex(x => x.name == line.Remove(line.Length - 1))];
-				card.is_class_ability = true;
-				c.Add(card);
-			}
-			else
-			{
-				c.Add(cards[cards.FindIndex(x => x.name == line)]);
-			}
+			c.Add(cards[cards.FindIndex(x => x.name == line)]);
 		}
 		return c.ToArray();
 	}
@@ -152,7 +152,7 @@ class ClientCore : Core
 			DeckPackets.ListRequest request = DeserializeJson<DeckPackets.ListRequest>(packet);
 			payload = GeneratePayload<DeckPackets.ListResponse>(new DeckPackets.ListResponse
 			{
-				cards = FindDeckByName(request.name!).cards
+				deck = FindDeckByName(request.name!),
 			});
 		}
 		else if (type == NetworkingConstants.PACKET_DECK_SEARCH_REQUEST)
@@ -160,7 +160,7 @@ class ClientCore : Core
 			DeckPackets.SearchRequest request = DeserializeJson<DeckPackets.SearchRequest>(packet);
 			payload = GeneratePayload<DeckPackets.SearchResponse>(new DeckPackets.SearchResponse
 			{
-				cards = FilterCards(cards, request.filter!).ToArray()
+				cards = FilterCards(cards, request.filter!, request.playerClass).ToArray()
 			});
 		}
 		else if (type == NetworkingConstants.PACKET_DECK_LIST_UPDATE_REQUEST)
@@ -199,23 +199,32 @@ class ClientCore : Core
 
 	private void SaveDeck(DeckPackets.Deck deck)
 	{
+		if(deck.name == "") return;
 		StringBuilder builder = new StringBuilder();
 		builder.Append(deck.player_class);
+		if(deck.ability != null)
+		{
+			builder.Append("\n#");
+			builder.Append(deck.ability.name);
+		}
+		if(deck.quest != null)
+		{
+			builder.Append("\n##");
+			builder.Append(deck.quest.name);
+		}
 		foreach (var card in deck.cards)
 		{
 			builder.Append("\n");
 			builder.Append(card.name);
-			if(card.is_class_ability)
-			{
-				builder.Append("|");
-			}
 		}
 		File.WriteAllText(Path.Combine(Program.config.deck_config!.deck_location, deck.name + ".dek"), builder.ToString());
 	}
 
-	private List<CardStruct> FilterCards(List<CardStruct> cards, string filter)
+	private List<CardStruct> FilterCards(List<CardStruct> cards, string filter, GameConstants.PlayerClass playerClass)
 	{
-		return cards.Where(x => x.ToString().ToLower().Contains(filter)).ToList();
+		return cards.Where(x => 
+			(playerClass == GameConstants.PlayerClass.All || x.card_class == GameConstants.PlayerClass.All || x.card_class == playerClass)
+			&& x.ToString().ToLower().Contains(filter)).ToList();
 	}
 
 	private DeckPackets.Deck FindDeckByName(string name)
