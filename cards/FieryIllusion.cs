@@ -8,7 +8,7 @@ class FieryIllusion : Spell
 		Name: "Fiery Illusion",
 		cardClass: PlayerClass.Pyromancer,
 		OriginalCost: 6,
-		Text: "Destroy all creatures"
+		Text: "{Cast}: Destroy all creatures"
 		)
 	{}
 	// TODO: implement functionality
