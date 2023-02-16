@@ -7,8 +7,8 @@
 			"deck_location": ".\\decks",
 			"additional_cards_url":
 			{
-				"cards_address": "127.0.0.1",
-				"cards_port": 7043
+				"address": "127.0.0.1",
+				"port": 7043
 			},
 			"should_fetch_additional_cards": true
 		}
@@ -21,8 +21,8 @@
 			"deck_location": "./decks",
 			"additional_cards_url":
 			{
-				"cards_address": "127.0.0.1",
-				"cards_port": 7043
+				"address": "127.0.0.1",
+				"port": 7043
 			},
 			"should_fetch_additional_cards": true
 		}
