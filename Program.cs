@@ -141,6 +141,6 @@ class Program
 	}
 	public static readonly Func<Type, bool> IsCardSubclass = (x) =>
 	{
-		return x.BaseType == typeof(Spell) || x.BaseType == typeof(Creature);
+		return x.BaseType == typeof(Spell) || x.BaseType == typeof(Creature) || x.BaseType == typeof(Quest);
 	};
 }
