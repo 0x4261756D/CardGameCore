@@ -45,7 +45,7 @@ class ClientCore : Core
 				deck.ability = cards[cards.FindIndex(x => x.name == decklist[0].Substring(1))];
 				decklist.RemoveAt(0);
 			}
-			if(decklist[0].StartsWith("##"))
+			if(decklist[0].StartsWith("|"))
 			{
 				deck.quest = cards[cards.FindIndex(x => x.name == decklist[0].Substring(1))];
 				decklist.RemoveAt(0);
@@ -209,7 +209,7 @@ class ClientCore : Core
 		}
 		if(deck.quest != null)
 		{
-			builder.Append("\n##");
+			builder.Append("\n|");
 			builder.Append(deck.quest.name);
 		}
 		foreach (var card in deck.cards)
