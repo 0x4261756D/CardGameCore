@@ -14,8 +14,8 @@ public class Card
 	public bool IsClassAbility, CanBeClassAbility;
 	public int Controller;
 
-	public Card(GameConstants.CardType cardType,
-		GameConstants.PlayerClass cardClass,
+	public Card(GameConstants.CardType CardType,
+		GameConstants.PlayerClass CardClass,
 		string Name,
 		string Text,
 		bool IsClassAbility,
@@ -27,8 +27,8 @@ public class Card
 		GameConstants.Location OriginalLocation = GameConstants.Location.UNKNOWN,
 		int OriginalPositon = 0)
 	{
-		this.CardType = cardType;
-		this.CardClass = cardClass;
+		this.CardType = CardType;
+		this.CardClass = CardClass;
 		this.Name = Name;
 		this.Text = Text;
 		this.BaseLife = OriginalLife;
@@ -73,8 +73,8 @@ public class Creature : Card
 		int OriginalPower,
 		GameConstants.Location OriginalLocation = GameConstants.Location.UNKNOWN,
 		int OriginalPositon = 0)
-	: base(cardType: GameConstants.CardType.Creature,
-		cardClass: cardClass,
+	: base(CardType: GameConstants.CardType.Creature,
+		CardClass: cardClass,
 		Name: Name,
 		Text: Text,
 		OriginalCost: OriginalCost,
@@ -95,12 +95,25 @@ public class Spell : Card
 		GameConstants.Location OriginalLocation = GameConstants.Location.UNKNOWN,
 		bool IsClassAbility = false,
 		bool CanBeClassAbility = false)
-		: base(cardType: GameConstants.CardType.Spell,
-			cardClass: cardClass,
+		: base(CardType: GameConstants.CardType.Spell,
+			CardClass: cardClass,
 			Name: Name,
 			Text: Text,
 			OriginalCost: OriginalCost,
 			OriginalLocation: OriginalLocation,
 			IsClassAbility: IsClassAbility,
 			CanBeClassAbility: CanBeClassAbility){}
+}
+
+public class Quest : Card
+{
+	public Quest(string Name, string Text, int ProgressGoal, GameConstants.PlayerClass CardClass) : base(
+		CardType: GameConstants.CardType.Quest,
+		CardClass: CardClass,
+		IsClassAbility: false,
+		CanBeClassAbility: false,
+		Name: Name,
+		Text: Text,
+		OriginalCost: ProgressGoal
+	) {}
 }
