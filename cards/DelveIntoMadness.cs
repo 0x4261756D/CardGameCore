@@ -6,9 +6,9 @@ class DelveIntoMadness : Spell
 {
 	public DelveIntoMadness() : base(
 		Name: "Delve into Madness",
-		cardClass: PlayerClass.Cultist,
+		CardClass: PlayerClass.Cultist,
 		OriginalCost: 0,
-		Text: "{Cast}: Draw a card.\n{Revelation}: Cast this.",
+		Text: "{Cast}: Draw 1 card.\n{Revelation}: Cast this.",
 		CanBeClassAbility: true
 		)
 	{ }

@@ -6,7 +6,7 @@ class CrumblingGiant : Creature
 {
 	public CrumblingGiant() : base(
 		Name: "Crumbling Giant",
-		cardClass: PlayerClass.Artificer,
+		CardClass: PlayerClass.Artificer,
 		OriginalCost: 1,
 		Text: "[Brittle]\n{Death}: Deal 5 damage to this creature's owner.",
 		OriginalPower: 5,

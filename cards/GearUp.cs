@@ -6,7 +6,7 @@ class GearUp : Spell
 {
 	public GearUp() : base(
 		Name: "Gear Up",
-		cardClass: PlayerClass.Artificer,
+		CardClass: PlayerClass.Artificer,
 		OriginalCost: 3,
 		Text: "{Cast}: Target creature you control gets +2/+2 and [Brittle] this turn.",
 		CanBeClassAbility: true

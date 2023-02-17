@@ -12,8 +12,3 @@ git submodule update --init --remote
 dotnet run --config=../../../config/config.json --mode=client
 ```
 Should be working with [VSCode](https://vscodium.com/) out of the box.
-
-```mermaid
-graph LR;
-T --> est;
-```

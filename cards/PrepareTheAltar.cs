@@ -6,9 +6,9 @@ class PrepareTheAltar : Spell
 {
 	public PrepareTheAltar() : base(
 		Name: "Prepare the Altar",
-		cardClass: PlayerClass.Cultist,
+		CardClass: PlayerClass.Cultist,
 		OriginalCost: 1,
-		Text: "{Cast}: Discard a card. Gain Momentum equal to its cost.\n{Revelation}: Gain 1 Momentum. You may discard a card.",
+		Text: "{Cast}: Discard 1 card. Gain Momentum equal to its cost.\n{Revelation}: Gain 1 Momentum. You may discard 1 card.",
 		CanBeClassAbility: true
 		)
 	{ }

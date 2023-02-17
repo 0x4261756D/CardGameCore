@@ -6,9 +6,9 @@ class Assemble : Spell
 {
 	public Assemble() : base(
 		Name: "Assemble",
-		cardClass: PlayerClass.Artificer,
+		CardClass: PlayerClass.Artificer,
 		OriginalCost: 0,
-		Text: "Cast: Create a 2/1 Construct with [Brittle].\n{Revelation}: Cast this.",
+		Text: "{Cast}: Create 1 2/1 Construct token with [Brittle].\n{Revelation}: Cast this.",
 		CanBeClassAbility: true
 		)
 	{ }

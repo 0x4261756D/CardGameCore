@@ -6,9 +6,9 @@ class Recycle : Spell
 {
 	public Recycle() : base(
 		Name: "Recycle",
-		cardClass: PlayerClass.Artificer,
+		CardClass: PlayerClass.Artificer,
 		OriginalCost: 1,
-		Text: "{End of turn}: Draw a card for each of your creatures that died this turn."
+		Text: "{End of turn}: Draw 1 card for each of your creatures that died this turn."
 		)
 	{ }
 	// TODO: implement functionality

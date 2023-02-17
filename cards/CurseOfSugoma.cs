@@ -6,7 +6,7 @@ class CurseOfSugoma : Spell
 {
 	public CurseOfSugoma() : base(
 		Name: "Curse of Sugoma",
-		cardClass: PlayerClass.Cultist,
+		CardClass: PlayerClass.Cultist,
 		OriginalCost: 2,
 		Text: "{Cast}: Target creature gains +2/-1.\n{Discard}: Target creature gains decaying."
 		)
