@@ -19,6 +19,11 @@ class ClientCore : Core
 			Functions.Log("Deck config was null when creating a client core", Functions.LogSeverity.Error);
 			return;
 		}
+		if(!Directory.Exists(Program.config.deck_config.deck_location))
+		{
+			Log($"Deck folder not found, creating it at {Program.config.deck_config.deck_location}", LogSeverity.Warning);
+			Directory.CreateDirectory(Program.config.deck_config.deck_location);
+		}
 		string[] deckfiles = Directory.GetFiles(Program.config.deck_config.deck_location);
 		foreach (Type card in Assembly.GetExecutingAssembly().GetTypes().Where(Program.IsCardSubclass))
 		{
@@ -28,7 +33,7 @@ class ClientCore : Core
 
 		if (Program.config.deck_config.should_fetch_additional_cards)
 		{
-			FetchAdditionalCards();
+			TryFetchAdditionalCards();
 		}
 
 		foreach (string deckfile in deckfiles)
@@ -66,7 +71,7 @@ class ClientCore : Core
 		}
 		return c.ToArray();
 	}
-	public void FetchAdditionalCards()
+	public void TryFetchAdditionalCards()
 	{
 		try
 		{

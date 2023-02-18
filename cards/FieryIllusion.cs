@@ -6,7 +6,7 @@ class FieryIllusion : Spell
 {
 	public FieryIllusion() : base(
 		Name: "Fiery Illusion",
-		cardClass: PlayerClass.Pyromancer,
+		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 1,
 		Text: "{Cast}: Create 2 0/1 Illusions with [Decaying]."
 		)

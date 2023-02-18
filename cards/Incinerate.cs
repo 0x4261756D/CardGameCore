@@ -6,7 +6,7 @@ class Incinerate : Spell
 {
 	public Incinerate() : base(
 		Name: "Incinerate",
-		cardClass: PlayerClass.Pyromancer,
+		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 6,
 		Text: "{Cast}: Destroy all creatures."
 		)

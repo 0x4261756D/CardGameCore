@@ -65,30 +65,27 @@ public class Card
 
 public class Creature : Card
 {
-	public Creature(GameConstants.PlayerClass cardClass,
+	public Creature(GameConstants.PlayerClass CardClass,
 		string Name,
 		string Text,
 		int OriginalCost,
 		int OriginalLife,
-		int OriginalPower,
-		GameConstants.Location OriginalLocation = GameConstants.Location.UNKNOWN,
-		int OriginalPositon = 0)
+		int OriginalPower
+		)
 	: base(CardType: GameConstants.CardType.Creature,
-		CardClass: cardClass,
+		CardClass: CardClass,
 		Name: Name,
 		Text: Text,
 		OriginalCost: OriginalCost,
 		OriginalLife: OriginalLife,
 		OriginalPower: OriginalPower,
-		OriginalLocation: OriginalLocation,
-		OriginalPositon: OriginalPositon,
 		IsClassAbility: false,
 		CanBeClassAbility: false){}
 }
 
 public class Spell : Card
 {
-	public Spell(GameConstants.PlayerClass cardClass,
+	public Spell(GameConstants.PlayerClass CardClass,
 		string Name,
 		string Text,
 		int OriginalCost = 0,
@@ -96,7 +93,7 @@ public class Spell : Card
 		bool IsClassAbility = false,
 		bool CanBeClassAbility = false)
 		: base(CardType: GameConstants.CardType.Spell,
-			CardClass: cardClass,
+			CardClass: CardClass,
 			Name: Name,
 			Text: Text,
 			OriginalCost: OriginalCost,

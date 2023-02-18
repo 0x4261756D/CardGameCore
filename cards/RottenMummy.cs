@@ -6,7 +6,7 @@ class RottenMummy : Creature
 {
 	public RottenMummy() : base(
 		Name: "Rotten Mummy",
-		cardClass: PlayerClass.Cultist,
+		CardClass: PlayerClass.Cultist,
 		OriginalCost: 2,
 		Text: "[Decaying]\n{Death}: Discard 1.",
 		OriginalLife: 4,

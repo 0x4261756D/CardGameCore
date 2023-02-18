@@ -6,7 +6,7 @@ class NovicePyromancer : Creature
 {
 	public NovicePyromancer() : base(
 		Name: "Novice Pyromancer",
-		cardClass: PlayerClass.Pyromancer,
+		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 3,
 		Text: "{A creature dies}: Deal 1 damage any target.",
 		OriginalLife: 1,

@@ -6,7 +6,7 @@ class DarkBolt : Spell
 {
 	public DarkBolt() : base(
 		Name: "Dark Bolt",
-		cardClass: PlayerClass.Cultist,
+		CardClass: PlayerClass.Cultist,
 		OriginalCost: 2,
 		Text: "{Cast}: Deal 3 damage any target.\n{Revelation}: Cast this."
 		)

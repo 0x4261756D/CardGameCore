@@ -6,9 +6,9 @@ class Fireball : Spell
 {
 	public Fireball() : base(
 		Name: "Fireball",
-		cardClass: PlayerClass.Pyromancer,
+		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 2,
-		Text: "{Cast}: Deal 4 damage to any target.\n{Revelation}: If your opponent controls a damaged creature, add this to your hand."
+		Text: "{Cast}: Deal 4 damage to any target.\n{Revelation}: If your opponent controls 1 damaged creature, add this to your hand."
 		)
 	{}
 	// TODO: implement functionality
