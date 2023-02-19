@@ -204,25 +204,9 @@ class ClientCore : Core
 
 	private void SaveDeck(DeckPackets.Deck deck)
 	{
-		if(deck.name == "") return;
-		StringBuilder builder = new StringBuilder();
-		builder.Append(deck.player_class);
-		if(deck.ability != null)
-		{
-			builder.Append("\n#");
-			builder.Append(deck.ability.name);
-		}
-		if(deck.quest != null)
-		{
-			builder.Append("\n|");
-			builder.Append(deck.quest.name);
-		}
-		foreach (var card in deck.cards)
-		{
-			builder.Append("\n");
-			builder.Append(card.name);
-		}
-		File.WriteAllText(Path.Combine(Program.config.deck_config!.deck_location, deck.name + ".dek"), builder.ToString());
+		string? deckString = deck.ToString();
+		if(deckString == null) return;
+		File.WriteAllText(Path.Combine(Program.config.deck_config!.deck_location, deck.name + ".dek"), deckString);
 	}
 
 	private List<CardStruct> FilterCards(List<CardStruct> cards, string filter, GameConstants.PlayerClass playerClass)
