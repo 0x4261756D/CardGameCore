@@ -8,7 +8,7 @@ class EnormousTitan : Creature
 		Name: "Enormous Titan",
 		CardClass: PlayerClass.All,
 		OriginalCost: 10,
-		Text: "{Cast}: [Collosal] 1. Costs 1 less for each creature your opponent controls.\n{Revelation}: Gain 3 life.",
+		Text: "[Collosal] +1\n{Cast}: Costs 1 less for each creature your opponent controls.\n{Revelation}: Gain 3 life.",
 		OriginalPower: 8,
 		OriginalLife: 8
 		)
