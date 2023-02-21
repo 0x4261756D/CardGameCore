@@ -1,3 +1,5 @@
+using CardGameUtils;
+
 namespace CardGameCore;
 
 class Deck
@@ -8,8 +10,14 @@ class Deck
 
 	}
 
+	public int Size
+	{
+		get => cards.Count;
+	}
+
 	internal void Add(Card c)
 	{
+		c.Location = GameConstants.Location.Deck;
 		cards.Add(c);
 	}
 
@@ -17,6 +25,7 @@ class Deck
 	{
 		Card ret = cards[0];
 		cards.RemoveAt(0);
+		ret.Location = GameConstants.Location.UNKNOWN;
 		return ret;
 	}
 

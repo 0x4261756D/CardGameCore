@@ -2,7 +2,9 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using CardGameUtils;
+using CardGameUtils.Structs;
 using static CardGameUtils.Functions;
+using static CardGameUtils.Structs.NetworkingStructs;
 
 namespace CardGameCore;
 
@@ -28,6 +30,8 @@ class DuelCore : Core
 	public static Random rnd = new Random();
 	public const int HASH_LEN = 96;
 	public int playersConnected = 0;
+	public int turn, turnPlayer;
+	public int momentumCount = GameConstants.START_MOMENTUM;
 	public DuelCore()
 	{
 		sha = SHA384.Create();
@@ -119,13 +123,13 @@ class DuelCore : Core
 					stream.Close();
 				}
 			}
-			if(playersConnected == players.Length)
+			if (playersConnected == players.Length)
 			{
-				if(HandleGameLogic())
+				if (HandleGameLogic())
 				{
 					break;
 				}
-				if(HandlePlayerActions())
+				if (HandlePlayerActions())
 				{
 					break;
 				}
@@ -135,11 +139,141 @@ class DuelCore : Core
 
 	private bool HandleGameLogic()
 	{
-		throw new NotImplementedException();
+		while (!state.HasFlag(GameConstants.State.InitGained))
+		{
+			switch (state)
+			{
+				case GameConstants.State.UNINITIALIZED:
+					foreach (Player player in players)
+					{
+						player.deck.Shuffle();
+						player.Draw(GameConstants.START_HAND_SIZE);
+					}
+					SendFieldUpdates();
+					// Mulligan
+					for (int i = 0; i < players.Length; i++)
+					{
+						if (AskYesNo(player: i, question: "Mulligan?"))
+						{
+							Card[] cards = SelectCardsCustom(i, "Select cards to mulligan", players[i].hand.GetAll(), (x) => true);
+							foreach(Card card in cards)
+							{
+								players[i].hand.Remove(card);
+								players[i].deck.Add(card);
+							}
+							SendFieldUpdates();
+							players[i].deck.Shuffle();
+							players[i].Draw(cards.Length);
+							SendFieldUpdates();
+						}
+					}
+					turnPlayer = rnd.Next(100) / 50;
+					foreach(Player player in players)
+					{
+						player.momentum = GameConstants.START_MOMENTUM;
+						player.life = GameConstants.START_LIFE;
+						player.progress = 0;
+					}
+					turn = 0;
+					state = GameConstants.State.TurnStart;
+					break;
+				default:
+					throw new NotImplementedException(state.ToString());
+			}
+		}
+		return false;
 	}
 
 	private bool HandlePlayerActions()
 	{
 		throw new NotImplementedException();
+	}
+
+	public bool AskYesNo(int player, string question)
+	{
+		SendPacketToPlayer(new DuelPackets.YesNoRequest { question = question }, player);
+		return ReceivePacketFromPlayer<DuelPackets.YesNoResponse>(player).result;
+	}
+	private void SendFieldUpdates(GameConstants.Location mask = GameConstants.Location.ALL)
+	{
+		for (int i = 0; i < players.Length; i++)
+		{
+			SendFieldUpdate(i, mask);
+		}
+	}
+	public Card[] SelectCardsCustom(int player, string description, Card[] cards, Func<Card[], bool> isValidSelection)
+	{
+		SendPacketToPlayer(new DuelPackets.CustomSelectCardsRequest
+		{
+			cards = Card.ToStruct(cards.ToList()),
+			desc = description,
+			initialState = isValidSelection(new Card[0])
+		}, player);
+
+		List<byte> payload = new List<byte>();
+		do
+		{
+			DuelPackets.CustomSelectCardsIntermediateRequest request;
+			payload = ReceiveRawPacket(playerStreams[player])!;
+			if (payload[0] == NetworkingConstants.PACKET_DUEL_CUSTOM_SELECT_CARDS_RESPONSE)
+			{
+				break;
+			}
+			request = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateRequest>(payload);
+			SendPacketToPlayer(new DuelPackets.CustomSelectCardsIntermediateResponse
+			{
+				isValid = isValidSelection(Array.ConvertAll(request.uids, (x => cards.First(y => y.uid == x))))
+			}, player);
+		} while (true);
+
+		DuelPackets.CustomSelectCardsResponse response = DeserializePayload<DuelPackets.CustomSelectCardsResponse>(payload);
+		Card[] ret = cards.Where(x => response.uids.Contains(x.uid)).ToArray();
+		if (!isValidSelection(ret))
+		{
+			throw new Exception("Player somethow selected invalid cards");
+		}
+		return ret;
+	}
+
+	private void SendFieldUpdate(int player, GameConstants.Location mask)
+	{
+		// TODO: actually handle mask if this is too slow
+		DuelPackets.FieldUpdateRequest request = new DuelPackets.FieldUpdateRequest() { turn = turn };
+		request.ownField = new DuelPackets.FieldUpdateRequest.Field
+		{
+			ability = players[player].ability.ToStruct(),
+			quest = players[player].quest.ToStruct(),
+			deckSize = players[player].deck.Size,
+			graveSize = players[player].grave.Size,
+			life = players[player].life,
+			name = players[player].name,
+			momentum = players[player].momentum,
+			field = players[player].field.ToStruct(),
+			hand = players[player].hand.ToStruct(),
+		};
+		request.ownField = new DuelPackets.FieldUpdateRequest.Field
+		{
+			ability = players[1 - player].ability.ToStruct(),
+			quest = players[1 - player].quest.ToStruct(),
+			deckSize = players[1 - player].deck.Size,
+			graveSize = players[1 - player].grave.Size,
+			life = players[1 - player].life,
+			name = players[1 - player].name,
+			momentum = players[1 - player].momentum,
+			field = players[1 - player].field.ToStruct(),
+			hand = players[1 - player].hand.ToStruct(),
+		};
+		SendPacketToPlayer<DuelPackets.FieldUpdateRequest>(request, player);
+	}
+
+	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent
+	{
+		T ret = ReceivePacket<T>(playerStreams[player])!;
+		return ret;
+	}
+	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
+	{
+		List<byte> payload = Functions.GeneratePayload<T>(packet);
+		playerStreams[player].Write(payload.ToArray(), 0, payload.Count);
 	}
 }
