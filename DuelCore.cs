@@ -215,7 +215,7 @@ class DuelCore : Core
 		{
 			DuelPackets.CustomSelectCardsIntermediateRequest request;
 			payload = ReceiveRawPacket(playerStreams[player])!;
-			if (payload[0] == NetworkingConstants.PACKET_DUEL_CUSTOM_SELECT_CARDS_RESPONSE)
+			if (payload[0] == (byte)NetworkingConstants.PacketType.DuelCustomSelectCardsResponse)
 			{
 				break;
 			}
