@@ -151,7 +151,7 @@ class DuelCore : Core
 						player.momentum = GameConstants.START_MOMENTUM;
 						player.life = GameConstants.START_LIFE;
 						player.progress = 0;
-					}
+					}					
 					SendFieldUpdates();
 					// Mulligan
 					for (int i = 0; i < players.Length; i++)
@@ -248,7 +248,7 @@ class DuelCore : Core
 			field = players[player].field.ToStruct(),
 			hand = players[player].hand.ToStruct(),
 		};
-		request.ownField = new DuelPackets.FieldUpdateRequest.Field
+		request.oppField = new DuelPackets.FieldUpdateRequest.Field
 		{
 			ability = players[1 - player].ability.ToStruct(),
 			quest = players[1 - player].quest.ToStruct(),
@@ -258,7 +258,7 @@ class DuelCore : Core
 			name = players[1 - player].name,
 			momentum = players[1 - player].momentum,
 			field = players[1 - player].field.ToStruct(),
-			hand = players[1 - player].hand.ToStruct(),
+			hand = players[1 - player].hand.ToHiddenStruct(),
 		};
 		SendPacketToPlayer<DuelPackets.FieldUpdateRequest>(request, player);
 	}

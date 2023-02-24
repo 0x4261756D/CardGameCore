@@ -11,8 +11,8 @@ class Field
 		
 	}
 
-	internal CardStruct[] ToStruct()
+	internal CardStruct?[] ToStruct()
 	{
-		return cards.ToList().ConvertAll(x => x.ToStruct()).ToArray();
+		return cards.ToList().ConvertAll(x => x?.ToStruct()).ToArray();
 	}
 }

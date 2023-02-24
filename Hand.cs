@@ -32,4 +32,9 @@ class Hand
 		c.Location = GameConstants.Location.UNKNOWN;
 		cards.Remove(c);
 	}
+
+	internal CardStruct[] ToHiddenStruct()
+	{
+		return cards.ConvertAll(x => new CardStruct()).ToArray();
+	}
 }
