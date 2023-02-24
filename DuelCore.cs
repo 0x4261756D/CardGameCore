@@ -44,13 +44,13 @@ class DuelCore : Core
 			GameConstants.PlayerClass playerClass = Enum.Parse<GameConstants.PlayerClass>(Program.config.duel_config.players[i].decklist[0]);
 			if (!Program.config.duel_config.players[i].decklist[1].StartsWith("#"))
 			{
-				Log($"Player {Program.config.duel_config.players[i].name} has no ability");
+				Log($"Player {Program.config.duel_config.players[i].name} has no ability, {Program.config.duel_config.players[i].decklist[1]} is no suitable ability");
 				return;
 			}
 			Card ability = CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[1].Substring(1))!, i);
 			if (!Program.config.duel_config.players[i].decklist[2].StartsWith("|"))
 			{
-				Log($"Player {Program.config.duel_config.players[i].name} has no quest");
+				Log($"Player {Program.config.duel_config.players[i].name} has no quest, {Program.config.duel_config.players[i].decklist[2]} is no suitable ability");
 				return;
 			}
 			Card quest = CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[2].Substring(1))!, i);
@@ -88,8 +88,6 @@ class DuelCore : Core
 			// Connect the players if they aren't yet
 			if (playersConnected < players.Length && listener.Pending())
 			{
-				DateTime t = DateTime.Now;
-				Log($"{t.ToLongTimeString()}:{t.Millisecond} New Player {playersConnected}/{players.Length}");
 				NetworkStream stream = listener.AcceptTcpClient().GetStream();
 				byte[] buf = new byte[256];
 				int len = stream.Read(buf, 0, HASH_LEN);
@@ -122,6 +120,8 @@ class DuelCore : Core
 					//FIXME: Be more nice, see above
 					stream.Close();
 				}
+				DateTime t = DateTime.Now;
+				Log($"{t.ToLongTimeString()}:{t.Millisecond} New Player {playersConnected}/{players.Length}");
 			}
 			if (playersConnected == players.Length)
 			{
