@@ -2,9 +2,9 @@
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
-class AcolyteOfMadness : Creature
+class AcolyteofMadness : Creature
 {
-	public AcolyteOfMadness() : base(
+	public AcolyteofMadness() : base(
 		Name: "Acolyte of Madness",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 4,

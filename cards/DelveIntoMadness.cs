@@ -2,9 +2,9 @@
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
-class DelveIntoMadness : Spell
+class DelveintoMadness : Spell
 {
-	public DelveIntoMadness() : base(
+	public DelveintoMadness() : base(
 		Name: "Delve into Madness",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 0,

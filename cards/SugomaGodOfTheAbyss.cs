@@ -2,9 +2,9 @@
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
-class SugomaGodOfTheAbyss : Creature
+class SugomaGodoftheAbyss : Creature
 {
-	public SugomaGodOfTheAbyss() : base(
+	public SugomaGodoftheAbyss() : base(
 		Name: "Sugoma God of the Abyss",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 12,

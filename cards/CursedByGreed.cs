@@ -2,9 +2,9 @@
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
-class CursedByGreed : Spell
+class CursedbyGreed : Spell
 {
-	public CursedByGreed() : base(
+	public CursedbyGreed() : base(
 		Name: "Cursed by Greed",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 2,

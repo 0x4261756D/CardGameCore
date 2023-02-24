@@ -2,9 +2,9 @@
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
-class ReturnFromBeyond : Spell
+class ReturnfromBeyond : Spell
 {
-	public ReturnFromBeyond() : base(
+	public ReturnfromBeyond() : base(
 		Name: "Return from Beyond",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 0,

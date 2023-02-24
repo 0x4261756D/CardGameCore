@@ -2,9 +2,9 @@
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
-class CurseOfSugoma : Spell
+class CurseofSugoma : Spell
 {
-	public CurseOfSugoma() : base(
+	public CurseofSugoma() : base(
 		Name: "Curse of Sugoma",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 2,

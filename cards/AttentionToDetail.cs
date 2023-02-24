@@ -2,9 +2,9 @@
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
-class AttentionToDetail : Spell
+class AttentiontoDetail : Spell
 {
-	public AttentionToDetail() : base(
+	public AttentiontoDetail() : base(
 		Name: "Attention to Detail",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 2,
