@@ -2,9 +2,9 @@
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
-class PrepareTheAltar : Spell
+class PreparetheAltar : Spell
 {
-	public PrepareTheAltar() : base(
+	public PreparetheAltar() : base(
 		Name: "Prepare the Altar",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 1,

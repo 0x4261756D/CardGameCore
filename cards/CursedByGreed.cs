@@ -2,13 +2,13 @@
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
-class CurseofSugoma : Spell
+class CursedbyGreed : Spell
 {
-	public CurseofSugoma() : base(
-		Name: "Curse of Sugoma",
+	public CursedbyGreed() : base(
+		Name: "Cursed by Greed",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 2,
-		Text: "{Cast}: Target creature gains +2/-1.\n{Discard}: Target creature gains decaying."
+		Text: "{Cast}: Pay 3 life. Draw 1 Card.\n{Discard}: Draw 2 Cards."
 		)
 	{ }
 	// TODO: implement functionality

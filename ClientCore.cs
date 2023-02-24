@@ -136,67 +136,73 @@ class ClientCore : Core
 	{
 		// THIS MIGHT CHANGE AS SENDING RAW JSON MIGHT BE TOO EXPENSIVE/SLOW
 		// possible improvements: Huffman or Burrows-Wheeler+RLE
-		byte type = bytes[0];
+		if (bytes[0] >= (byte)NetworkingConstants.PacketType.PACKET_COUNT)
+		{
+			throw new Exception($"ERROR: Unknown packet type encountered: ({bytes[0]})");
+		}
+		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)bytes[0];
 		bytes.RemoveAt(0);
 		string packet = Encoding.UTF8.GetString(bytes.ToArray());
 		List<byte> payload = new List<byte>();
-		if (type >= NetworkingConstants.PACKET_COUNT)
+		switch (type)
 		{
-			throw new Exception($"ERROR: Unknown packet type encountered: {NetworkingConstants.PacketTypeToName(type)}({type}) | {packet}");
-		}
-		else if (type == NetworkingConstants.PACKET_DECK_NAMES_REQUEST)
-		{
-			DeckPackets.NamesRequest request = DeserializeJson<DeckPackets.NamesRequest>(packet);
-			payload = GeneratePayload<DeckPackets.NamesResponse>(new DeckPackets.NamesResponse
+			
+			case NetworkingConstants.PacketType.DeckNamesRequest:
 			{
-				names = decks.ConvertAll(x => x.name).ToArray()
-			});
-		}
-		else if (type == NetworkingConstants.PACKET_DECK_LIST_REQUEST)
-		{
-			DeckPackets.ListRequest request = DeserializeJson<DeckPackets.ListRequest>(packet);
-			payload = GeneratePayload<DeckPackets.ListResponse>(new DeckPackets.ListResponse
-			{
-				deck = FindDeckByName(request.name!),
-			});
-		}
-		else if (type == NetworkingConstants.PACKET_DECK_SEARCH_REQUEST)
-		{
-			DeckPackets.SearchRequest request = DeserializeJson<DeckPackets.SearchRequest>(packet);
-			payload = GeneratePayload<DeckPackets.SearchResponse>(new DeckPackets.SearchResponse
-			{
-				cards = FilterCards(cards, request.filter!, request.playerClass).ToArray()
-			});
-		}
-		else if (type == NetworkingConstants.PACKET_DECK_LIST_UPDATE_REQUEST)
-		{
-			DeckPackets.Deck deck = DeserializeJson<DeckPackets.ListUpdateRequest>(packet).deck;
-			int index = decks.FindIndex(x => x.name == deck.name);
-			if (deck.cards != null)
-			{
-				if (index == -1)
+				DeckPackets.NamesRequest request = DeserializeJson<DeckPackets.NamesRequest>(packet);
+				payload = GeneratePayload<DeckPackets.NamesResponse>(new DeckPackets.NamesResponse
 				{
-					decks.Add(deck);
+					names = decks.ConvertAll(x => x.name).ToArray()
+				});
+			}
+			break;
+			case NetworkingConstants.PacketType.DeckListRequest:
+			{
+				DeckPackets.ListRequest request = DeserializeJson<DeckPackets.ListRequest>(packet);
+				payload = GeneratePayload<DeckPackets.ListResponse>(new DeckPackets.ListResponse
+				{
+					deck = FindDeckByName(request.name!),
+				});
+			}
+			break;
+			case NetworkingConstants.PacketType.DeckSearchRequest:
+			{
+				DeckPackets.SearchRequest request = DeserializeJson<DeckPackets.SearchRequest>(packet);
+				payload = GeneratePayload<DeckPackets.SearchResponse>(new DeckPackets.SearchResponse
+				{
+					cards = FilterCards(cards, request.filter!, request.playerClass).ToArray()
+				});
+			}
+			break;
+			case NetworkingConstants.PacketType.DeckListUpdateRequest:
+			{
+				DeckPackets.Deck deck = DeserializeJson<DeckPackets.ListUpdateRequest>(packet).deck;
+				int index = decks.FindIndex(x => x.name == deck.name);
+				if (deck.cards != null)
+				{
+					if (index == -1)
+					{
+						decks.Add(deck);
+					}
+					else
+					{
+						decks[index] = deck;
+					}
+					SaveDeck(deck);
 				}
 				else
 				{
-					decks[index] = deck;
+					if (index != -1)
+					{
+						decks.RemoveAt(index);
+						File.Delete(Path.Combine(Program.config.deck_config!.deck_location, deck.name + ".dek"));
+					}
 				}
-				SaveDeck(deck);
+				payload = GeneratePayload<DeckPackets.ListUpdateResponse>(new DeckPackets.ListUpdateResponse { should_update = index == -1 });
 			}
-			else
-			{
-				if (index != -1)
-				{
-					decks.RemoveAt(index);
-					File.Delete(Path.Combine(Program.config.deck_config!.deck_location, deck.name + ".dek"));
-				}
-			}
-			payload = GeneratePayload<DeckPackets.ListUpdateResponse>(new DeckPackets.ListUpdateResponse { should_update = index == -1 });
-		}
-		else
-		{
-			throw new Exception($"ERROR: Unable to process this packet: {type} | {packet}");
+			break;
+			default:
+				throw new Exception($"ERROR: Unable to process this packet: ({type}) | {packet}");
 		}
 		stream.Write(payload.ToArray(), 0, payload.Count);
 		return false;

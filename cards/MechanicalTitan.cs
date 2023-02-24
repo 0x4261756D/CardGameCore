@@ -8,7 +8,7 @@ class MechanicalTitan : Creature
 		Name: "Mechanical Titan",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 10,
-		Text: "{Cast}: [Collosal] 1. Costs 1 less to cast for each [Brittle] creature that died last turn.\n{Revelation}: Gain 5 life.",
+		Text: "[Collosal] +1\n{Cast}: Costs 1 less to cast for each [Brittle] creature that died last turn.\n{Revelation}: Gain 5 life.",
 		OriginalPower: 8,
 		OriginalLife: 8
 		)

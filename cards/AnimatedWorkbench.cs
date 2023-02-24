@@ -2,13 +2,15 @@
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
-class AttentiontoDetail : Spell
+class AnimatedWorkbench : Creature
 {
-	public AttentiontoDetail() : base(
-		Name: "Attention to Detail",
+	public AnimatedWorkbench() : base(
+		Name: "Animated Workbench",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 2,
-		Text: "{Cast}: Create 1 token copy of target creature. The copy gains [Brittle]."
+		Text: "{Start of your turn}: Gain 1 Momentum.",
+		OriginalPower: 1,
+		OriginalLife: 4
 		)
 	{ }
 	// TODO: implement functionality

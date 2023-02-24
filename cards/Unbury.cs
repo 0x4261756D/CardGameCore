@@ -2,13 +2,13 @@
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
-class CurseofSugoma : Spell
+class Unbury : Spell
 {
-	public CurseofSugoma() : base(
-		Name: "Curse of Sugoma",
+	public Unbury() : base(
+		Name: "Unbury",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 2,
-		Text: "{Cast}: Target creature gains +2/-1.\n{Discard}: Target creature gains decaying."
+		Text: "{Cast}: Return all creatures from the graves to the decks."
 		)
 	{ }
 	// TODO: implement functionality

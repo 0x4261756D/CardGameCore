@@ -61,6 +61,41 @@ public class Card
 			can_be_class_ability: CanBeClassAbility,
 			controller: Controller);
 	}
+
+	public static bool operator == (Card? first, Card? second)
+	{
+		return first != null && second != null && first.uid == second.uid;
+	}
+
+	public static bool operator != (Card? first, Card? second)
+	{
+		return first == null || second == null || first.uid != second.uid;
+	}
+
+	public override bool Equals(object? obj)
+	{
+		if (ReferenceEquals(this, obj))
+		{
+			return true;
+		}
+
+		if (ReferenceEquals(obj, null))
+		{
+			return false;
+		}
+
+		return obj.GetType() == GetType() && (Card)obj == this;
+	}
+
+	public override int GetHashCode()
+	{
+		return base.GetHashCode();
+	}
+
+	internal static CardStruct[] ToStruct(List<Card> cards)
+	{
+		return cards.ConvertAll(x => x.ToStruct()).ToArray();
+	}
 }
 
 public class Creature : Card

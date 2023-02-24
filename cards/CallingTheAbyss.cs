@@ -2,9 +2,9 @@
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
-class CallingTheAbyss : Spell
+class CallingtheAbyss : Spell
 {
-	public CallingTheAbyss() : base(
+	public CallingtheAbyss() : base(
 		Name: "Calling the Abyss",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 6,

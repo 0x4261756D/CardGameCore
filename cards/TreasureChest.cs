@@ -8,7 +8,7 @@ class TreasureChest : Creature
 		Name: "Treasure Chest",
 		CardClass: PlayerClass.All,
 		OriginalCost: 4,
-		Text: "{Death}: Draw 2.",
+		Text: "{Death}: Draw 2.\n{Revelation}: Reveal 2.",
 		OriginalPower: 0,
 		OriginalLife: 4
 		)
