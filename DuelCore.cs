@@ -148,6 +148,9 @@ class DuelCore : Core
 					{
 						player.deck.Shuffle();
 						player.Draw(GameConstants.START_HAND_SIZE);
+						player.momentum = GameConstants.START_MOMENTUM;
+						player.life = GameConstants.START_LIFE;
+						player.progress = 0;
 					}
 					SendFieldUpdates();
 					// Mulligan
@@ -168,12 +171,6 @@ class DuelCore : Core
 						}
 					}
 					turnPlayer = rnd.Next(100) / 50;
-					foreach(Player player in players)
-					{
-						player.momentum = GameConstants.START_MOMENTUM;
-						player.life = GameConstants.START_LIFE;
-						player.progress = 0;
-					}
 					turn = 0;
 					state = GameConstants.State.TurnStart;
 					break;
