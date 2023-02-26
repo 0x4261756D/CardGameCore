@@ -27,7 +27,7 @@ class Program
 						}
 						else
 						{
-							Log($"No config file found at {path}.", severity: LogSeverity.Error);
+							Log($"No config file found at {Path.GetFullPath(path)}.", severity: LogSeverity.Error);
 							return;
 						}
 						break;
