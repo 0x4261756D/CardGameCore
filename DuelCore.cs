@@ -30,7 +30,7 @@ class DuelCore : Core
 	public static Random rnd = new Random();
 	public const int HASH_LEN = 96;
 	public int playersConnected = 0;
-	public int turn, turnPlayer;
+	public int turn, turnPlayer, initPlayer;
 	public int momentumCount = GameConstants.START_MOMENTUM;
 	public DuelCore()
 	{
@@ -182,46 +182,176 @@ class DuelCore : Core
 			switch (state)
 			{
 				case GameConstants.State.UNINITIALIZED:
-					foreach (Player player in players)
 					{
-						player.deck.Shuffle();
-						player.Draw(GameConstants.START_HAND_SIZE);
-						player.momentum = GameConstants.START_MOMENTUM;
-						player.life = GameConstants.START_LIFE;
-						player.progress = 0;
-					}					
-					SendFieldUpdates();
-					// Mulligan
-					for (int i = 0; i < players.Length; i++)
-					{
-						if (AskYesNo(player: i, question: "Mulligan?"))
+						foreach (Player player in players)
 						{
-							Card[] cards = SelectCardsCustom(i, "Select cards to mulligan", players[i].hand.GetAll(), (x) => true);
-							foreach(Card card in cards)
-							{
-								players[i].hand.Remove(card);
-								players[i].deck.Add(card);
-							}
-							SendFieldUpdates();
-							players[i].deck.Shuffle();
-							players[i].Draw(cards.Length);
-							SendFieldUpdates();
+							player.deck.Shuffle();
+							player.Draw(GameConstants.START_HAND_SIZE);
+							player.momentum = GameConstants.START_MOMENTUM;
+							player.life = GameConstants.START_LIFE;
+							player.progress = 0;
 						}
+						SendFieldUpdates();
+						// Mulligan
+						for (int i = 0; i < players.Length; i++)
+						{
+							if (AskYesNo(player: i, question: "Mulligan?"))
+							{
+								Card[] cards = SelectCardsCustom(i, "Select cards to mulligan", players[i].hand.GetAll(), (x) => true);
+								foreach (Card card in cards)
+								{
+									players[i].hand.Remove(card);
+									players[i].deck.Add(card);
+								}
+								SendFieldUpdates();
+								players[i].deck.Shuffle();
+								players[i].Draw(cards.Length);
+								SendFieldUpdates();
+							}
+						}
+						turnPlayer = rnd.Next(100) / 50;
+						turn = 0;
+						state = GameConstants.State.TurnStart;
 					}
-					turnPlayer = rnd.Next(100) / 50;
-					turn = 0;
-					state = GameConstants.State.TurnStart;
+					break;
+				case GameConstants.State.TurnStart:
+					{
+						foreach (Player player in players)
+						{
+							player.Draw(1);
+						}
+						initPlayer = turnPlayer;
+						state = GameConstants.State.MainInitGained;
+					}
+					break;
+				case GameConstants.State.MainInitGained:
 					break;
 				default:
 					throw new NotImplementedException(state.ToString());
 			}
+			SendFieldUpdates();
 		}
 		return false;
 	}
 
 	private bool HandlePlayerActions()
 	{
-		throw new NotImplementedException();
+		for (int i = 0; i < players.Length; i++)
+		{
+			if (playerStreams[i].DataAvailable)
+			{
+				List<byte> bytes = ReceiveRawPacket(playerStreams[i])!;
+				if (bytes.Count == 0)
+				{
+					Log("Request was empty, ignoring it", severity: LogSeverity.Warning);
+				}
+				else
+				{
+					byte type = bytes[0];
+					bytes.RemoveAt(0);
+					string packet = Encoding.UTF8.GetString(bytes.ToArray());
+					if (HandlePacket(type, packet, i))
+					{
+						Log($"{players[i].name} is giving up, closing.");
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+
+	}
+
+	private bool HandlePacket(byte typeByte, string packet, int player)
+	{
+		// THIS MIGHT CHANGE AS SENDING RAW JSON MIGHT BE TOO EXPENSIVE/SLOW
+		// possible improvements: Huffman or Burrows-Wheeler+RLE
+		if (typeByte >= (byte)NetworkingConstants.PacketType.PACKET_COUNT)
+		{
+			throw new Exception($"ERROR: Unknown packet type encountered: ({typeByte})");
+		}
+		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)typeByte;
+
+		List<byte> payload = new List<byte>();
+		switch (type)
+		{
+			case NetworkingConstants.PacketType.DuelSurrenderRequest:
+				{
+					SendPacketToPlayer(new DuelPackets.GameResultResponse
+					{
+						result = GameConstants.GameResult.Won
+					}, 1 - player);
+					Log("Surrender request received");
+					return true;
+				}
+			case NetworkingConstants.PacketType.DuelGetOptionsRequest:
+				{
+					DuelPackets.GetOptionsRequest request = DeserializeJson<DuelPackets.GetOptionsRequest>(packet);
+					SendPacketToPlayer(new DuelPackets.GetOptionsResponse
+					{
+						location = request.location,
+						uid = request.uid,
+						options = GetCardActions(player, request.uid, request.location),
+					}, player);
+				}
+				break;
+			case NetworkingConstants.PacketType.DuelSelectOptionRequest:
+				{
+					DuelPackets.SelectOptionRequest request = DeserializeJson<DuelPackets.SelectOptionRequest>(packet);
+					if (!GetCardActions(player, request.uid, request.location).Contains(request.desc))
+					{
+						Log("Tried to use an option that is not present for that card");
+					}
+					else
+					{
+						TakeAction(player, request.uid, request.location, request.desc!);
+					}
+				}
+				break;
+			default:
+				throw new Exception($"ERROR: Unable to process this packet: ({type}) | {packet}");
+		}
+		return false;
+	}
+
+	private void TakeAction(int player, int uid, GameConstants.Location location, string option)
+	{
+		switch (location)
+		{
+			case GameConstants.Location.Hand:
+				{
+					Card card = players[player].hand.Get(uid);
+					if (option == "Cast")
+					{
+						Cast(player, card);
+					}
+					else
+					{
+						throw new NotImplementedException($"Scripted action {option}");
+					}
+				}
+				break;
+			default:
+				throw new NotImplementedException($"TakeAction at {location}");
+		}
+	}
+
+	private string[] GetCardActions(int player, int uid, GameConstants.Location location)
+	{
+		List<string> options = new List<string>();
+		switch (location)
+		{
+			case GameConstants.Location.Hand:
+				Card card = players[player].hand.Get(uid);
+				if (card.Cost <= players[player].momentum)
+				{
+					options.Add("Cast");
+				}
+				break;
+			default:
+				throw new NotImplementedException($"GetCardActions at {location}");
+		}
+		return options.ToArray();
 	}
 
 	public bool AskYesNo(int player, string question)
@@ -273,32 +403,56 @@ class DuelCore : Core
 	private void SendFieldUpdate(int player, GameConstants.Location mask)
 	{
 		// TODO: actually handle mask if this is too slow
-		DuelPackets.FieldUpdateRequest request = new DuelPackets.FieldUpdateRequest() { turn = turn };
-		request.ownField = new DuelPackets.FieldUpdateRequest.Field
+		DuelPackets.FieldUpdateRequest request = new DuelPackets.FieldUpdateRequest()
 		{
-			ability = players[player].ability.ToStruct(),
-			quest = players[player].quest.ToStruct(),
-			deckSize = players[player].deck.Size,
-			graveSize = players[player].grave.Size,
-			life = players[player].life,
-			name = players[player].name,
-			momentum = players[player].momentum,
-			field = players[player].field.ToStruct(),
-			hand = players[player].hand.ToStruct(),
-		};
-		request.oppField = new DuelPackets.FieldUpdateRequest.Field
-		{
-			ability = players[1 - player].ability.ToStruct(),
-			quest = players[1 - player].quest.ToStruct(),
-			deckSize = players[1 - player].deck.Size,
-			graveSize = players[1 - player].grave.Size,
-			life = players[1 - player].life,
-			name = players[1 - player].name,
-			momentum = players[1 - player].momentum,
-			field = players[1 - player].field.ToStruct(),
-			hand = players[1 - player].hand.ToHiddenStruct(),
+			turn = turn + 1,
+			hasInitiative = state != GameConstants.State.UNINITIALIZED && initPlayer == player,
+			ownField = new DuelPackets.FieldUpdateRequest.Field
+			{
+				ability = players[player].ability.ToStruct(),
+				quest = players[player].quest.ToStruct(),
+				deckSize = players[player].deck.Size,
+				graveSize = players[player].grave.Size,
+				life = players[player].life,
+				name = players[player].name,
+				momentum = players[player].momentum,
+				field = players[player].field.ToStruct(),
+				hand = players[player].hand.ToStruct(),
+			},
+			oppField = new DuelPackets.FieldUpdateRequest.Field
+			{
+				ability = players[1 - player].ability.ToStruct(),
+				quest = players[1 - player].quest.ToStruct(),
+				deckSize = players[1 - player].deck.Size,
+				graveSize = players[1 - player].grave.Size,
+				life = players[1 - player].life,
+				name = players[1 - player].name,
+				momentum = players[1 - player].momentum,
+				field = players[1 - player].field.ToStruct(),
+				hand = players[1 - player].hand.ToHiddenStruct(),
+			},
 		};
 		SendPacketToPlayer<DuelPackets.FieldUpdateRequest>(request, player);
+	}
+
+	private void Cast(int player, Card card)
+	{
+		switch (card.CardType)
+		{
+			case GameConstants.CardType.Creature:
+				{
+					SendPacketToPlayer<DuelPackets.SelectZoneRequest>(new DuelPackets.SelectZoneRequest
+					{
+						options = players[player].field.GetPlacementOptions(),
+					}, player);
+					int zone = ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
+					players[player].CastCreature(card, zone);
+				}
+				break;
+			default:
+				throw new NotImplementedException($"Casting {card.CardType} cards");
+		}
+		SendFieldUpdates();
 	}
 
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent

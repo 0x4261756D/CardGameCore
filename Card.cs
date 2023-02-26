@@ -64,12 +64,22 @@ public class Card
 
 	public static bool operator == (Card? first, Card? second)
 	{
-		return first != null && second != null && first.uid == second.uid;
+		if (ReferenceEquals(first, null))
+		{
+			return true;
+		}
+
+		if (ReferenceEquals(second, null))
+		{
+			return false;
+		}
+
+		return first.uid == second.uid;
 	}
 
 	public static bool operator != (Card? first, Card? second)
 	{
-		return first == null || second == null || first.uid != second.uid;
+		return !(first == second);
 	}
 
 	public override bool Equals(object? obj)

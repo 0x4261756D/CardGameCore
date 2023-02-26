@@ -35,4 +35,16 @@ class Player
 			hand.Add(deck.Pop());
 		}
 	}
+
+	private void CastGeneric(Card card)
+	{
+		momentum -= card.Cost;
+		hand.Remove(card);
+	}
+
+	internal void CastCreature(Card card, int zone)
+	{
+		CastGeneric(card);
+		field.Add(card, zone);
+	}
 }
