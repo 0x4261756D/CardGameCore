@@ -84,6 +84,7 @@ class DuelCore : Core
 		c.RegisterCastTrigger = RegisterCastTriggerImpl;
 		c.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		c.GetField = GetFieldImpl;
+		c.GetHand = GetHandImpl;
 		c.Init();
 		return c;
 	}
@@ -594,6 +595,10 @@ class DuelCore : Core
 	public Card?[] GetFieldImpl(int player)
 	{
 		return players[player].field.GetAll();
+	}
+	public Card[] GetHandImpl(int player)
+	{
+		return players[player].hand.GetAll();
 	}
 	public int SelectZoneImpl(int player)
 	{
