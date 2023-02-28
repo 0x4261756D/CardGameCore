@@ -85,6 +85,7 @@ class DuelCore : Core
 		c.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		c.GetField = GetFieldImpl;
 		c.GetHand = GetHandImpl;
+		c.SelectCards = SelectCardsImpl;
 		c.Init();
 		return c;
 	}
@@ -599,6 +600,26 @@ class DuelCore : Core
 	public Card[] GetHandImpl(int player)
 	{
 		return players[player].hand.GetAll();
+	}
+	public Card[] SelectCardsImpl(int player, Card[] cards, int amount, string description)
+	{
+		if (cards.Length < amount)
+		{
+			throw new Exception($"Tried to let a player select from a too small collection ({cards.Length} < {amount})");
+		}
+		SendPacketToPlayer(new DuelPackets.SelectCardsRequest
+		{
+			amount = amount,
+			cards = Card.ToStruct(cards),
+			desc = description,
+		}, player);
+		DuelPackets.SelectCardsResponse response = ReceivePacketFromPlayer<DuelPackets.SelectCardsResponse>(player);
+		if (response.uids.Length != amount)
+		{
+			throw new Exception($"Selected the wrong amount of cards ({response.uids.Length} != {amount})");
+		}
+		// TODO: Make this nicer?
+		return response.uids.ToList().ConvertAll(x => cards.First(y => y.uid == x)).ToArray();
 	}
 	public int SelectZoneImpl(int player)
 	{

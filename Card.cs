@@ -47,6 +47,7 @@ public abstract class Card
 	public RegisterLingeringEffectDelegate RegisterLingeringEffect = (_, _) => {};
 	public GetFieldDelegate GetField = (_) => new Card?[0];
 	public GetHandDelegate GetHand = (_) => new Card[0];
+	public SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
 	public void ClearModifications()
 	{
 		Life = BaseLife;
