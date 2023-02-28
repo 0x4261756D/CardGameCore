@@ -474,18 +474,28 @@ class DuelCore : Core
 		{
 			case GameConstants.CardType.Creature:
 				{
-					SendPacketToPlayer<DuelPackets.SelectZoneRequest>(new DuelPackets.SelectZoneRequest
-					{
-						options = players[player].field.GetPlacementOptions(),
-					}, player);
-					int zone = ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
-					players[player].CastCreature(card, zone);
+					players[player].CastCreature(card, SelectZoneImpl(player));
+				}
+				break;
+			case GameConstants.CardType.Spell:
+				{
+					players[player].hand.Remove(card);
 				}
 				break;
 			default:
 				throw new NotImplementedException($"Casting {card.CardType} cards");
 		}
 		SendFieldUpdates();
+	}
+
+	public int SelectZoneImpl(int player)
+	{
+		SendPacketToPlayer<DuelPackets.SelectZoneRequest>(new DuelPackets.SelectZoneRequest
+		{
+			options = players[player].field.GetPlacementOptions(),
+		}, player);
+		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
+
 	}
 
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent
