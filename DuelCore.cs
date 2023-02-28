@@ -251,6 +251,7 @@ class DuelCore : Core
 						foreach (Player player in players)
 						{
 							player.Draw(1);
+							player.ability.Position = 0;
 						}
 						initPlayer = turnPlayer;
 						state = GameConstants.State.MainInitGained;
@@ -392,6 +393,29 @@ class DuelCore : Core
 					}
 				}
 				break;
+			case GameConstants.Location.Quest:
+				{
+					if (players[player].quest.Position >= players[player].quest.Cost)
+					{
+						throw new NotImplementedException($"GetActions for ignition quests");
+					}
+				}
+				break;
+			case GameConstants.Location.Ability:
+				{
+					if (players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
+					{
+						foreach (CastTrigger trigger in castTriggers[players[player].ability.uid])
+						{
+							if (trigger.condition())
+							{
+								trigger.effect();
+							}
+						}
+						players[player].ability.Position = 1;
+					}
+				}
+				break;
 			default:
 				throw new NotImplementedException($"TakeAction at {location}");
 		}
@@ -403,10 +427,28 @@ class DuelCore : Core
 		switch (location)
 		{
 			case GameConstants.Location.Hand:
-				Card card = players[player].hand.Get(uid);
-				if (card.Cost <= players[player].momentum)
 				{
-					options.Add("Cast");
+					Card card = players[player].hand.Get(uid);
+					if (card.Cost <= players[player].momentum)
+					{
+						options.Add("Cast");
+					}
+				}
+				break;
+			case GameConstants.Location.Quest:
+				{
+					if (players[player].quest.Position >= players[player].quest.Cost)
+					{
+						options.Add("Activate");
+					}
+				}
+				break;
+			case GameConstants.Location.Ability:
+				{
+					if (players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
+					{
+						options.Add("Activate");
+					}
 				}
 				break;
 			default:
