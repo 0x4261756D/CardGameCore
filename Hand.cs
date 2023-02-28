@@ -42,4 +42,12 @@ class Hand
 	{
 		return cards[cards.FindIndex(x => x.uid == uid)];
 	}
+
+	internal void ClearCardModifications()
+	{
+		foreach (Card card in cards)
+		{
+			card.ClearModifications();
+		}
+	}
 }

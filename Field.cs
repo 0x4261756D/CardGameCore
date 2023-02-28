@@ -37,4 +37,13 @@ class Field
 	{
 		return cards.ToList().ConvertAll(x => x == null).ToArray();
 	}
+
+	internal void ClearCardModifications()
+	{
+		foreach (Card? card in cards)
+		{
+			card?.ClearModifications();
+		}
+	}
+
 }

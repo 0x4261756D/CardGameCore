@@ -34,6 +34,8 @@ class DuelCore : Core
 	public int momentumCount = GameConstants.START_MOMENTUM;
 
 	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
+	private Dictionary<int, List<Effect>> lingeringEffects = new Dictionary<int, List<Effect>>();
+
 	public DuelCore()
 	{
 		sha = SHA384.Create();
@@ -80,6 +82,7 @@ class DuelCore : Core
 		count++;
 		c.Controller = controller;
 		c.RegisterCastTrigger = RegisterCastTriggerImpl;
+		c.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		c.Init();
 		return c;
 	}
@@ -179,10 +182,32 @@ class DuelCore : Core
 		}
 	}
 
+	private void EvaluateLingeringEffects()
+	{
+		foreach (Player player in players)
+		{
+			player.ClearCardModifications();
+		}
+		foreach (Player player in players)
+		{
+			foreach (Card? card in player.field.GetAll())
+			{
+				if (card != null && lingeringEffects.ContainsKey(card.uid))
+				{
+					foreach (Effect effect in lingeringEffects[card.uid])
+					{
+						effect();
+					}
+				}
+			}
+		}
+	}
+
 	private bool HandleGameLogic()
 	{
 		while (!state.HasFlag(GameConstants.State.InitGained))
 		{
+			EvaluateLingeringEffects();
 			switch (state)
 			{
 				case GameConstants.State.UNINITIALIZED:
@@ -503,6 +528,7 @@ class DuelCore : Core
 			// TODO: Add handling of opponent's responses here
 			while (chain.Pop()) { }
 		}
+		EvaluateLingeringEffects();
 		SendFieldUpdates();
 	}
 
@@ -513,6 +539,14 @@ class DuelCore : Core
 			castTriggers[referrer.uid] = new List<CastTrigger>();
 		}
 		castTriggers[referrer.uid].Add(new CastTrigger(effect, condition));
+	}
+	public void RegisterLingeringEffectImpl(Effect effect, Card referrer)
+	{
+		if (!lingeringEffects.ContainsKey(referrer.uid))
+		{
+			lingeringEffects[referrer.uid] = new List<Effect>();
+		}
+		lingeringEffects[referrer.uid].Add(effect);
 	}
 	public int SelectZoneImpl(int player)
 	{

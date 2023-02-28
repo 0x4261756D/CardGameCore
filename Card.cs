@@ -44,6 +44,7 @@ public abstract class Card
 	}
 
 	public RegisterCastTriggerDelegate RegisterCastTrigger = (_, _, _) => {};
+	public RegisterLingeringEffectDelegate RegisterLingeringEffect = (_, _) => {};
 	public void ClearModifications()
 	{
 		Life = BaseLife;

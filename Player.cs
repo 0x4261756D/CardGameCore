@@ -49,4 +49,11 @@ class Player
 		CastGeneric(card);
 		field.Add(card, zone);
 	}
+
+	internal void ClearCardModifications()
+	{
+		hand.ClearCardModifications();
+		field.ClearCardModifications();
+	}
+
 }
