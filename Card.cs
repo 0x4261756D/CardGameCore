@@ -43,6 +43,7 @@ public abstract class Card
 		ClearModifications();
 	}
 
+	public RegisterCastTriggerDelegate RegisterCastTrigger = (_, _, _) => {};
 	public void ClearModifications()
 	{
 		Life = BaseLife;

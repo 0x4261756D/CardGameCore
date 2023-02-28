@@ -32,6 +32,8 @@ class DuelCore : Core
 	public int playersConnected = 0;
 	public int turn, turnPlayer, initPlayer;
 	public int momentumCount = GameConstants.START_MOMENTUM;
+
+	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
 	public DuelCore()
 	{
 		sha = SHA384.Create();
@@ -77,6 +79,7 @@ class DuelCore : Core
 		c.uid = count;
 		count++;
 		c.Controller = controller;
+		c.RegisterCastTrigger = RegisterCastTriggerImpl;
 		c.Init();
 		return c;
 	}
@@ -485,9 +488,32 @@ class DuelCore : Core
 			default:
 				throw new NotImplementedException($"Casting {card.CardType} cards");
 		}
+		if (castTriggers.ContainsKey(card.uid))
+		{
+			EffectChain chain = new EffectChain(players.Length);
+			foreach (Trigger trigger in castTriggers[card.uid])
+			{
+				Log($"trigger condition met: {trigger.condition()}");
+				if (trigger.condition())
+				{
+					chain.Push(card, trigger.effect);
+				}
+			}
+			Log($"trigger chain length: {chain.Count()}");
+			// TODO: Add handling of opponent's responses here
+			while (chain.Pop()) { }
+		}
 		SendFieldUpdates();
 	}
 
+	public void RegisterCastTriggerImpl(Effect effect, TriggerCondition condition, Card referrer)
+	{
+		if (!castTriggers.ContainsKey(referrer.uid))
+		{
+			castTriggers[referrer.uid] = new List<CastTrigger>();
+		}
+		castTriggers[referrer.uid].Add(new CastTrigger(effect, condition));
+	}
 	public int SelectZoneImpl(int player)
 	{
 		SendPacketToPlayer<DuelPackets.SelectZoneRequest>(new DuelPackets.SelectZoneRequest
