@@ -310,6 +310,10 @@ class DuelCore : Core
 					{
 						TakeAction(player, request.uid, request.location, request.desc!);
 					}
+					state &= ~GameConstants.State.InitGained;
+					state |= GameConstants.State.ActionTaken;
+				}
+				break;
 			case NetworkingConstants.PacketType.DuelPassRequest:
 				{
 					switch (state)
