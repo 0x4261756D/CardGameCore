@@ -230,6 +230,12 @@ class DuelCore : Core
 					break;
 				case GameConstants.State.MainInitGained:
 					break;
+				case GameConstants.State.MainActionTaken:
+					{
+						initPlayer = 1 - initPlayer;
+						state = GameConstants.State.MainInitGained;
+					}
+					break;
 				default:
 					throw new NotImplementedException(state.ToString());
 			}
