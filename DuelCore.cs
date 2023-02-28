@@ -310,6 +310,24 @@ class DuelCore : Core
 					{
 						TakeAction(player, request.uid, request.location, request.desc!);
 					}
+			case NetworkingConstants.PacketType.DuelPassRequest:
+				{
+					switch (state)
+					{
+						case GameConstants.State.MainInitGained:
+							if(players[1 - player].passed)
+							{
+								state = GameConstants.State.BattleStart;
+							}
+							else
+							{
+								players[player].passed = true;
+								state = GameConstants.State.MainActionTaken;
+							}
+							break;
+						default:
+							throw new Exception($"Unable to pass in state {state}");
+					}
 				}
 				break;
 			default:
@@ -320,6 +338,7 @@ class DuelCore : Core
 
 	private void TakeAction(int player, int uid, GameConstants.Location location, string option)
 	{
+		players[player].passed = false;
 		switch (location)
 		{
 			case GameConstants.Location.Hand:
