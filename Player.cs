@@ -24,7 +24,9 @@ class Player
 		this.passed = false;
 		this.playerClass = playerClass;
 		this.ability = ability;
+		this.ability.Location = GameConstants.Location.Ability;
 		this.quest = quest;
+		this.quest.Location = GameConstants.Location.Quest;
 		this.number = number;
 	}
 
