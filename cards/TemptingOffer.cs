@@ -12,4 +12,8 @@ class TemptingOffer : Spell
 		)
 	{}
 	// TODO: implement functionality
+
+	public override void Init()
+	{
+	}
 }

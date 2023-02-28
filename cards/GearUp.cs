@@ -14,4 +14,8 @@ class GearUp : Spell
 	{ }
 	// TODO: implement functionality
 
+	public override void Init()
+	{
+	}
+
 }

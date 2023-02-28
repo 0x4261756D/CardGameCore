@@ -15,4 +15,8 @@ class DeceivingTactician : Creature
 	{ }
 	// TODO: implement functionality
 
+	public override void Init()
+	{
+	}
+
 }

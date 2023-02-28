@@ -15,4 +15,8 @@ class BurningTitan : Creature
 	{ }
 	// TODO: implement functionality
 
+	public override void Init()
+	{
+	}
+
 }

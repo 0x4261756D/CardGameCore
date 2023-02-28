@@ -13,4 +13,8 @@ class EverlastingProgress : Quest
 	{ }
 	// TODO: implement functionality
 
+	public override void Init()
+	{
+	}
+
 }

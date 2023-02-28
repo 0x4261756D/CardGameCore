@@ -77,6 +77,7 @@ class DuelCore : Core
 		c.uid = count;
 		count++;
 		c.Controller = controller;
+		c.Init();
 		return c;
 	}
 

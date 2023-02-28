@@ -15,4 +15,8 @@ class AcolyteofMadness : Creature
 	{ }
 	// TODO: implement functionality
 
+	public override void Init()
+	{
+	}
+
 }

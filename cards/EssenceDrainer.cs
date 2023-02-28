@@ -15,4 +15,8 @@ class EssenceDrainer : Creature
 	{ }
 	// TODO: implement functionality
 
+	public override void Init()
+	{
+	}
+
 }

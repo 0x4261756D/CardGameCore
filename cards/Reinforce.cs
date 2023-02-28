@@ -13,4 +13,8 @@ class Reinforce : Spell
 	{ }
 	// TODO: implement functionality
 
+	public override void Init()
+	{
+	}
+
 }

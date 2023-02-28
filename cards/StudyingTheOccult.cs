@@ -13,4 +13,8 @@ class StudyingtheOccult : Quest
 	{ }
 	// TODO: implement functionality
 
+	public override void Init()
+	{
+	}
+
 }

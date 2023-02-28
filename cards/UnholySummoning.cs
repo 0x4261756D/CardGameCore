@@ -11,6 +11,8 @@ class UnholySummoning : Spell
 		Text: "{Cast}: Discard 1. Create 1 X/X Horror token where X is the discarded Card's Momentum cost.\n{Discard}: Create a 3/2 Horror Token."
 		)
 	{ }
-	// TODO: implement functionality
+	public override void Init()
+	{
+	}
 
 }

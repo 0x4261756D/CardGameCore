@@ -3,7 +3,7 @@ using CardGameUtils.Structs;
 
 namespace CardGameCore;
 
-public class Card
+public abstract class Card
 {
 	public string Name, Text;
 	public GameConstants.CardType CardType;
@@ -13,6 +13,7 @@ public class Card
 	public GameConstants.Location Location;
 	public bool IsClassAbility, CanBeClassAbility;
 	public int Controller;
+	public abstract void Init();
 
 	public Card(GameConstants.CardType CardType,
 		GameConstants.PlayerClass CardClass,
@@ -108,7 +109,7 @@ public class Card
 	}
 }
 
-public class Creature : Card
+public abstract class Creature : Card
 {
 	public Creature(GameConstants.PlayerClass CardClass,
 		string Name,
@@ -128,7 +129,7 @@ public class Creature : Card
 		CanBeClassAbility: false){}
 }
 
-public class Spell : Card
+public abstract class Spell : Card
 {
 	public Spell(GameConstants.PlayerClass CardClass,
 		string Name,
@@ -147,7 +148,7 @@ public class Spell : Card
 			CanBeClassAbility: CanBeClassAbility){}
 }
 
-public class Quest : Card
+public abstract class Quest : Card
 {
 	public Quest(string Name, string Text, int ProgressGoal, GameConstants.PlayerClass CardClass) : base(
 		CardType: GameConstants.CardType.Quest,
