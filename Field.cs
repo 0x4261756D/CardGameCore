@@ -46,4 +46,8 @@ class Field
 		}
 	}
 
+	internal bool HasEmpty()
+	{
+		return cards.Any(x => x == null);
+	}
 }

@@ -87,6 +87,7 @@ class DuelCore : Core
 		c.GetHand = GetHandImpl;
 		c.SelectCards = SelectCardsImpl;
 		c.Discard = DiscardImpl;
+		c.CreateToken = CreateTokenImpl;
 		c.Init();
 		return c;
 	}
@@ -629,6 +630,22 @@ class DuelCore : Core
 			throw new Exception($"Tried to discard a card that is not in the hand but at {card.Location}");
 		}
 		players[card.Controller].Discard(card);
+	}
+	public void CreateTokenImpl(int player, int power, int life, string name)
+	{
+		if (!players[player].field.HasEmpty())
+		{
+			throw new Exception($"Tried to create a token but the field is full");
+		}
+		int zone = SelectZoneImpl(player);
+		players[player].field.Add(new Token
+		(
+			Name: name,
+			Text: "[Token]",
+			OriginalCost: 0,
+			OriginalLife: life,
+			OriginalPower: power
+		), zone);
 	}
 	public int SelectZoneImpl(int player)
 	{

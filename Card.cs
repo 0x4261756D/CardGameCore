@@ -49,6 +49,8 @@ public abstract class Card
 	public GetHandDelegate GetHand = (_) => new Card[0];
 	public SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
 	public DiscardDelegate Discard = (_) => {};
+	public CreateTokenDelegate CreateToken = (_, _, _, _) => {};
+
 	public void ClearModifications()
 	{
 		Life = BaseLife;
@@ -167,4 +169,24 @@ public abstract class Quest : Card
 		OriginalPositon: 0,
 		OriginalCost: ProgressGoal
 	) {}
+}
+
+public class Token : Creature
+{
+	public Token(string Name,
+		string Text,
+		int OriginalCost,
+		int OriginalLife,
+		int OriginalPower) : base(
+			Name: Name,
+			Text: Text,
+			OriginalCost: OriginalCost,
+			OriginalLife: OriginalLife,
+			OriginalPower: OriginalPower,
+			CardClass: GameConstants.PlayerClass.All
+		)
+		{}
+	public override void Init()
+	{
+	}
 }
