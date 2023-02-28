@@ -13,9 +13,21 @@ class Weaponsmith : Creature
 		OriginalLife: 3
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterLingeringEffect(effect: BuffEffect, this);
+	}
+
+	private void BuffEffect()
+	{
+		foreach (Card? card in GetField(this.Controller))
+		{
+			if(card != null)
+			{
+				card.Power += 1;
+				card.Life += 1;
+			}
+		}
 	}
 }
