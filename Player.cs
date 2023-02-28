@@ -56,4 +56,9 @@ class Player
 		field.ClearCardModifications();
 	}
 
+	internal void Discard(Card card)
+	{
+		hand.Remove(card);
+		grave.Add(card);
+	}
 }

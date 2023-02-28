@@ -48,6 +48,7 @@ public abstract class Card
 	public GetFieldDelegate GetField = (_) => new Card?[0];
 	public GetHandDelegate GetHand = (_) => new Card[0];
 	public SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
+	public DiscardDelegate Discard = (_) => {};
 	public void ClearModifications()
 	{
 		Life = BaseLife;

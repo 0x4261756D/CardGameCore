@@ -86,6 +86,7 @@ class DuelCore : Core
 		c.GetField = GetFieldImpl;
 		c.GetHand = GetHandImpl;
 		c.SelectCards = SelectCardsImpl;
+		c.Discard = DiscardImpl;
 		c.Init();
 		return c;
 	}
@@ -620,6 +621,14 @@ class DuelCore : Core
 		}
 		// TODO: Make this nicer?
 		return response.uids.ToList().ConvertAll(x => cards.First(y => y.uid == x)).ToArray();
+	}
+	public void DiscardImpl(Card card)
+	{
+		if (card.Location != GameConstants.Location.Hand)
+		{
+			throw new Exception($"Tried to discard a card that is not in the hand but at {card.Location}");
+		}
+		players[card.Controller].Discard(card);
 	}
 	public int SelectZoneImpl(int player)
 	{

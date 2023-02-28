@@ -1,3 +1,5 @@
+using CardGameUtils;
+
 namespace CardGameCore;
 
 class Grave
@@ -11,5 +13,11 @@ class Grave
 	public Grave()
 	{
 
+	}
+
+	internal void Add(Card card)
+	{
+		card.Location = GameConstants.Location.Grave;
+		cards.Add(card);
 	}
 }
