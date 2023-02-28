@@ -157,6 +157,8 @@ public abstract class Quest : Card
 		CanBeClassAbility: false,
 		Name: Name,
 		Text: Text,
+		// Position = Progress, Cost = Goal
+		OriginalPositon: 0,
 		OriginalCost: ProgressGoal
 	) {}
 }
