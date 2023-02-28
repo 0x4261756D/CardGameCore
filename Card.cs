@@ -103,9 +103,9 @@ public abstract class Card
 		return base.GetHashCode();
 	}
 
-	internal static CardStruct[] ToStruct(List<Card> cards)
+	internal static CardStruct[] ToStruct(Card[] cards)
 	{
-		return cards.ConvertAll(x => x.ToStruct()).ToArray();
+		return cards.ToList().ConvertAll(x => x.ToStruct()).ToArray();
 	}
 }
 

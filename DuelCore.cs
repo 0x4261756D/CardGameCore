@@ -374,7 +374,7 @@ class DuelCore : Core
 	{
 		SendPacketToPlayer(new DuelPackets.CustomSelectCardsRequest
 		{
-			cards = Card.ToStruct(cards.ToList()),
+			cards = Card.ToStruct(cards),
 			desc = description,
 			initialState = isValidSelection(new Card[0])
 		}, player);
