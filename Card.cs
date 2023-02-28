@@ -43,7 +43,7 @@ public abstract class Card
 		ClearModifications();
 	}
 
-	private void ClearModifications()
+	public void ClearModifications()
 	{
 		Life = BaseLife;
 		Power = BasePower;
