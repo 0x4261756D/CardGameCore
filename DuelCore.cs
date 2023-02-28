@@ -83,6 +83,7 @@ class DuelCore : Core
 		c.Controller = controller;
 		c.RegisterCastTrigger = RegisterCastTriggerImpl;
 		c.RegisterLingeringEffect = RegisterLingeringEffectImpl;
+		c.GetField = GetFieldImpl;
 		c.Init();
 		return c;
 	}
@@ -589,6 +590,10 @@ class DuelCore : Core
 			lingeringEffects[referrer.uid] = new List<Effect>();
 		}
 		lingeringEffects[referrer.uid].Add(effect);
+	}
+	public Card?[] GetFieldImpl(int player)
+	{
+		return players[player].field.GetAll();
 	}
 	public int SelectZoneImpl(int player)
 	{
