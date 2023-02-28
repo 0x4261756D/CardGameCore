@@ -186,7 +186,10 @@ class DuelCore : Core
 					{
 						foreach (Player player in players)
 						{
-							player.deck.Shuffle();
+							if(!Program.config.duel_config!.noshuffle)
+							{
+								player.deck.Shuffle();
+							}
 							player.Draw(GameConstants.START_HAND_SIZE);
 							player.momentum = GameConstants.START_MOMENTUM;
 							player.life = GameConstants.START_LIFE;
