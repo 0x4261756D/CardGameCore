@@ -203,5 +203,6 @@ public class Token : Creature
 	{ }
 	public override void Init()
 	{
+		RegisterKeyword(Keyword.Token);
 	}
 }
