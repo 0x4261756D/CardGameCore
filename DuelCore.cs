@@ -220,61 +220,61 @@ class DuelCore : Core
 			switch(state)
 			{
 				case GameConstants.State.UNINITIALIZED:
+				{
+					foreach(Player player in players)
 					{
-						foreach(Player player in players)
+						if(!Program.config.duel_config!.noshuffle)
 						{
-							if(!Program.config.duel_config!.noshuffle)
-							{
-								player.deck.Shuffle();
-							}
-							player.Draw(GameConstants.START_HAND_SIZE);
-							player.momentum = GameConstants.START_MOMENTUM;
-							player.life = GameConstants.START_LIFE;
-							player.progress = 0;
+							player.deck.Shuffle();
 						}
-						SendFieldUpdates();
-						// Mulligan
-						for(int i = 0; i < players.Length; i++)
-						{
-							if(AskYesNo(player: i, question: "Mulligan?"))
-							{
-								Card[] cards = SelectCardsCustom(i, "Select cards to mulligan", players[i].hand.GetAll(), (x) => true);
-								foreach(Card card in cards)
-								{
-									players[i].hand.Remove(card);
-									players[i].deck.Add(card);
-								}
-								SendFieldUpdates();
-								players[i].deck.Shuffle();
-								players[i].Draw(cards.Length);
-								SendFieldUpdates();
-							}
-						}
-						turnPlayer = rnd.Next(100) / 50;
-						turn = 0;
-						state = GameConstants.State.TurnStart;
+						player.Draw(GameConstants.START_HAND_SIZE);
+						player.momentum = GameConstants.START_MOMENTUM;
+						player.life = GameConstants.START_LIFE;
+						player.progress = 0;
 					}
-					break;
+					SendFieldUpdates();
+					// Mulligan
+					for(int i = 0; i < players.Length; i++)
+					{
+						if(AskYesNo(player: i, question: "Mulligan?"))
+						{
+							Card[] cards = SelectCardsCustom(i, "Select cards to mulligan", players[i].hand.GetAll(), (x) => true);
+							foreach(Card card in cards)
+							{
+								players[i].hand.Remove(card);
+								players[i].deck.Add(card);
+							}
+							SendFieldUpdates();
+							players[i].deck.Shuffle();
+							players[i].Draw(cards.Length);
+							SendFieldUpdates();
+						}
+					}
+					turnPlayer = rnd.Next(100) / 50;
+					turn = 0;
+					state = GameConstants.State.TurnStart;
+				}
+				break;
 				case GameConstants.State.TurnStart:
+				{
+					foreach(Player player in players)
 					{
-						foreach(Player player in players)
-						{
-							player.Draw(1);
-							player.ability.Position = 0;
-							player.discardCountThisTurn = 0;
-						}
-						initPlayer = turnPlayer;
-						state = GameConstants.State.MainInitGained;
+						player.Draw(1);
+						player.ability.Position = 0;
+						player.discardCountThisTurn = 0;
 					}
-					break;
+					initPlayer = turnPlayer;
+					state = GameConstants.State.MainInitGained;
+				}
+				break;
 				case GameConstants.State.MainInitGained:
 					break;
 				case GameConstants.State.MainActionTaken:
-					{
-						initPlayer = 1 - initPlayer;
-						state = GameConstants.State.MainInitGained;
-					}
-					break;
+				{
+					initPlayer = 1 - initPlayer;
+					state = GameConstants.State.MainInitGained;
+				}
+				break;
 				default:
 					throw new NotImplementedException(state.ToString());
 			}
@@ -325,60 +325,60 @@ class DuelCore : Core
 		switch(type)
 		{
 			case NetworkingConstants.PacketType.DuelSurrenderRequest:
+			{
+				SendPacketToPlayer(new DuelPackets.GameResultResponse
 				{
-					SendPacketToPlayer(new DuelPackets.GameResultResponse
-					{
-						result = GameConstants.GameResult.Won
-					}, 1 - player);
-					Log("Surrender request received");
-					return true;
-				}
+					result = GameConstants.GameResult.Won
+				}, 1 - player);
+				Log("Surrender request received");
+				return true;
+			}
 			case NetworkingConstants.PacketType.DuelGetOptionsRequest:
+			{
+				DuelPackets.GetOptionsRequest request = DeserializeJson<DuelPackets.GetOptionsRequest>(packet);
+				SendPacketToPlayer(new DuelPackets.GetOptionsResponse
 				{
-					DuelPackets.GetOptionsRequest request = DeserializeJson<DuelPackets.GetOptionsRequest>(packet);
-					SendPacketToPlayer(new DuelPackets.GetOptionsResponse
-					{
-						location = request.location,
-						uid = request.uid,
-						options = GetCardActions(player, request.uid, request.location),
-					}, player);
-				}
-				break;
+					location = request.location,
+					uid = request.uid,
+					options = GetCardActions(player, request.uid, request.location),
+				}, player);
+			}
+			break;
 			case NetworkingConstants.PacketType.DuelSelectOptionRequest:
+			{
+				DuelPackets.SelectOptionRequest request = DeserializeJson<DuelPackets.SelectOptionRequest>(packet);
+				if(!GetCardActions(player, request.uid, request.location).Contains(request.desc))
 				{
-					DuelPackets.SelectOptionRequest request = DeserializeJson<DuelPackets.SelectOptionRequest>(packet);
-					if(!GetCardActions(player, request.uid, request.location).Contains(request.desc))
-					{
-						Log("Tried to use an option that is not present for that card");
-					}
-					else
-					{
-						TakeAction(player, request.uid, request.location, request.desc!);
-					}
-					state &= ~GameConstants.State.InitGained;
-					state |= GameConstants.State.ActionTaken;
+					Log("Tried to use an option that is not present for that card");
 				}
-				break;
+				else
+				{
+					TakeAction(player, request.uid, request.location, request.desc!);
+				}
+				state &= ~GameConstants.State.InitGained;
+				state |= GameConstants.State.ActionTaken;
+			}
+			break;
 			case NetworkingConstants.PacketType.DuelPassRequest:
+			{
+				switch(state)
 				{
-					switch(state)
-					{
-						case GameConstants.State.MainInitGained:
-							if(players[1 - player].passed)
-							{
-								state = GameConstants.State.BattleStart;
-							}
-							else
-							{
-								players[player].passed = true;
-								state = GameConstants.State.MainActionTaken;
-							}
-							break;
-						default:
-							throw new Exception($"Unable to pass in state {state}");
-					}
+					case GameConstants.State.MainInitGained:
+						if(players[1 - player].passed)
+						{
+							state = GameConstants.State.BattleStart;
+						}
+						else
+						{
+							players[player].passed = true;
+							state = GameConstants.State.MainActionTaken;
+						}
+						break;
+					default:
+						throw new Exception($"Unable to pass in state {state}");
 				}
-				break;
+			}
+			break;
 			default:
 				throw new Exception($"ERROR: Unable to process this packet: ({type}) | {packet}");
 		}
@@ -395,60 +395,60 @@ class DuelCore : Core
 		switch(location)
 		{
 			case GameConstants.Location.Hand:
+			{
+				Card card = players[player].hand.GetByUID(uid);
+				if(option == "Cast")
 				{
-					Card card = players[player].hand.GetByUID(uid);
-					if(option == "Cast")
-					{
-						Cast(player, card);
-					}
-					else
-					{
-						throw new NotImplementedException($"Scripted action {option}");
-					}
+					Cast(player, card);
 				}
-				break;
+				else
+				{
+					throw new NotImplementedException($"Scripted action {option}");
+				}
+			}
+			break;
 			case GameConstants.Location.Quest:
+			{
+				if(players[player].quest.Position >= players[player].quest.Cost)
 				{
-					if(players[player].quest.Position >= players[player].quest.Cost)
-					{
-						throw new NotImplementedException($"GetActions for ignition quests");
-					}
+					throw new NotImplementedException($"GetActions for ignition quests");
 				}
-				break;
+			}
+			break;
 			case GameConstants.Location.Ability:
+			{
+				if(players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
 				{
-					if(players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
+					foreach(CastTrigger trigger in castTriggers[players[player].ability.uid])
 					{
-						foreach(CastTrigger trigger in castTriggers[players[player].ability.uid])
+						if(trigger.condition())
 						{
-							if(trigger.condition())
-							{
-								trigger.effect();
-							}
+							trigger.effect();
 						}
-						players[player].ability.Position = 1;
 					}
+					players[player].ability.Position = 1;
 				}
-				break;
+			}
+			break;
 			case GameConstants.Location.Field:
+			{
+				Card card = players[player].field.GetByUID(uid);
+				if(option == "Move")
 				{
-					Card card = players[player].field.GetByUID(uid);
-					if(option == "Move")
+					if(players[player].field.CanMove(card.Position, players[player].momentum))
 					{
-						if(players[player].field.CanMove(card.Position, players[player].momentum))
-						{
-							int zone = SelectMovementZone(player, card.Position, players[player].momentum);
-							players[player].momentum -= Math.Abs(card.Position - zone) * card.CalculateMovementCost();
-							players[player].field.Move(card.Position, zone);
-							SendFieldUpdates();
-						}
-					}
-					else
-					{
-						throw new NotImplementedException($"Scripted onfield option {option}");
+						int zone = SelectMovementZone(player, card.Position, players[player].momentum);
+						players[player].momentum -= Math.Abs(card.Position - zone) * card.CalculateMovementCost();
+						players[player].field.Move(card.Position, zone);
+						SendFieldUpdates();
 					}
 				}
-				break;
+				else
+				{
+					throw new NotImplementedException($"Scripted onfield option {option}");
+				}
+			}
+			break;
 			default:
 				throw new NotImplementedException($"TakeAction at {location}");
 		}
@@ -464,39 +464,39 @@ class DuelCore : Core
 		switch(location)
 		{
 			case GameConstants.Location.Hand:
+			{
+				Card card = players[player].hand.GetByUID(uid);
+				if(card.Cost <= players[player].momentum)
 				{
-					Card card = players[player].hand.GetByUID(uid);
-					if(card.Cost <= players[player].momentum)
-					{
-						options.Add("Cast");
-					}
+					options.Add("Cast");
 				}
-				break;
+			}
+			break;
 			case GameConstants.Location.Quest:
+			{
+				if(players[player].quest.Position >= players[player].quest.Cost)
 				{
-					if(players[player].quest.Position >= players[player].quest.Cost)
-					{
-						options.Add("Activate");
-					}
+					options.Add("Activate");
 				}
-				break;
+			}
+			break;
 			case GameConstants.Location.Ability:
+			{
+				if(players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
 				{
-					if(players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
-					{
-						options.Add("Activate");
-					}
+					options.Add("Activate");
 				}
-				break;
+			}
+			break;
 			case GameConstants.Location.Field:
+			{
+				Card card = players[player].field.GetByUID(uid);
+				if(players[player].field.CanMove(card.Position, players[player].momentum))
 				{
-					Card card = players[player].field.GetByUID(uid);
-					if(players[player].field.CanMove(card.Position, players[player].momentum))
-					{
-						options.Add("Move");
-					}
+					options.Add("Move");
 				}
-				break;
+			}
+			break;
 			default:
 				throw new NotImplementedException($"GetCardActions at {location}");
 		}
@@ -596,15 +596,15 @@ class DuelCore : Core
 		switch(card.CardType)
 		{
 			case GameConstants.CardType.Creature:
-				{
-					players[player].CastCreature(card, SelectZoneImpl(player));
-				}
-				break;
+			{
+				players[player].CastCreature(card, SelectZoneImpl(player));
+			}
+			break;
 			case GameConstants.CardType.Spell:
-				{
-					players[player].hand.Remove(card);
-				}
-				break;
+			{
+				players[player].hand.Remove(card);
+			}
+			break;
 			default:
 				throw new NotImplementedException($"Casting {card.CardType} cards");
 		}

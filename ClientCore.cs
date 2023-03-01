@@ -147,59 +147,59 @@ class ClientCore : Core
 		switch(type)
 		{
 			case NetworkingConstants.PacketType.DeckNamesRequest:
+			{
+				DeckPackets.NamesRequest request = DeserializeJson<DeckPackets.NamesRequest>(packet);
+				payload = GeneratePayload<DeckPackets.NamesResponse>(new DeckPackets.NamesResponse
 				{
-					DeckPackets.NamesRequest request = DeserializeJson<DeckPackets.NamesRequest>(packet);
-					payload = GeneratePayload<DeckPackets.NamesResponse>(new DeckPackets.NamesResponse
-					{
-						names = decks.ConvertAll(x => x.name).ToArray()
-					});
-				}
-				break;
+					names = decks.ConvertAll(x => x.name).ToArray()
+				});
+			}
+			break;
 			case NetworkingConstants.PacketType.DeckListRequest:
+			{
+				DeckPackets.ListRequest request = DeserializeJson<DeckPackets.ListRequest>(packet);
+				payload = GeneratePayload<DeckPackets.ListResponse>(new DeckPackets.ListResponse
 				{
-					DeckPackets.ListRequest request = DeserializeJson<DeckPackets.ListRequest>(packet);
-					payload = GeneratePayload<DeckPackets.ListResponse>(new DeckPackets.ListResponse
-					{
-						deck = FindDeckByName(request.name!),
-					});
-				}
-				break;
+					deck = FindDeckByName(request.name!),
+				});
+			}
+			break;
 			case NetworkingConstants.PacketType.DeckSearchRequest:
+			{
+				DeckPackets.SearchRequest request = DeserializeJson<DeckPackets.SearchRequest>(packet);
+				payload = GeneratePayload<DeckPackets.SearchResponse>(new DeckPackets.SearchResponse
 				{
-					DeckPackets.SearchRequest request = DeserializeJson<DeckPackets.SearchRequest>(packet);
-					payload = GeneratePayload<DeckPackets.SearchResponse>(new DeckPackets.SearchResponse
-					{
-						cards = FilterCards(cards, request.filter!, request.playerClass).ToArray()
-					});
-				}
-				break;
+					cards = FilterCards(cards, request.filter!, request.playerClass).ToArray()
+				});
+			}
+			break;
 			case NetworkingConstants.PacketType.DeckListUpdateRequest:
+			{
+				DeckPackets.Deck deck = DeserializeJson<DeckPackets.ListUpdateRequest>(packet).deck;
+				int index = decks.FindIndex(x => x.name == deck.name);
+				if(deck.cards != null)
 				{
-					DeckPackets.Deck deck = DeserializeJson<DeckPackets.ListUpdateRequest>(packet).deck;
-					int index = decks.FindIndex(x => x.name == deck.name);
-					if(deck.cards != null)
+					if(index == -1)
 					{
-						if(index == -1)
-						{
-							decks.Add(deck);
-						}
-						else
-						{
-							decks[index] = deck;
-						}
-						SaveDeck(deck);
+						decks.Add(deck);
 					}
 					else
 					{
-						if(index != -1)
-						{
-							decks.RemoveAt(index);
-							File.Delete(Path.Combine(Program.config.deck_config!.deck_location, deck.name + ".dek"));
-						}
+						decks[index] = deck;
 					}
-					payload = GeneratePayload<DeckPackets.ListUpdateResponse>(new DeckPackets.ListUpdateResponse { should_update = index == -1 });
+					SaveDeck(deck);
 				}
-				break;
+				else
+				{
+					if(index != -1)
+					{
+						decks.RemoveAt(index);
+						File.Delete(Path.Combine(Program.config.deck_config!.deck_location, deck.name + ".dek"));
+					}
+				}
+				payload = GeneratePayload<DeckPackets.ListUpdateResponse>(new DeckPackets.ListUpdateResponse { should_update = index == -1 });
+			}
+			break;
 			default:
 				throw new Exception($"ERROR: Unable to process this packet: ({type}) | {packet}");
 		}

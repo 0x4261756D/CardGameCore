@@ -128,7 +128,7 @@ class Field
 		if(cards[zone] != null)
 		{
 			Functions.Log($"Called Move to move to an occupied position", severity: Functions.LogSeverity.Error);
-			return;			
+			return;
 		}
 		cards[position] = null;
 		cards[zone] = card;
