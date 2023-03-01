@@ -12,16 +12,16 @@ class Program
 	public static void Main(string[] args)
 	{
 		string? configPath = null;
-		for (int i = 0; i < args.Length; i++)
+		for(int i = 0; i < args.Length; i++)
 		{
 			string[] parts = args[i].Split('=');
-			if (parts.Length == 2)
+			if(parts.Length == 2)
 			{
 				string path = Path.Combine(baseDir, parts[1]);
-				switch (parts[0])
+				switch(parts[0])
 				{
 					case "--config":
-						if (File.Exists(path))
+						if(File.Exists(path))
 						{
 							configPath = path;
 						}
@@ -38,23 +38,23 @@ class Program
 				}
 			}
 		}
-		if (configPath == null)
+		if(configPath == null)
 		{
 			Log("Please supply a config location with '--config=<path/to/config.json>'");
 			return;
 		}
-		if (!File.Exists(configPath))
+		if(!File.Exists(configPath))
 		{
 			Log($"Missing a config at {configPath}.", severity: LogSeverity.Error);
 			return;
 		}
 		PlatformCoreConfig? platformConfig = JsonSerializer.Deserialize<PlatformCoreConfig>(File.ReadAllText(configPath), NetworkingConstants.jsonIncludeOption);
-		if (platformConfig == null)
+		if(platformConfig == null)
 		{
 			Log("Could not parse a platform config", LogSeverity.Error);
 			return;
 		}
-		if (Environment.OSVersion.Platform == PlatformID.Unix)
+		if(Environment.OSVersion.Platform == PlatformID.Unix)
 		{
 			config = platformConfig.linux!;
 		}
@@ -63,16 +63,16 @@ class Program
 			config = platformConfig.windows!;
 		}
 		bool modeSet = false;
-		foreach (string s in args)
+		foreach(string s in args)
 		{
-			if (s.StartsWith("--"))
+			if(s.StartsWith("--"))
 			{
 				string arg = s.Substring(2).Split('=')[0];
 				string parameter = s.Substring(arg.Length + 3);
-				switch (arg)
+				switch(arg)
 				{
 					case "mode":
-						if (parameter == "duel")
+						if(parameter == "duel")
 						{
 							config.mode = CoreConfig.CoreMode.Duel;
 						}
@@ -84,13 +84,13 @@ class Program
 						break;
 					case "players":
 						string players = Encoding.UTF8.GetString(Convert.FromBase64String(parameter));
-						if (!players.StartsWith("µ") || !players.EndsWith("µ"))
+						if(!players.StartsWith("µ") || !players.EndsWith("µ"))
 						{
 							Log($"Your players string is in a wrong format: {players}", severity: LogSeverity.Error);
 							return;
 						}
 						string[] playerData = players.Split('µ');
-						if (playerData.Length != 8)
+						if(playerData.Length != 8)
 						{
 							Log($"Your players string is in a wrong format: {players}", severity: LogSeverity.Error);
 							return;
@@ -129,7 +129,7 @@ class Program
 			Log("No mode supplied, please do so with --mode={client|duel|test}");
 			return;
 		}
-		if (config.mode == CoreConfig.CoreMode.Client)
+		if(config.mode == CoreConfig.CoreMode.Client)
 		{
 			new ClientCore();
 		}

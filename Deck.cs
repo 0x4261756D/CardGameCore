@@ -31,7 +31,7 @@ class Deck
 
 	internal void Shuffle()
 	{
-		for (int i = cards.Count - 1; i >= 0; i--)
+		for(int i = cards.Count - 1; i >= 0; i--)
 		{
 			int k = DuelCore.rnd.Next(i);
 			Card tmp = cards[i];

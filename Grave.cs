@@ -9,7 +9,7 @@ class Grave
 	{
 		get => cards.Count;
 	}
-	
+
 	public Grave()
 	{
 

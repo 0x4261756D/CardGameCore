@@ -43,13 +43,13 @@ public abstract class Card
 		ClearModifications();
 	}
 
-	public RegisterCastTriggerDelegate RegisterCastTrigger = (_, _, _) => {};
-	public RegisterLingeringEffectDelegate RegisterLingeringEffect = (_, _) => {};
+	public RegisterCastTriggerDelegate RegisterCastTrigger = (_, _, _) => { };
+	public RegisterLingeringEffectDelegate RegisterLingeringEffect = (_, _) => { };
 	public GetFieldDelegate GetField = (_) => new Card?[0];
 	public GetHandDelegate GetHand = (_) => new Card[0];
 	public SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
-	public DiscardDelegate Discard = (_) => {};
-	public CreateTokenDelegate CreateToken = (_, _, _, _) => {};
+	public DiscardDelegate Discard = (_) => { };
+	public CreateTokenDelegate CreateToken = (_, _, _, _) => { };
 
 	public void ClearModifications()
 	{
@@ -71,14 +71,14 @@ public abstract class Card
 			controller: Controller);
 	}
 
-	public static bool operator == (Card? first, Card? second)
+	public static bool operator ==(Card? first, Card? second)
 	{
-		if (ReferenceEquals(first, null))
+		if(ReferenceEquals(first, null))
 		{
 			return true;
 		}
 
-		if (ReferenceEquals(second, null))
+		if(ReferenceEquals(second, null))
 		{
 			return false;
 		}
@@ -86,19 +86,19 @@ public abstract class Card
 		return first.uid == second.uid;
 	}
 
-	public static bool operator != (Card? first, Card? second)
+	public static bool operator !=(Card? first, Card? second)
 	{
 		return !(first == second);
 	}
 
 	public override bool Equals(object? obj)
 	{
-		if (ReferenceEquals(this, obj))
+		if(ReferenceEquals(this, obj))
 		{
 			return true;
 		}
 
-		if (ReferenceEquals(obj, null))
+		if(ReferenceEquals(obj, null))
 		{
 			return false;
 		}
@@ -134,7 +134,8 @@ public abstract class Creature : Card
 		OriginalLife: OriginalLife,
 		OriginalPower: OriginalPower,
 		IsClassAbility: false,
-		CanBeClassAbility: false){}
+		CanBeClassAbility: false)
+	{ }
 }
 
 public abstract class Spell : Card
@@ -153,7 +154,8 @@ public abstract class Spell : Card
 			OriginalCost: OriginalCost,
 			OriginalLocation: OriginalLocation,
 			IsClassAbility: IsClassAbility,
-			CanBeClassAbility: CanBeClassAbility){}
+			CanBeClassAbility: CanBeClassAbility)
+	{ }
 }
 
 public abstract class Quest : Card
@@ -168,7 +170,8 @@ public abstract class Quest : Card
 		// Position = Progress, Cost = Goal
 		OriginalPositon: 0,
 		OriginalCost: ProgressGoal
-	) {}
+	)
+	{ }
 }
 
 public class Token : Creature
@@ -185,7 +188,7 @@ public class Token : Creature
 			OriginalPower: OriginalPower,
 			CardClass: GameConstants.PlayerClass.All
 		)
-		{}
+	{ }
 	public override void Init()
 	{
 	}

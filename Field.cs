@@ -40,7 +40,7 @@ class Field
 
 	internal void ClearCardModifications()
 	{
-		foreach (Card? card in cards)
+		foreach(Card? card in cards)
 		{
 			card?.ClearModifications();
 		}

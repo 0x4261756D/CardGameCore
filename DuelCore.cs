@@ -41,33 +41,33 @@ class DuelCore : Core
 		sha = SHA384.Create();
 		players = new Player[Program.config.duel_config!.players.Length];
 		playerStreams = new NetworkStream[Program.config.duel_config.players.Length];
-		for (int i = 0; i < players.Length; i++)
+		for(int i = 0; i < players.Length; i++)
 		{
 			Log("Player created. ID: " + Program.config.duel_config.players[i].id);
 			Deck deck = new Deck();
 			GameConstants.PlayerClass playerClass = Enum.Parse<GameConstants.PlayerClass>(Program.config.duel_config.players[i].decklist[0]);
-			if (!Program.config.duel_config.players[i].decklist[1].StartsWith("#"))
+			if(!Program.config.duel_config.players[i].decklist[1].StartsWith("#"))
 			{
 				Log($"Player {Program.config.duel_config.players[i].name} has no ability, {Program.config.duel_config.players[i].decklist[1]} is no suitable ability");
 				return;
 			}
 			Card ability = CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[1].Substring(1))!, i);
-			if (!Program.config.duel_config.players[i].decklist[2].StartsWith("|"))
+			if(!Program.config.duel_config.players[i].decklist[2].StartsWith("|"))
 			{
 				Log($"Player {Program.config.duel_config.players[i].name} has no quest, {Program.config.duel_config.players[i].decklist[2]} is no suitable ability");
 				return;
 			}
 			Card quest = CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[2].Substring(1))!, i);
-			for (int j = 3; j < Program.config.duel_config.players[i].decklist.Length; j++)
+			for(int j = 3; j < Program.config.duel_config.players[i].decklist.Length; j++)
 			{
 				deck.Add(CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[j])!, i));
 			}
 			players[i] = new Player(Program.config.duel_config.players[i], i, deck, playerClass, ability, quest);
 		}
 		HandleNetworking();
-		foreach (NetworkStream stream in playerStreams)
+		foreach(NetworkStream stream in playerStreams)
 		{
-			if (stream != null)
+			if(stream != null)
 			{
 				stream.Dispose();
 			}
@@ -95,15 +95,15 @@ class DuelCore : Core
 	public override void HandleNetworking()
 	{
 		listener.Start();
-		while (true)
+		while(true)
 		{
 			// Connect the players if they aren't yet
-			if (playersConnected < players.Length && listener.Pending())
+			if(playersConnected < players.Length && listener.Pending())
 			{
 				NetworkStream stream = listener.AcceptTcpClient().GetStream();
 				byte[] buf = new byte[256];
 				int len = stream.Read(buf, 0, HASH_LEN);
-				if (len != HASH_LEN)
+				if(len != HASH_LEN)
 				{
 					Log($"len was {len} but expected {HASH_LEN}\n-------------------\n{Encoding.UTF8.GetString(buf)}", severity: LogSeverity.Error);
 					//FIXME: Be more nice than simply killing the connection
@@ -112,12 +112,12 @@ class DuelCore : Core
 				}
 				string id = Encoding.UTF8.GetString(buf, 0, len);
 				bool foundPlayer = false;
-				for (int i = 0; i < players.Length; i++)
+				for(int i = 0; i < players.Length; i++)
 				{
-					if (playerStreams[i] == null)
+					if(playerStreams[i] == null)
 					{
 						Log($"Player id: {players[i].id} ({players[i].id.Length}), found {id} ({id.Length}) | {players[i].id == id}");
-						if (players[i].id == id)
+						if(players[i].id == id)
 						{
 							playersConnected++;
 							foundPlayer = true;
@@ -126,7 +126,7 @@ class DuelCore : Core
 						}
 					}
 				}
-				if (!foundPlayer)
+				if(!foundPlayer)
 				{
 					Log("Found no player", severity: LogSeverity.Error);
 					//FIXME: Be more nice, see above
@@ -135,13 +135,13 @@ class DuelCore : Core
 				DateTime t = DateTime.Now;
 				Log($"{t.ToLongTimeString()}:{t.Millisecond} New Player {playersConnected}/{players.Length}");
 			}
-			if (playersConnected == players.Length)
+			if(playersConnected == players.Length)
 			{
-				if (HandleGameLogic())
+				if(HandleGameLogic())
 				{
 					break;
 				}
-				if (HandlePlayerActions())
+				if(HandlePlayerActions())
 				{
 					break;
 				}
@@ -156,7 +156,7 @@ class DuelCore : Core
 		NetworkStream stream = listener.AcceptTcpClient().GetStream();
 		byte[] buf = new byte[256];
 		int len = stream.Read(buf, 0, HASH_LEN);
-		if (len != HASH_LEN)
+		if(len != HASH_LEN)
 		{
 			Log($"len was {len} but expected {HASH_LEN}\n-------------------\n{Encoding.UTF8.GetString(buf)}", severity: LogSeverity.Error);
 			//FIXME: Be more nice than simply killing the connection
@@ -165,12 +165,12 @@ class DuelCore : Core
 		}
 		string id = Encoding.UTF8.GetString(buf, 0, len);
 		bool foundPlayer = false;
-		for (int i = 0; i < players.Length; i++)
+		for(int i = 0; i < players.Length; i++)
 		{
-			if (playerStreams[i] == null)
+			if(playerStreams[i] == null)
 			{
 				Log($"Player id: {players[i].id} ({players[i].id.Length}), found {id} ({id.Length}) | {players[i].id == id}");
-				if (players[i].id == id)
+				if(players[i].id == id)
 				{
 					playersConnected++;
 					foundPlayer = true;
@@ -179,7 +179,7 @@ class DuelCore : Core
 				}
 			}
 		}
-		if (!foundPlayer)
+		if(!foundPlayer)
 		{
 			Log("Found no player", severity: LogSeverity.Error);
 			//FIXME: Be more nice, see above
@@ -189,17 +189,17 @@ class DuelCore : Core
 
 	private void EvaluateLingeringEffects()
 	{
-		foreach (Player player in players)
+		foreach(Player player in players)
 		{
 			player.ClearCardModifications();
 		}
-		foreach (Player player in players)
+		foreach(Player player in players)
 		{
-			foreach (Card? card in player.field.GetAll())
+			foreach(Card? card in player.field.GetAll())
 			{
-				if (card != null && lingeringEffects.ContainsKey(card.uid))
+				if(card != null && lingeringEffects.ContainsKey(card.uid))
 				{
-					foreach (Effect effect in lingeringEffects[card.uid])
+					foreach(Effect effect in lingeringEffects[card.uid])
 					{
 						effect();
 					}
@@ -210,14 +210,14 @@ class DuelCore : Core
 
 	private bool HandleGameLogic()
 	{
-		while (!state.HasFlag(GameConstants.State.InitGained))
+		while(!state.HasFlag(GameConstants.State.InitGained))
 		{
 			EvaluateLingeringEffects();
-			switch (state)
+			switch(state)
 			{
 				case GameConstants.State.UNINITIALIZED:
 					{
-						foreach (Player player in players)
+						foreach(Player player in players)
 						{
 							if(!Program.config.duel_config!.noshuffle)
 							{
@@ -230,12 +230,12 @@ class DuelCore : Core
 						}
 						SendFieldUpdates();
 						// Mulligan
-						for (int i = 0; i < players.Length; i++)
+						for(int i = 0; i < players.Length; i++)
 						{
-							if (AskYesNo(player: i, question: "Mulligan?"))
+							if(AskYesNo(player: i, question: "Mulligan?"))
 							{
 								Card[] cards = SelectCardsCustom(i, "Select cards to mulligan", players[i].hand.GetAll(), (x) => true);
-								foreach (Card card in cards)
+								foreach(Card card in cards)
 								{
 									players[i].hand.Remove(card);
 									players[i].deck.Add(card);
@@ -253,7 +253,7 @@ class DuelCore : Core
 					break;
 				case GameConstants.State.TurnStart:
 					{
-						foreach (Player player in players)
+						foreach(Player player in players)
 						{
 							player.Draw(1);
 							player.ability.Position = 0;
@@ -280,12 +280,12 @@ class DuelCore : Core
 
 	private bool HandlePlayerActions()
 	{
-		for (int i = 0; i < players.Length; i++)
+		for(int i = 0; i < players.Length; i++)
 		{
-			if (playerStreams[i].DataAvailable)
+			if(playerStreams[i].DataAvailable)
 			{
 				List<byte> bytes = ReceiveRawPacket(playerStreams[i])!;
-				if (bytes.Count == 0)
+				if(bytes.Count == 0)
 				{
 					Log("Request was empty, ignoring it", severity: LogSeverity.Warning);
 				}
@@ -294,7 +294,7 @@ class DuelCore : Core
 					byte type = bytes[0];
 					bytes.RemoveAt(0);
 					string packet = Encoding.UTF8.GetString(bytes.ToArray());
-					if (HandlePacket(type, packet, i))
+					if(HandlePacket(type, packet, i))
 					{
 						Log($"{players[i].name} is giving up, closing.");
 						return true;
@@ -310,14 +310,14 @@ class DuelCore : Core
 	{
 		// THIS MIGHT CHANGE AS SENDING RAW JSON MIGHT BE TOO EXPENSIVE/SLOW
 		// possible improvements: Huffman or Burrows-Wheeler+RLE
-		if (typeByte >= (byte)NetworkingConstants.PacketType.PACKET_COUNT)
+		if(typeByte >= (byte)NetworkingConstants.PacketType.PACKET_COUNT)
 		{
 			throw new Exception($"ERROR: Unknown packet type encountered: ({typeByte})");
 		}
 		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)typeByte;
 
 		List<byte> payload = new List<byte>();
-		switch (type)
+		switch(type)
 		{
 			case NetworkingConstants.PacketType.DuelSurrenderRequest:
 				{
@@ -342,7 +342,7 @@ class DuelCore : Core
 			case NetworkingConstants.PacketType.DuelSelectOptionRequest:
 				{
 					DuelPackets.SelectOptionRequest request = DeserializeJson<DuelPackets.SelectOptionRequest>(packet);
-					if (!GetCardActions(player, request.uid, request.location).Contains(request.desc))
+					if(!GetCardActions(player, request.uid, request.location).Contains(request.desc))
 					{
 						Log("Tried to use an option that is not present for that card");
 					}
@@ -356,7 +356,7 @@ class DuelCore : Core
 				break;
 			case NetworkingConstants.PacketType.DuelPassRequest:
 				{
-					switch (state)
+					switch(state)
 					{
 						case GameConstants.State.MainInitGained:
 							if(players[1 - player].passed)
@@ -383,12 +383,12 @@ class DuelCore : Core
 	private void TakeAction(int player, int uid, GameConstants.Location location, string option)
 	{
 		players[player].passed = false;
-		switch (location)
+		switch(location)
 		{
 			case GameConstants.Location.Hand:
 				{
 					Card card = players[player].hand.Get(uid);
-					if (option == "Cast")
+					if(option == "Cast")
 					{
 						Cast(player, card);
 					}
@@ -400,7 +400,7 @@ class DuelCore : Core
 				break;
 			case GameConstants.Location.Quest:
 				{
-					if (players[player].quest.Position >= players[player].quest.Cost)
+					if(players[player].quest.Position >= players[player].quest.Cost)
 					{
 						throw new NotImplementedException($"GetActions for ignition quests");
 					}
@@ -408,11 +408,11 @@ class DuelCore : Core
 				break;
 			case GameConstants.Location.Ability:
 				{
-					if (players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
+					if(players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
 					{
-						foreach (CastTrigger trigger in castTriggers[players[player].ability.uid])
+						foreach(CastTrigger trigger in castTriggers[players[player].ability.uid])
 						{
-							if (trigger.condition())
+							if(trigger.condition())
 							{
 								trigger.effect();
 							}
@@ -429,12 +429,12 @@ class DuelCore : Core
 	private string[] GetCardActions(int player, int uid, GameConstants.Location location)
 	{
 		List<string> options = new List<string>();
-		switch (location)
+		switch(location)
 		{
 			case GameConstants.Location.Hand:
 				{
 					Card card = players[player].hand.Get(uid);
-					if (card.Cost <= players[player].momentum)
+					if(card.Cost <= players[player].momentum)
 					{
 						options.Add("Cast");
 					}
@@ -442,7 +442,7 @@ class DuelCore : Core
 				break;
 			case GameConstants.Location.Quest:
 				{
-					if (players[player].quest.Position >= players[player].quest.Cost)
+					if(players[player].quest.Position >= players[player].quest.Cost)
 					{
 						options.Add("Activate");
 					}
@@ -450,7 +450,7 @@ class DuelCore : Core
 				break;
 			case GameConstants.Location.Ability:
 				{
-					if (players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
+					if(players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
 					{
 						options.Add("Activate");
 					}
@@ -469,7 +469,7 @@ class DuelCore : Core
 	}
 	private void SendFieldUpdates(GameConstants.Location mask = GameConstants.Location.ALL)
 	{
-		for (int i = 0; i < players.Length; i++)
+		for(int i = 0; i < players.Length; i++)
 		{
 			SendFieldUpdate(i, mask);
 		}
@@ -488,7 +488,7 @@ class DuelCore : Core
 		{
 			DuelPackets.CustomSelectCardsIntermediateRequest request;
 			payload = ReceiveRawPacket(playerStreams[player])!;
-			if (payload[0] == (byte)NetworkingConstants.PacketType.DuelCustomSelectCardsResponse)
+			if(payload[0] == (byte)NetworkingConstants.PacketType.DuelCustomSelectCardsResponse)
 			{
 				break;
 			}
@@ -497,11 +497,11 @@ class DuelCore : Core
 			{
 				isValid = isValidSelection(Array.ConvertAll(request.uids, (x => cards.First(y => y.uid == x))))
 			}, player);
-		} while (true);
+		} while(true);
 
 		DuelPackets.CustomSelectCardsResponse response = DeserializePayload<DuelPackets.CustomSelectCardsResponse>(payload);
 		Card[] ret = cards.Where(x => response.uids.Contains(x.uid)).ToArray();
-		if (!isValidSelection(ret))
+		if(!isValidSelection(ret))
 		{
 			throw new Exception("Player somethow selected invalid cards");
 		}
@@ -545,7 +545,7 @@ class DuelCore : Core
 
 	private void Cast(int player, Card card)
 	{
-		switch (card.CardType)
+		switch(card.CardType)
 		{
 			case GameConstants.CardType.Creature:
 				{
@@ -560,20 +560,20 @@ class DuelCore : Core
 			default:
 				throw new NotImplementedException($"Casting {card.CardType} cards");
 		}
-		if (castTriggers.ContainsKey(card.uid))
+		if(castTriggers.ContainsKey(card.uid))
 		{
 			EffectChain chain = new EffectChain(players.Length);
-			foreach (Trigger trigger in castTriggers[card.uid])
+			foreach(Trigger trigger in castTriggers[card.uid])
 			{
 				Log($"trigger condition met: {trigger.condition()}");
-				if (trigger.condition())
+				if(trigger.condition())
 				{
 					chain.Push(card, trigger.effect);
 				}
 			}
 			Log($"trigger chain length: {chain.Count()}");
 			// TODO: Add handling of opponent's responses here
-			while (chain.Pop()) { }
+			while(chain.Pop()) { }
 		}
 		EvaluateLingeringEffects();
 		SendFieldUpdates();
@@ -581,7 +581,7 @@ class DuelCore : Core
 
 	public void RegisterCastTriggerImpl(Effect effect, TriggerCondition condition, Card referrer)
 	{
-		if (!castTriggers.ContainsKey(referrer.uid))
+		if(!castTriggers.ContainsKey(referrer.uid))
 		{
 			castTriggers[referrer.uid] = new List<CastTrigger>();
 		}
@@ -589,7 +589,7 @@ class DuelCore : Core
 	}
 	public void RegisterLingeringEffectImpl(Effect effect, Card referrer)
 	{
-		if (!lingeringEffects.ContainsKey(referrer.uid))
+		if(!lingeringEffects.ContainsKey(referrer.uid))
 		{
 			lingeringEffects[referrer.uid] = new List<Effect>();
 		}
@@ -605,7 +605,7 @@ class DuelCore : Core
 	}
 	public Card[] SelectCardsImpl(int player, Card[] cards, int amount, string description)
 	{
-		if (cards.Length < amount)
+		if(cards.Length < amount)
 		{
 			throw new Exception($"Tried to let a player select from a too small collection ({cards.Length} < {amount})");
 		}
@@ -616,7 +616,7 @@ class DuelCore : Core
 			desc = description,
 		}, player);
 		DuelPackets.SelectCardsResponse response = ReceivePacketFromPlayer<DuelPackets.SelectCardsResponse>(player);
-		if (response.uids.Length != amount)
+		if(response.uids.Length != amount)
 		{
 			throw new Exception($"Selected the wrong amount of cards ({response.uids.Length} != {amount})");
 		}
@@ -625,7 +625,7 @@ class DuelCore : Core
 	}
 	public void DiscardImpl(Card card)
 	{
-		if (card.Location != GameConstants.Location.Hand)
+		if(card.Location != GameConstants.Location.Hand)
 		{
 			throw new Exception($"Tried to discard a card that is not in the hand but at {card.Location}");
 		}
@@ -633,7 +633,7 @@ class DuelCore : Core
 	}
 	public void CreateTokenImpl(int player, int power, int life, string name)
 	{
-		if (!players[player].field.HasEmpty())
+		if(!players[player].field.HasEmpty())
 		{
 			throw new Exception($"Tried to create a token but the field is full");
 		}
