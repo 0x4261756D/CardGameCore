@@ -23,7 +23,6 @@ class Field
 
 	internal void Add(Card card, int zone)
 	{
-		Functions.Log($"{zone}, {GameConstants.FIELD_SIZE}");
 		if(cards[zone] != null)
 		{
 			throw new Exception($"Tried to move {card} to zone {zone} occupied by {cards[zone]}");
