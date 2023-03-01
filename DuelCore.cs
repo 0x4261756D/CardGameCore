@@ -382,12 +382,16 @@ class DuelCore : Core
 
 	private void TakeAction(int player, int uid, GameConstants.Location location, string option)
 	{
+		if(player != initPlayer)
+		{
+			return;
+		}
 		players[player].passed = false;
 		switch(location)
 		{
 			case GameConstants.Location.Hand:
 				{
-					Card card = players[player].hand.Get(uid);
+					Card card = players[player].hand.GetByUID(uid);
 					if(option == "Cast")
 					{
 						Cast(player, card);
@@ -421,6 +425,25 @@ class DuelCore : Core
 					}
 				}
 				break;
+			case GameConstants.Location.Field:
+				{
+					Card card = players[player].field.GetByUID(uid);
+					if(option == "Move")
+					{
+						if(players[player].field.CanMove(card.Position, players[player].momentum))
+						{
+							int zone = SelectMovementZone(player, card.Position, players[player].momentum);
+							players[player].momentum -= Math.Abs(card.Position - zone) * card.CalculateMovementCost();
+							players[player].field.Move(card.Position, zone);
+							SendFieldUpdates();
+						}
+					}
+					else
+					{
+						throw new NotImplementedException($"Scripted onfield option {option}");
+					}
+				}
+				break;
 			default:
 				throw new NotImplementedException($"TakeAction at {location}");
 		}
@@ -437,7 +460,7 @@ class DuelCore : Core
 		{
 			case GameConstants.Location.Hand:
 				{
-					Card card = players[player].hand.Get(uid);
+					Card card = players[player].hand.GetByUID(uid);
 					if(card.Cost <= players[player].momentum)
 					{
 						options.Add("Cast");
@@ -457,6 +480,15 @@ class DuelCore : Core
 					if(players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
 					{
 						options.Add("Activate");
+					}
+				}
+				break;
+			case GameConstants.Location.Field:
+				{
+					Card card = players[player].field.GetByUID(uid);
+					if(players[player].field.CanMove(card.Position, players[player].momentum))
+					{
+						options.Add("Move");
 					}
 				}
 				break;
@@ -511,7 +543,14 @@ class DuelCore : Core
 		}
 		return ret;
 	}
-
+	private int SelectMovementZone(int player, int position, int momentum)
+	{
+		SendPacketToPlayer<DuelPackets.SelectZoneRequest>(new DuelPackets.SelectZoneRequest
+		{
+			options = players[player].field.GetMovementOptions(position, momentum),
+		}, player);
+		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;		
+	}
 	private void SendFieldUpdate(int player, GameConstants.Location mask)
 	{
 		// TODO: actually handle mask if this is too slow
@@ -658,7 +697,6 @@ class DuelCore : Core
 			options = players[player].field.GetPlacementOptions(),
 		}, player);
 		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
-
 	}
 
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent

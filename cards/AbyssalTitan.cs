@@ -13,9 +13,10 @@ class AbyssalTitan : Creature
 		OriginalLife: 8
 		)
 	{ }
-	// TODO: implement functionality
+	// TODO: implement cost reduction + revelation
 
 	public override void Init()
 	{
+		RegisterKeyword(Keyword.Colossal, 1);
 	}
 }

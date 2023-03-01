@@ -13,7 +13,18 @@ public abstract class Card
 	public GameConstants.Location Location;
 	public bool IsClassAbility, CanBeClassAbility;
 	public int Controller;
+	public Dictionary<Keyword, int> Keywords = new Dictionary<Keyword, int>();
 	public abstract void Init();
+
+	public int CalculateMovementCost()
+	{
+		return 1 + Keywords.GetValueOrDefault(Keyword.Colossal, 0);
+	}
+
+	public void RegisterKeyword(Keyword keyword, int amount)
+	{
+		Keywords[keyword] = amount;
+	}
 
 	public Card(GameConstants.CardType CardType,
 		GameConstants.PlayerClass CardClass,

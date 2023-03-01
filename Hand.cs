@@ -38,7 +38,7 @@ class Hand
 		return cards.ConvertAll(x => new CardStruct()).ToArray();
 	}
 
-	internal Card Get(int uid)
+	internal Card GetByUID(int uid)
 	{
 		return cards[cards.FindIndex(x => x.uid == uid)];
 	}

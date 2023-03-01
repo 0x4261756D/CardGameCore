@@ -1,5 +1,11 @@
 namespace CardGameCore;
 
+public enum Keyword
+{
+	Colossal,
+	Brittle,
+}
+
 public class Trigger
 {
 	public TriggerCondition condition;
