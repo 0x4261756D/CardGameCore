@@ -8,7 +8,35 @@ public abstract class Card
 	public string Name, Text;
 	public GameConstants.CardType CardType;
 	public GameConstants.PlayerClass CardClass;
-	public int uid, Life, Power, Cost, Position;
+	public int uid, Position;
+	private int _life, _power, _cost;
+	public int Life
+	{
+		get => _life;
+		set
+		{
+			_life = value;
+			if(_life < 0) _life = 0;
+		}
+	}
+	public int Power
+	{
+		get => _power;
+		set
+		{
+			_power = value;
+			if(_power < 0) _power = 0;
+		}
+	}
+	public int Cost
+	{
+		get => _cost;
+		set
+		{
+			_cost = value;
+			if(_cost < 0) _cost = 0;
+		}
+	}
 	public int BaseLife, BasePower, BaseCost;
 	public GameConstants.Location Location;
 	public bool IsClassAbility, CanBeClassAbility;
