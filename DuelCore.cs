@@ -95,7 +95,10 @@ class DuelCore : Core
 		c.SelectCards = SelectCardsImpl;
 		c.Discard = DiscardImpl;
 		c.CreateToken = CreateTokenImpl;
+		c.CreateTokenWithKeywords = CreateTokenWithKeywordsImpl;
 		c.GetDiscardCountThisTurn = GetDiscardCountThisTurnImpl;
+		c.PlayerChangeLife = PlayerChangeLifeImpl;
+		c.PlayerChangeMomentum = PlayerChangeMomentumImpl;
 		c.Init();
 		return c;
 	}
@@ -426,9 +429,8 @@ class DuelCore : Core
 		}
 	}
 
+	private void CheckIfLost(int player)
 	{
-		players[player].life -= damage;
-		Reveal(player, damage);
 		if(players[player].life <= 0)
 		{
 			SendFieldUpdates();
@@ -441,6 +443,13 @@ class DuelCore : Core
 				result = GameConstants.GameResult.Won
 			}, 1 - player);
 		}
+	}
+
+	private void DealDamage(int player, int damage)
+	{
+		players[player].life -= damage;
+		Reveal(player, damage);
+		CheckIfLost(player);
 	}
 	private void Reveal(int player, int damage)
 	{
@@ -917,6 +926,16 @@ class DuelCore : Core
 	{
 		return players[player].hand.GetAll();
 	}
+	public void PlayerChangeLifeImpl(int player, int amount)
+	{
+		players[player].life += amount;
+		CheckIfLost(player);
+	}
+	public void PlayerChangeMomentumImpl(int player, int amount)
+	{
+		players[player].life += amount;
+		if(players[player].life < 0) players[player].life = 0;
+	}
 	public Card[] SelectCardsImpl(int player, Card[] cards, int amount, string description)
 	{
 		if(cards.Length < amount)
@@ -944,6 +963,56 @@ class DuelCore : Core
 			throw new Exception($"Tried to discard a card that is not in the hand but at {card.Location}");
 		}
 		players[card.Controller].Discard(card);
+		if(youDiscardTriggers.Count > 0)
+		{
+			foreach(Player player in players)
+			{
+				foreach(Card c in player.hand.GetAll())
+				{
+					if(youDiscardTriggers.ContainsKey(c.uid))
+					{
+						foreach(YouDiscardTrigger trigger in youDiscardTriggers[c.uid])
+						{
+							if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
+							{
+								trigger.effect();
+							}
+						}
+					}
+				}
+				foreach(Card? c in player.field.GetAll())
+				{
+					if(c != null && youDiscardTriggers.ContainsKey(c.uid))
+					{
+						foreach(YouDiscardTrigger trigger in youDiscardTriggers[c.uid])
+						{
+							if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition())
+							{
+								trigger.effect();
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public void CreateTokenWithKeywordsImpl(int player, int power, int life, string name, KeyValuePair<Keyword, int>[] keywords)
+	{
+		if(!players[player].field.HasEmpty())
+		{
+			throw new Exception($"Tried to create a token but the field is full");
+		}
+		int zone = SelectZoneImpl(player);
+		players[player].field.Add(new Token
+		(
+			Name: name,
+			Text: "[Token]",
+			OriginalCost: 0,
+			OriginalLife: life,
+			OriginalPower: power,
+			keywords: keywords
+		), zone);
 	}
 	public void CreateTokenImpl(int player, int power, int life, string name)
 	{

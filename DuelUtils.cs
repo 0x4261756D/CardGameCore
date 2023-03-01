@@ -111,7 +111,10 @@ public delegate Card[] GetHandDelegate(int player);
 public delegate Card[] SelectCardsDelegate(int player, Card[] cards, int amount, string description);
 public delegate void DiscardDelegate(Card card);
 public delegate void CreateTokenDelegate(int player, int power, int life, string name);
+public delegate void CreateTokenWithKeywordsDelegate(int player, int power, int life, string name, KeyValuePair<Keyword, int>[] keywords);
 public delegate int GetDiscardCountThisTurnDelegate(int player);
+public delegate void PlayerChangeLifeDelegate(int player, int amount);
+public delegate void PlayerChangeMomentumDelegate(int player, int amount);
 
 public class LingeringEffectInfo
 {
