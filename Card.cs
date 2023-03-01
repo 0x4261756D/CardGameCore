@@ -21,7 +21,7 @@ public abstract class Card
 		return 1 + Keywords.GetValueOrDefault(Keyword.Colossal, 0);
 	}
 
-	public void RegisterKeyword(Keyword keyword, int amount)
+	public void RegisterKeyword(Keyword keyword, int amount = 0)
 	{
 		Keywords[keyword] = amount;
 	}
