@@ -13,10 +13,16 @@ class AbyssalTitan : Creature
 		OriginalLife: 8
 		)
 	{ }
-	// TODO: implement cost reduction + revelation
+	// TODO: revelation
 
 	public override void Init()
 	{
 		RegisterKeyword(Keyword.Colossal, 1);
+		RegisterLingeringEffect(info: new LingeringEffectInfo(CostReductionEffect, this, Location.Hand));
+	}
+
+	private void CostReductionEffect()
+	{
+		this.Cost -= GetDiscardCountThisTurn(player: Controller);
 	}
 }
