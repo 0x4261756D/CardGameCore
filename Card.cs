@@ -82,6 +82,9 @@ public abstract class Card
 		ClearModifications();
 	}
 
+	public RegisterCastTriggerDelegate RegisterCastTrigger = (_, _) => { };
+	public RegisterRevelationTriggerDelegate RegisterRevelationTrigger = (_, _) => { };
+	public RegisterYouDiscardTriggerDelegate RegisterYouDiscardTrigger = (_, _) => { };
 	public RegisterStateReachedTriggerDelegate RegisterStateReachedTrigger = (_, _) => { };
 	public RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
 	public GetFieldDelegate GetField = (_) => new Card?[0];

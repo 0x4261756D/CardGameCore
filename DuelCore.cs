@@ -36,6 +36,7 @@ class DuelCore : Core
 
 	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
+	private Dictionary<int, List<YouDiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<YouDiscardTrigger>>();
 	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new Dictionary<int, List<StateReachedTrigger>>();
 	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
 
@@ -85,6 +86,8 @@ class DuelCore : Core
 		count++;
 		c.Controller = controller;
 		c.RegisterCastTrigger = RegisterCastTriggerImpl;
+		c.RegisterRevelationTrigger = RegisterRevelationTriggerImpl;
+		c.RegisterYouDiscardTrigger = RegisterYouDiscardTriggerImpl;
 		c.RegisterStateReachedTrigger = RegisterStateReachedTriggerImpl;
 		c.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		c.GetField = GetFieldImpl;
@@ -866,12 +869,30 @@ class DuelCore : Core
 		SendFieldUpdates();
 	}
 
-	public void RegisterCastTriggerImpl(Effect effect, TriggerCondition condition, Card referrer)
+	public void RegisterCastTriggerImpl(CastTrigger trigger, Card referrer)
 	{
 		if(!castTriggers.ContainsKey(referrer.uid))
 		{
 			castTriggers[referrer.uid] = new List<CastTrigger>();
 		}
+		castTriggers[referrer.uid].Add(trigger);
+	}
+	public void RegisterRevelationTriggerImpl(RevelationTrigger trigger, Card referrer)
+	{
+		if(!revelationTriggers.ContainsKey(referrer.uid))
+		{
+			revelationTriggers[referrer.uid] = new List<RevelationTrigger>();
+		}
+		revelationTriggers[referrer.uid].Add(trigger);
+	}
+	public void RegisterYouDiscardTriggerImpl(YouDiscardTrigger trigger, Card referrer)
+	{
+		if(!youDiscardTriggers.ContainsKey(referrer.uid))
+		{
+			youDiscardTriggers[referrer.uid] = new List<YouDiscardTrigger>();
+		}
+		youDiscardTriggers[referrer.uid].Add(trigger);
+	}
 	public void RegisterStateReachedTriggerImpl(StateReachedTrigger trigger, Card referrer)
 	{
 		if(!stateReachedTriggers.ContainsKey(referrer.uid))
