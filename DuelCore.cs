@@ -32,8 +32,10 @@ class DuelCore : Core
 	public int playersConnected = 0;
 	public int turn, turnPlayer, initPlayer;
 	public int momentumCount = GameConstants.START_MOMENTUM;
+	public int? markedZone = null;
 
 	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
+	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
 	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
 
 	public DuelCore()
@@ -275,12 +277,167 @@ class DuelCore : Core
 					state = GameConstants.State.MainInitGained;
 				}
 				break;
+				case GameConstants.State.BattleStart:
+				{
+					// The marked zone is relative to the 0th player
+					// If player 1 is turnplayer it is FIELD_SIZE-1, the rightmost zone
+					markedZone = turnPlayer * (GameConstants.FIELD_SIZE - 1);
+					initPlayer = turnPlayer;
+					foreach(Player player in players)
+					{
+						player.passed = false;
+					}
+					state = GameConstants.State.BattleInitGained;
+				}
+				break;
+				case GameConstants.State.BattleInitGained:
+					break;
+				case GameConstants.State.BattleActionTaken:
+				{
+					initPlayer = 1 - initPlayer;
+					state = GameConstants.State.BattleInitGained;
+				}
+				break;
+				case GameConstants.State.DamageCalc:
+				{
+					if(markedZone == null)
+					{
+						throw new Exception("No zone marked during damage calc");
+					}
+					Card? card0 = players[0].field.GetByPosition(GetMarkedZoneForPlayer(0));
+					Card? card1 = players[1].field.GetByPosition(GetMarkedZoneForPlayer(1));
+					if(card0 == null)
+					{
+						if(card1 != null)
+						{
+							// Deal damage to player
+							DealDamage(0, card1.Power);
+							if(players[0].life <= 0)
+							{
+								return true;
+							}
+						}
+					}
+					else
+					{
+						if(card1 == null)
+						{
+							DealDamage(1, card0.Power);
+							if(players[1].life <= 0)
+							{
+								return true;
+							}
+						}
+						else
+						{
+							card0.BaseLife -= card1.BasePower;
+							card1.BaseLife -= card0.BasePower;
+							EvaluateLingeringEffects();
+							if(card0.Power == 0)
+							{
+								players[0].Destroy(card0);
+							}
+							if(card1.Power == 0)
+							{
+								players[1].Destroy(card1);
+							}
+						}
+					}
+					foreach (Player player in players)
+					{
+						player.passed = false;
+					}
+					MarkNextZoneOrContinue();
+				}
+				break;
 				default:
 					throw new NotImplementedException(state.ToString());
 			}
 			SendFieldUpdates();
 		}
 		return false;
+	}
+
+	private void DealDamage(int player, int damage)
+	{
+		players[player].life -= damage;
+		Reveal(player, damage);
+		if(players[player].life <= 0)
+		{
+			SendFieldUpdates();
+			SendPacketToPlayer<DuelPackets.GameResultResponse>(new DuelPackets.GameResultResponse
+			{
+				result = GameConstants.GameResult.Lost
+			}, player);
+			SendPacketToPlayer<DuelPackets.GameResultResponse>(new DuelPackets.GameResultResponse
+			{
+				result = GameConstants.GameResult.Won
+			}, 1 - player);
+		}
+	}
+	private void Reveal(int player, int damage)
+	{
+		for(int i = 0; i < damage; i++)
+		{
+			Card c = players[player].deck.Pop();
+			Card?[] shownCards = new Card[2];
+			shownCards[player] = c;
+			SendFieldUpdates(shownCards: shownCards);
+			if(revelationTriggers.ContainsKey(c.uid))
+			{
+				foreach(RevelationTrigger trigger in revelationTriggers[c.uid])
+				{
+					if(trigger.condition())
+					{
+						trigger.effect();
+					}
+				}
+			}
+			players[player].grave.Add(c);
+			SendFieldUpdates();
+		}
+	}
+	private void MarkNextZoneOrContinue()
+	{
+		if(markedZone == null)
+		{
+			return;
+		}
+		if(turnPlayer == 0)
+		{
+			markedZone++;
+			if(markedZone == GameConstants.FIELD_SIZE)
+			{
+				markedZone = null;
+				state = GameConstants.State.TurnEnd;
+				return;
+			}
+		}
+		else
+		{
+			markedZone--;
+			if(markedZone < 0)
+			{
+				markedZone = null;
+				state = GameConstants.State.TurnEnd;
+				return;
+			}
+		}
+		initPlayer = turnPlayer;
+		state = GameConstants.State.BattleInitGained;
+	}
+	private int GetMarkedZoneForPlayer(int player)
+	{
+		if(player == 0)
+		{
+			return markedZone!.Value;
+		}
+		else
+		{
+			return GameConstants.FIELD_SIZE - 1 - markedZone!.Value;
+		}
+		// Equivalent but magic:
+		// return player * (GameConstants.FIELD_SIZE - 1 - 2 * markedZone!.Value) + markedZone!.Value;
 	}
 
 	private bool HandlePlayerActions()
@@ -364,6 +521,7 @@ class DuelCore : Core
 				switch(state)
 				{
 					case GameConstants.State.MainInitGained:
+					{
 						if(players[1 - player].passed)
 						{
 							state = GameConstants.State.BattleStart;
@@ -373,7 +531,21 @@ class DuelCore : Core
 							players[player].passed = true;
 							state = GameConstants.State.MainActionTaken;
 						}
-						break;
+					}
+					break;
+					case GameConstants.State.BattleInitGained:
+					{
+						if(players[1 - player].passed)
+						{
+							state = GameConstants.State.DamageCalc;
+						}
+						else
+						{
+							players[player].passed = true;
+							state = GameConstants.State.BattleActionTaken;
+						}
+					}
+					break;
 					default:
 						throw new Exception($"Unable to pass in state {state}");
 				}
@@ -466,7 +638,8 @@ class DuelCore : Core
 			case GameConstants.Location.Hand:
 			{
 				Card card = players[player].hand.GetByUID(uid);
-				if(card.Cost <= players[player].momentum)
+				if(card.Cost <= players[player].momentum &&
+					!(state.HasFlag(GameConstants.State.BattleStart) && card.CardType == GameConstants.CardType.Creature))
 				{
 					options.Add("Cast");
 				}
@@ -508,12 +681,49 @@ class DuelCore : Core
 		SendPacketToPlayer(new DuelPackets.YesNoRequest { question = question }, player);
 		return ReceivePacketFromPlayer<DuelPackets.YesNoResponse>(player).result;
 	}
-	private void SendFieldUpdates(GameConstants.Location mask = GameConstants.Location.ALL)
+	private void SendFieldUpdates(GameConstants.Location mask = GameConstants.Location.ALL, Card?[]? shownCards = null)
 	{
 		for(int i = 0; i < players.Length; i++)
 		{
-			SendFieldUpdate(i, mask);
+			SendFieldUpdate(i, mask, ownShownCard: shownCards?[i], oppShownCard: shownCards?[1 - i]);
 		}
+	}
+	private void SendFieldUpdate(int player, GameConstants.Location mask, Card? ownShownCard, Card? oppShownCard)
+	{
+		// TODO: actually handle mask if this is too slow
+		DuelPackets.FieldUpdateRequest request = new DuelPackets.FieldUpdateRequest()
+		{
+			turn = turn + 1,
+			hasInitiative = state != GameConstants.State.UNINITIALIZED && initPlayer == player,
+			markedZone = player == 0 ? markedZone : (GameConstants.FIELD_SIZE - 1 - markedZone),
+			ownField = new DuelPackets.FieldUpdateRequest.Field
+			{
+				ability = players[player].ability.ToStruct(),
+				quest = players[player].quest.ToStruct(),
+				deckSize = players[player].deck.Size,
+				graveSize = players[player].grave.Size,
+				life = players[player].life,
+				name = players[player].name,
+				momentum = players[player].momentum,
+				field = players[player].field.ToStruct(),
+				hand = players[player].hand.ToStruct(),
+				shownCard = ownShownCard?.ToStruct(),
+			},
+			oppField = new DuelPackets.FieldUpdateRequest.Field
+			{
+				ability = players[1 - player].ability.ToStruct(),
+				quest = players[1 - player].quest.ToStruct(),
+				deckSize = players[1 - player].deck.Size,
+				graveSize = players[1 - player].grave.Size,
+				life = players[1 - player].life,
+				name = players[1 - player].name,
+				momentum = players[1 - player].momentum,
+				field = players[1 - player].field.ToStruct(),
+				hand = players[1 - player].hand.ToHiddenStruct(),
+				shownCard = oppShownCard?.ToStruct(),
+			},
+		};
+		SendPacketToPlayer<DuelPackets.FieldUpdateRequest>(request, player);
 	}
 	public Card[] SelectCardsCustom(int player, string description, Card[] cards, Func<Card[], bool> isValidSelection)
 	{
@@ -556,41 +766,6 @@ class DuelCore : Core
 		}, player);
 		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
 	}
-	private void SendFieldUpdate(int player, GameConstants.Location mask)
-	{
-		// TODO: actually handle mask if this is too slow
-		DuelPackets.FieldUpdateRequest request = new DuelPackets.FieldUpdateRequest()
-		{
-			turn = turn + 1,
-			hasInitiative = state != GameConstants.State.UNINITIALIZED && initPlayer == player,
-			ownField = new DuelPackets.FieldUpdateRequest.Field
-			{
-				ability = players[player].ability.ToStruct(),
-				quest = players[player].quest.ToStruct(),
-				deckSize = players[player].deck.Size,
-				graveSize = players[player].grave.Size,
-				life = players[player].life,
-				name = players[player].name,
-				momentum = players[player].momentum,
-				field = players[player].field.ToStruct(),
-				hand = players[player].hand.ToStruct(),
-			},
-			oppField = new DuelPackets.FieldUpdateRequest.Field
-			{
-				ability = players[1 - player].ability.ToStruct(),
-				quest = players[1 - player].quest.ToStruct(),
-				deckSize = players[1 - player].deck.Size,
-				graveSize = players[1 - player].grave.Size,
-				life = players[1 - player].life,
-				name = players[1 - player].name,
-				momentum = players[1 - player].momentum,
-				field = players[1 - player].field.ToStruct(),
-				hand = players[1 - player].hand.ToHiddenStruct(),
-			},
-		};
-		SendPacketToPlayer<DuelPackets.FieldUpdateRequest>(request, player);
-	}
-
 	private void Cast(int player, Card card)
 	{
 		switch(card.CardType)

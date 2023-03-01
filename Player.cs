@@ -63,4 +63,18 @@ class Player
 		grave.Add(card);
 		discardCountThisTurn++;
 	}
+	internal void Destroy(Card card)
+	{
+		switch(card.Location)
+		{
+			case GameConstants.Location.Field:
+			{
+				field.Remove(card);
+				grave.Add(card);
+			}
+			break;
+			default:
+				throw new Exception($"Destroying a card at {card.Location} is not supported");
+		}
+	}
 }

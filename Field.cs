@@ -88,6 +88,14 @@ class Field
 		}
 		throw new Exception($"Could not find card with UID {uid} on the field");
 	}
+	internal Card? GetByPosition(int position)
+	{
+		if(position < 0 || position >= cards.Length)
+		{
+			throw new Exception($"Field position oob {position}");
+		}
+		return cards[position];
+	}
 
 	internal bool CanMove(int position, int momentum)
 	{
@@ -132,5 +140,17 @@ class Field
 		cards[position] = null;
 		cards[zone] = card;
 		card.Position = zone;
+	}
+	internal void Remove(Card card)
+	{
+		for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
+		{
+			if(cards[i] != null && cards[i] == card)
+			{
+				cards[i] = null;
+				return;
+			}
+		}
+		throw new Exception($"Could not remove {card} from the field because it was not present");
 	}
 }
