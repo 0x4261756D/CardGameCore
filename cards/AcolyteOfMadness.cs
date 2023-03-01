@@ -13,10 +13,15 @@ class AcolyteofMadness : Creature
 		OriginalLife: 5
 		)
 	{ }
-	// TODO: implement functionality
-
+	
 	public override void Init()
 	{
+		RegisterYouDiscardTrigger(trigger: new YouDiscardTrigger(effect: DiscardEffect), referrer: this);
 	}
 
+	public void DiscardEffect()
+	{
+		PlayerChangeLife(player: 1 - Controller, amount: -2);
+		PlayerChangeLife(player: Controller, amount: 2);
+	}
 }

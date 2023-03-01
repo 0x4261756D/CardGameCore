@@ -23,7 +23,7 @@ class Weaponsmith : Creature
 	{
 		foreach(Card? card in GetField(this.Controller))
 		{
-			if(card != null)
+			if(card != null && card != this)
 			{
 				card.Power += 1;
 				card.Life += 1;

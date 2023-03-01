@@ -12,10 +12,23 @@ class Assemble : Spell
 		CanBeClassAbility: true
 		)
 	{ }
-	// TODO: implement functionality
+	// TODO: implement casting this
 
 	public override void Init()
 	{
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
 	}
 
+	public void CastEffect()
+	{
+		CreateTokenWithKeywords(player: Controller, power: 2, life: 1, name: "Construct", new KeyValuePair<Keyword, int>[]
+		{
+			new KeyValuePair<Keyword, int>(Keyword.Brittle, 0),
+		});
+	}
+
+	public bool CastCondition()
+	{
+		return GetField(Controller).Any(x => x == null);
+	}
 }
