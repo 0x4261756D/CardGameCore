@@ -34,7 +34,7 @@ class DuelCore : Core
 	public int momentumCount = GameConstants.START_MOMENTUM;
 
 	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
-	private Dictionary<int, List<Effect>> lingeringEffects = new Dictionary<int, List<Effect>>();
+	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
 
 	public DuelCore()
 	{
@@ -199,9 +199,12 @@ class DuelCore : Core
 			{
 				if(card != null && lingeringEffects.ContainsKey(card.uid))
 				{
-					foreach(Effect effect in lingeringEffects[card.uid])
+					foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
 					{
-						effect();
+						if(info.influenceLocation.HasFlag(card.Location))
+						{
+							info.effect();
+						}
 					}
 				}
 			}
@@ -549,7 +552,7 @@ class DuelCore : Core
 		{
 			options = players[player].field.GetMovementOptions(position, momentum),
 		}, player);
-		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;		
+		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
 	}
 	private void SendFieldUpdate(int player, GameConstants.Location mask)
 	{
@@ -630,13 +633,13 @@ class DuelCore : Core
 		}
 		castTriggers[referrer.uid].Add(new CastTrigger(effect, condition));
 	}
-	public void RegisterLingeringEffectImpl(Effect effect, Card referrer)
+	public void RegisterLingeringEffectImpl(LingeringEffectInfo info)
 	{
-		if(!lingeringEffects.ContainsKey(referrer.uid))
+		if(!lingeringEffects.ContainsKey(info.referrer.uid))
 		{
-			lingeringEffects[referrer.uid] = new List<Effect>();
+			lingeringEffects[info.referrer.uid] = new List<LingeringEffectInfo>();
 		}
-		lingeringEffects[referrer.uid].Add(effect);
+		lingeringEffects[info.referrer.uid].Add(info);
 	}
 	public Card?[] GetFieldImpl(int player)
 	{

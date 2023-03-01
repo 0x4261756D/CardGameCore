@@ -1,3 +1,5 @@
+using CardGameUtils;
+
 namespace CardGameCore;
 
 public enum Keyword
@@ -65,13 +67,26 @@ public delegate bool TriggerCondition();
 public delegate void Effect();
 
 public delegate void RegisterCastTriggerDelegate(Effect effect, TriggerCondition condition, Card referrer);
-public delegate void RegisterLingeringEffectDelegate(Effect effect, Card referrer);
+public delegate void RegisterLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate Card?[] GetFieldDelegate(int player);
 public delegate Card[] GetHandDelegate(int player);
 public delegate Card[] SelectCardsDelegate(int player, Card[] cards, int amount, string description);
 public delegate void DiscardDelegate(Card card);
 public delegate void CreateTokenDelegate(int player, int power, int life, string name);
 
+public class LingeringEffectInfo
+{
+	public Effect effect;
+	public Card referrer;
+	public GameConstants.Location influenceLocation;
+
+	public LingeringEffectInfo(Effect effect, Card referrer, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	{
+		this.effect = effect;
+		this.referrer = referrer;
+		this.influenceLocation = influenceLocation;
+	}
+}
 
 public class EffectChain
 {

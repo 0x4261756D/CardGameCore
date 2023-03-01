@@ -55,7 +55,7 @@ public abstract class Card
 	}
 
 	public RegisterCastTriggerDelegate RegisterCastTrigger = (_, _, _) => { };
-	public RegisterLingeringEffectDelegate RegisterLingeringEffect = (_, _) => { };
+	public RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
 	public GetFieldDelegate GetField = (_) => new Card?[0];
 	public GetHandDelegate GetHand = (_) => new Card[0];
 	public SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];

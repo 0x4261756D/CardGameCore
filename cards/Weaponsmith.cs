@@ -16,7 +16,7 @@ class Weaponsmith : Creature
 
 	public override void Init()
 	{
-		RegisterLingeringEffect(effect: BuffEffect, this);
+		RegisterLingeringEffect(new LingeringEffectInfo(BuffEffect, this));
 	}
 
 	private void BuffEffect()
