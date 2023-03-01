@@ -8,7 +8,7 @@ class EssenceDrainer : Creature
 		Name: "Essence Drainer",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 2,
-		Text: "{Cast}: This gains +2/+2 for each card you discarded this turn.",
+		Text: "{Cast}: Gain +2/+2 for each card you discarded this turn.",
 		OriginalPower: 1,
 		OriginalLife: 1
 		)

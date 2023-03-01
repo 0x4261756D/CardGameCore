@@ -8,7 +8,7 @@ class CursedbyGreed : Spell
 		Name: "Cursed by Greed",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 2,
-		Text: "{Cast}: Pay 3 life. Draw 1 Card.\n{Discard}: Draw 2 Cards."
+		Text: "{Cast}: Pay 3 life. Draw 1.\n{Discard}: Draw 2."
 		)
 	{ }
 	// TODO: implement functionality

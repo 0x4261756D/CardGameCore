@@ -8,7 +8,7 @@ class RottingHydra : Creature
 		Name: "Rotting Hydra",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 5,
-		Text: "[Decaying]\n{Victorious}: This gains +0/+3.",
+		Text: "[Decaying]\n{Victorious}: Gain +0/+3.",
 		OriginalPower: 5,
 		OriginalLife: 6
 		)

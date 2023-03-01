@@ -8,7 +8,7 @@ class TemptingOffer : Spell
 		Name: "Tempting Offer",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 0,
-		Text: "{Cast}: Discard 2 cards. Gain 2 Momentum."
+		Text: "{Cast}: Discard 2. Gain 2 Momentum."
 		)
 	{}
 	// TODO: implement functionality

@@ -8,7 +8,7 @@ class BurningTitan : Creature
 		Name: "Burning Titan",
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 10,
-		Text: "[Collosal] +1\n{Cast}: Costs 1 less for each damage you dealt with spells last turn.\n{Revelation}: Gain 5 life.",
+		Text: "[Collosal] +1.\n Costs 1 less for each damage you dealt with spells last turn.\n{Revelation}: Gain 5 life.",
 		OriginalPower: 8,
 		OriginalLife: 8
 		)

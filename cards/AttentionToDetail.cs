@@ -8,7 +8,7 @@ class AttentiontoDetail : Spell
 		Name: "Attention to Detail",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 2,
-		Text: "{Cast}: Create 1 token copy of target creature. The copy gains [Brittle]."
+		Text: "{Cast}: Create a token copy of target creature. The copy gains [Brittle]."
 		)
 	{ }
 	// TODO: implement functionality

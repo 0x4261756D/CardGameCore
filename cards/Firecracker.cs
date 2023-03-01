@@ -8,7 +8,7 @@ class Firecracker : Creature
 		Name: "Firecracker",
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 2,
-		Text: "{Cast}: Cast Ignite.",
+		Text: "{Cast}: Cast \"Ignite\".",
 		OriginalPower: 2,
 		OriginalLife: 3
 		)
