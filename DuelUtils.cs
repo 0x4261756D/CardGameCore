@@ -27,6 +27,25 @@ public class Trigger
 	}
 }
 
+public class StateReachedTrigger : Trigger
+{
+	public GameConstants.Location influenceLocation;
+	public GameConstants.State state;
+
+	public StateReachedTrigger(Effect effect, TriggerCondition condition, GameConstants.State state, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+		: base(effect, condition)
+	{
+		this.influenceLocation = influenceLocation;
+		this.state = state;
+	}
+	public StateReachedTrigger(Effect effect, GameConstants.State state, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+		: base(effect)
+	{
+		this.influenceLocation = influenceLocation;
+		this.state = state;
+	}
+}
+
 public class CastTrigger : Trigger
 {
 	//public Card referrer;
@@ -67,7 +86,7 @@ public class RevelationTrigger : Trigger
 public delegate bool TriggerCondition();
 public delegate void Effect();
 
-public delegate void RegisterCastTriggerDelegate(Effect effect, TriggerCondition condition, Card referrer);
+public delegate void RegisterStateReachedTriggerDelegate(StateReachedTrigger trigger, Card referrer);
 public delegate void RegisterLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate Card?[] GetFieldDelegate(int player);
 public delegate Card[] GetHandDelegate(int player);

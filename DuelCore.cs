@@ -31,11 +31,12 @@ class DuelCore : Core
 	public const int HASH_LEN = 96;
 	public int playersConnected = 0;
 	public int turn, turnPlayer, initPlayer;
-	public int momentumCount = GameConstants.START_MOMENTUM;
 	public int? markedZone = null;
+	public int momentumBase = GameConstants.START_MOMENTUM;
 
 	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
+	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new Dictionary<int, List<StateReachedTrigger>>();
 	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
 
 	public DuelCore()
@@ -84,6 +85,7 @@ class DuelCore : Core
 		count++;
 		c.Controller = controller;
 		c.RegisterCastTrigger = RegisterCastTriggerImpl;
+		c.RegisterStateReachedTrigger = RegisterStateReachedTriggerImpl;
 		c.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		c.GetField = GetFieldImpl;
 		c.GetHand = GetHandImpl;
@@ -230,7 +232,7 @@ class DuelCore : Core
 							player.deck.Shuffle();
 						}
 						player.Draw(GameConstants.START_HAND_SIZE);
-						player.momentum = GameConstants.START_MOMENTUM;
+						player.momentum = momentumBase;
 						player.life = GameConstants.START_LIFE;
 						player.progress = 0;
 					}
@@ -264,8 +266,10 @@ class DuelCore : Core
 						player.Draw(1);
 						player.ability.Position = 0;
 						player.discardCountThisTurn = 0;
+						player.momentum = momentumBase;
 					}
 					initPlayer = turnPlayer;
+					ProcessStateReachedTriggers();
 					state = GameConstants.State.MainInitGained;
 				}
 				break;
@@ -287,6 +291,7 @@ class DuelCore : Core
 					{
 						player.passed = false;
 					}
+					ProcessStateReachedTriggers();
 					state = GameConstants.State.BattleInitGained;
 				}
 				break;
@@ -350,6 +355,29 @@ class DuelCore : Core
 					MarkNextZoneOrContinue();
 				}
 				break;
+				case GameConstants.State.TurnEnd:
+				{
+					turn++;
+					turnPlayer = 1 - turnPlayer;
+					if(GameConstants.MOMENTUM_INCREMENT_TURNS.Contains(turn))
+					{
+						momentumBase++;
+					}
+					ProcessStateReachedTriggers();
+					foreach (Player player in players)
+					{
+						for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
+						{
+							Card? c = player.field.GetByPosition(i);
+							if(c != null && c.Keywords.ContainsKey(Keyword.Brittle))
+							{
+								player.field.Remove(c);
+							}
+						}
+					}
+					state = GameConstants.State.TurnStart;
+				}
+				break;
 				default:
 					throw new NotImplementedException(state.ToString());
 			}
@@ -358,7 +386,43 @@ class DuelCore : Core
 		return false;
 	}
 
-	private void DealDamage(int player, int damage)
+	private void ProcessStateReachedTriggers()
+	{
+		// TODO: If this is slow, index by state?
+		if(stateReachedTriggers.Count > 0)
+		{
+			foreach(Player player in players)
+			{
+				foreach(Card card in player.hand.GetAll())
+				{
+					if(stateReachedTriggers.ContainsKey(card.uid))
+					{
+						foreach(StateReachedTrigger trigger in stateReachedTriggers[card.uid])
+						{
+							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
+							{
+								trigger.effect();
+							}
+						}
+					}
+				}
+				foreach(Card? card in player.field.GetAll())
+				{
+					if(card != null && stateReachedTriggers.ContainsKey(card.uid))
+					{
+						foreach(StateReachedTrigger trigger in stateReachedTriggers[card.uid])
+						{
+							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
+							{
+								trigger.effect();
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	{
 		players[player].life -= damage;
 		Reveal(player, damage);
@@ -808,7 +872,13 @@ class DuelCore : Core
 		{
 			castTriggers[referrer.uid] = new List<CastTrigger>();
 		}
-		castTriggers[referrer.uid].Add(new CastTrigger(effect, condition));
+	public void RegisterStateReachedTriggerImpl(StateReachedTrigger trigger, Card referrer)
+	{
+		if(!stateReachedTriggers.ContainsKey(referrer.uid))
+		{
+			stateReachedTriggers[referrer.uid] = new List<StateReachedTrigger>();
+		}
+		stateReachedTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterLingeringEffectImpl(LingeringEffectInfo info)
 	{
