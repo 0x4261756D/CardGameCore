@@ -8,7 +8,7 @@ class Tinker : Spell
 		Name: "Tinker",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 2,
-		Text: "{Cast}: Summon 2 2/1 Construct tokens with [Brittle]."
+		Text: "{Cast}: Summon two 2/1 Construct tokens with [Brittle]."
 		)
 	{}
 	// TODO: implement functionality

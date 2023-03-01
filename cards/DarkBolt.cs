@@ -8,7 +8,7 @@ class DarkBolt : Spell
 		Name: "Dark Bolt",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 2,
-		Text: "{Cast}: Deal 3 damage any target.\n{Revelation}: Cast this."
+		Text: "{Cast}: Deal 3 damage any target.\n{Discard}: Cast this."
 		)
 	{ }
 	// TODO: implement functionality

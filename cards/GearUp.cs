@@ -7,8 +7,8 @@ class GearUp : Spell
 	public GearUp() : base(
 		Name: "Gear Up",
 		CardClass: PlayerClass.Artificer,
-		OriginalCost: 3,
-		Text: "{Cast}: Target creature you control gets +2/+2 and [Brittle] this turn.",
+		OriginalCost: 0,
+		Text: "{Cast}: Target creature you control gets +2/+2 and [Brittle].",
 		CanBeClassAbility: true
 		)
 	{ }

@@ -8,7 +8,7 @@ class FieryIllusion : Spell
 		Name: "Fiery Illusion",
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 1,
-		Text: "{Cast}: Create 2 0/1 Illusions with [Decaying]."
+		Text: "{Cast}: Create two 0/1 Illusions with [Decaying]."
 		)
 	{}
 	// TODO: implement functionality

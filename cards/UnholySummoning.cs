@@ -7,8 +7,8 @@ class UnholySummoning : Spell
 	public UnholySummoning() : base(
 		Name: "Unholy Summoning",
 		CardClass: PlayerClass.Cultist,
-		OriginalCost: 0,
-		Text: "{Cast}: Discard 1. Create 1 X/X Horror token where X is the discarded Card's Momentum cost.\n{Discard}: Create a 3/2 Horror Token."
+		OriginalCost: 2,
+		Text: "{Cast}: Discard 1. Create an X/X Horror token with [Decaying] where X is the discarded Card's Momentum cost.\n{Discard}: Create a 3/2 Horror Token."
 		)
 	{ }
 	// TODO: implement discard trigger

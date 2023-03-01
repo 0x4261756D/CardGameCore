@@ -8,7 +8,7 @@ class AnimatedWorkbench : Creature
 		Name: "Animated Workbench",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 2,
-		Text: "{Start of your turn}: Gain 1 Momentum.",
+		Text: "{Turn start:}: Gain 1 Momentum.",
 		OriginalPower: 1,
 		OriginalLife: 4
 		)

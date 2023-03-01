@@ -8,7 +8,7 @@ class Recycle : Spell
 		Name: "Recycle",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 1,
-		Text: "{End of turn}: Draw 1 card for each of your creatures that died this turn."
+		Text: "{End of turn}: Draw 1 for each of your creatures that died this turn."
 		)
 	{ }
 	// TODO: implement functionality
