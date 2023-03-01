@@ -428,6 +428,10 @@ class DuelCore : Core
 
 	private string[] GetCardActions(int player, int uid, GameConstants.Location location)
 	{
+		if(player != initPlayer)
+		{
+			return new string[0];
+		}
 		List<string> options = new List<string>();
 		switch(location)
 		{
