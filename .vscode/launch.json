@@ -10,7 +10,7 @@
 			"request": "launch",
 			"preLaunchTask": "build",
 			// If you have changed target frameworks, make sure to update the program path.
-			"program": "${workspaceFolder}/bin/Debug/net6.0/CardGameCore.dll",
+			"program": "${workspaceFolder}/bin/Debug/net7.0/CardGameCore.dll",
 			"args": ["--mode=client", "--config=${cwd}/config/config.json"],
 			"cwd": "${workspaceFolder}",
 			// For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
