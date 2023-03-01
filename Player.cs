@@ -16,6 +16,7 @@ class Player
 	public GameConstants.PlayerClass playerClass;
 	public Card ability, quest;
 	public int life, progress, momentum;
+	public int discardCountThisTurn = 0;
 	public Player(CoreConfig.PlayerConfig config, int number, Deck deck, GameConstants.PlayerClass playerClass, Card ability, Card quest)
 	{
 		this.deck = deck;
@@ -60,5 +61,6 @@ class Player
 	{
 		hand.Remove(card);
 		grave.Add(card);
+		discardCountThisTurn++;
 	}
 }

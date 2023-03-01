@@ -73,6 +73,7 @@ public delegate Card[] GetHandDelegate(int player);
 public delegate Card[] SelectCardsDelegate(int player, Card[] cards, int amount, string description);
 public delegate void DiscardDelegate(Card card);
 public delegate void CreateTokenDelegate(int player, int power, int life, string name);
+public delegate int GetDiscardCountThisTurnDelegate(int player);
 
 public class LingeringEffectInfo
 {

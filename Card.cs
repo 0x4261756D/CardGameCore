@@ -61,6 +61,7 @@ public abstract class Card
 	public SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
 	public DiscardDelegate Discard = (_) => { };
 	public CreateTokenDelegate CreateToken = (_, _, _, _) => { };
+	public GetDiscardCountThisTurnDelegate GetDiscardCountThisTurn = (_) => -1;
 
 	public void ClearModifications()
 	{

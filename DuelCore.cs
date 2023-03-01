@@ -88,6 +88,7 @@ class DuelCore : Core
 		c.SelectCards = SelectCardsImpl;
 		c.Discard = DiscardImpl;
 		c.CreateToken = CreateTokenImpl;
+		c.GetDiscardCountThisTurn = GetDiscardCountThisTurnImpl;
 		c.Init();
 		return c;
 	}
@@ -260,6 +261,7 @@ class DuelCore : Core
 						{
 							player.Draw(1);
 							player.ability.Position = 0;
+							player.discardCountThisTurn = 0;
 						}
 						initPlayer = turnPlayer;
 						state = GameConstants.State.MainInitGained;
@@ -700,6 +702,10 @@ class DuelCore : Core
 			options = players[player].field.GetPlacementOptions(),
 		}, player);
 		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
+	}
+	public int GetDiscardCountThisTurnImpl(int player)
+	{
+		return players[player].discardCountThisTurn;
 	}
 
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent
