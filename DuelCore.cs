@@ -226,6 +226,16 @@ class DuelCore : Core
 	{
 		while(!state.HasFlag(GameConstants.State.InitGained))
 		{
+			if(state != GameConstants.State.UNINITIALIZED)
+			{
+				foreach(Player player in players)
+				{
+					if(player.life <= 0)
+					{
+						return true;
+					}
+				}
+			}
 			EvaluateLingeringEffects();
 			switch(state)
 			{
@@ -254,7 +264,6 @@ class DuelCore : Core
 								players[i].hand.Remove(card);
 								players[i].deck.Add(card);
 							}
-							SendFieldUpdates();
 							players[i].deck.Shuffle();
 							players[i].Draw(cards.Length);
 							SendFieldUpdates();
@@ -344,17 +353,17 @@ class DuelCore : Core
 							card0.BaseLife -= card1.BasePower;
 							card1.BaseLife -= card0.BasePower;
 							EvaluateLingeringEffects();
-							if(card0.Power == 0)
+							if(card0.Life == 0)
 							{
 								players[0].Destroy(card0);
 							}
-							if(card1.Power == 0)
+							if(card1.Life == 0)
 							{
 								players[1].Destroy(card1);
 							}
 						}
 					}
-					foreach (Player player in players)
+					foreach(Player player in players)
 					{
 						player.passed = false;
 					}
