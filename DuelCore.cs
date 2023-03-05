@@ -383,7 +383,7 @@ class DuelCore : Core
 						momentumBase++;
 					}
 					ProcessStateReachedTriggers();
-					foreach (Player player in players)
+					foreach(Player player in players)
 					{
 						for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 						{
@@ -552,9 +552,12 @@ class DuelCore : Core
 					}
 				}
 			}
+			else
+			{
+				Thread.Sleep(100);
+			}
 		}
 		return false;
-
 	}
 
 	private bool HandlePacket(byte typeByte, string packet, int player)
