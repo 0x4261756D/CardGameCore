@@ -96,6 +96,7 @@ public abstract class Card
 	public GetDiscardCountThisTurnDelegate GetDiscardCountThisTurn = (_) => -1;
 	public PlayerChangeLifeDelegate PlayerChangeLife = (_, _) => { };
 	public PlayerChangeMomentumDelegate PlayerChangeMomentum = (_, _) => { };
+	public CastDelegate Cast = (_, _) => { };
 
 	public void ClearModifications()
 	{

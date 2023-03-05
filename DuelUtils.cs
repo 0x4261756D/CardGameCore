@@ -106,6 +106,7 @@ public delegate void RegisterRevelationTriggerDelegate(RevelationTrigger trigger
 public delegate void RegisterYouDiscardTriggerDelegate(YouDiscardTrigger trigger, Card referrer);
 public delegate void RegisterStateReachedTriggerDelegate(StateReachedTrigger trigger, Card referrer);
 public delegate void RegisterLingeringEffectDelegate(LingeringEffectInfo info);
+public delegate void CastDelegate(int player, Card card);
 public delegate Card?[] GetFieldDelegate(int player);
 public delegate Card[] GetHandDelegate(int player);
 public delegate Card[] SelectCardsDelegate(int player, Card[] cards, int amount, string description);

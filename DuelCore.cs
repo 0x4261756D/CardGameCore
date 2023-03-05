@@ -103,6 +103,7 @@ class DuelCore : Core
 		c.GetDiscardCountThisTurn = GetDiscardCountThisTurnImpl;
 		c.PlayerChangeLife = PlayerChangeLifeImpl;
 		c.PlayerChangeMomentum = PlayerChangeMomentumImpl;
+		c.Cast = CastImpl;
 		c.Init();
 		return c;
 	}
@@ -663,7 +664,22 @@ class DuelCore : Core
 				Card card = players[player].hand.GetByUID(uid);
 				if(option == "Cast")
 				{
-					Cast(player, card);
+					switch(card.CardType)
+					{
+						case GameConstants.CardType.Creature:
+						{
+							players[player].CastCreature(card, SelectZoneImpl(player));
+						}
+						break;
+						case GameConstants.CardType.Spell:
+						{
+							players[player].hand.Remove(card);
+						}
+						break;
+						default:
+							throw new NotImplementedException($"Casting {card.CardType} cards");
+					}
+					CastImpl(player, card);
 				}
 				else
 				{
@@ -858,23 +874,8 @@ class DuelCore : Core
 		}, player);
 		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
 	}
-	private void Cast(int player, Card card)
+	private void CastImpl(int player, Card card)
 	{
-		switch(card.CardType)
-		{
-			case GameConstants.CardType.Creature:
-			{
-				players[player].CastCreature(card, SelectZoneImpl(player));
-			}
-			break;
-			case GameConstants.CardType.Spell:
-			{
-				players[player].hand.Remove(card);
-			}
-			break;
-			default:
-				throw new NotImplementedException($"Casting {card.CardType} cards");
-		}
 		if(castTriggers.ContainsKey(card.uid))
 		{
 			EffectChain chain = new EffectChain(players.Length);
