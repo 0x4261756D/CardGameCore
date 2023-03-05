@@ -12,11 +12,16 @@ class Assemble : Spell
 		CanBeClassAbility: true
 		)
 	{ }
-	// TODO: implement casting this
 
 	public override void Init()
 	{
 		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
+		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect, CastCondition), referrer: this);
+	}
+
+	public void RevelationEffect()
+	{
+		Cast(Controller, this);
 	}
 
 	public void CastEffect()
