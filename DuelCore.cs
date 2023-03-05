@@ -68,6 +68,10 @@ class DuelCore : Core
 			}
 			players[i] = new Player(Program.config.duel_config.players[i], i, deck, playerClass, ability, quest);
 		}
+	}
+
+	public override void Init()
+	{
 		HandleNetworking();
 		foreach(NetworkStream stream in playerStreams)
 		{

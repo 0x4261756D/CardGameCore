@@ -58,7 +58,12 @@ class ClientCore : Core
 			deck.cards = DecklistToCards(decklist);
 			decks.Add(deck);
 		}
+	}
+
+	public override void Init()
+	{
 		HandleNetworking();
+		listener.Stop();
 	}
 
 	//TODO: This could be more elegant

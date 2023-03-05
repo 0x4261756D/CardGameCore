@@ -7,6 +7,7 @@ abstract class Core
 {
 	public TcpListener listener;
 	public abstract void HandleNetworking();
+	public abstract void Init();
 
 	public Core()
 	{

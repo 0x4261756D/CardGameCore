@@ -129,14 +129,16 @@ class Program
 			Log("No mode supplied, please do so with --mode={client|duel|test}");
 			return;
 		}
+		Core core;
 		if(config.mode == CoreConfig.CoreMode.Client)
 		{
-			new ClientCore();
+			core = new ClientCore();
 		}
-		else if(config.mode == CoreConfig.CoreMode.Duel)
+		else
 		{
-			new DuelCore();
+			core = new DuelCore();
 		}
+		core.Init();
 		Log("EXITING");
 	}
 	public static readonly Func<Type, bool> IsCardSubclass = (x) =>
