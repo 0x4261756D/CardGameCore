@@ -1,0 +1,8 @@
+{
+	"FormattingOptions":
+	{
+		"UseTabs": true,
+		"SpaceAfterControlFlowStatementKeyword": false,
+		"IndentSwitchCaseSectionWhenBlock": false
+	}
+}
