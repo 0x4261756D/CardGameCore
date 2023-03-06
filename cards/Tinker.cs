@@ -10,7 +10,7 @@ class Tinker : Spell
 		OriginalCost: 2,
 		Text: "{Cast}: Summon two 2/1 Construct tokens with [Brittle]."
 		)
-	{}
+	{ }
 	// TODO: implement functionality
 
 	public override void Init()

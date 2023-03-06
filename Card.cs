@@ -250,7 +250,7 @@ public class Token : Creature
 			CardClass: GameConstants.PlayerClass.All
 		)
 	{
-		foreach (KeyValuePair<Keyword, int> pair in keywords)
+		foreach(KeyValuePair<Keyword, int> pair in keywords)
 		{
 			RegisterKeyword(pair.Key, pair.Value);
 			Text += $"\n[{Enum.GetName<Keyword>(pair.Key)}]";

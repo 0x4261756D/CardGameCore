@@ -12,7 +12,7 @@ class NovicePyromancer : Creature
 		OriginalLife: 1,
 		OriginalPower: 2
 		)
-	{}
+	{ }
 	// TODO: implement functionality
 
 	public override void Init()

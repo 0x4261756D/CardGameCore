@@ -12,7 +12,7 @@ class RottenMummy : Creature
 		OriginalLife: 4,
 		OriginalPower: 3
 		)
-	{}
+	{ }
 	// TODO: implement functionality
 
 	public override void Init()

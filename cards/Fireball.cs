@@ -10,7 +10,7 @@ class Fireball : Spell
 		OriginalCost: 2,
 		Text: "{Cast}: Deal 4 damage to any target.\n{Revelation}: If your opponent controls a damaged creature, add this to your hand."
 		)
-	{}
+	{ }
 	// TODO: implement functionality
 
 	public override void Init()

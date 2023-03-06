@@ -13,7 +13,7 @@ class AcolyteofMadness : Creature
 		OriginalLife: 5
 		)
 	{ }
-	
+
 	public override void Init()
 	{
 		RegisterYouDiscardTrigger(trigger: new YouDiscardTrigger(effect: DiscardEffect), referrer: this);

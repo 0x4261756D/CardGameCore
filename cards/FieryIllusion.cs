@@ -10,7 +10,7 @@ class FieryIllusion : Spell
 		OriginalCost: 1,
 		Text: "{Cast}: Create two 0/1 Illusions with [Decaying]."
 		)
-	{}
+	{ }
 	// TODO: implement functionality
 
 	public override void Init()

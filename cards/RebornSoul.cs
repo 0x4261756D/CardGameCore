@@ -12,7 +12,7 @@ class RebornSoul : Creature
 		OriginalLife: 2,
 		OriginalPower: 3
 		)
-	{}
+	{ }
 	// TODO: implement functionality
 
 	public override void Init()

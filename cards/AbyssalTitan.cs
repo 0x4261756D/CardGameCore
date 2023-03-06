@@ -20,7 +20,7 @@ class AbyssalTitan : Creature
 		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: CostReductionEffect, referrer: this, influenceLocation: Location.Hand));
 		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: GainEffect), referrer: this);
 	}
-	
+
 	private void GainEffect()
 	{
 		PlayerChangeLife(player: Controller, amount: 5);

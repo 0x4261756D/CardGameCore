@@ -10,7 +10,7 @@ class TemptingOffer : Spell
 		OriginalCost: 0,
 		Text: "{Cast}: Discard 2. Gain 2 Momentum."
 		)
-	{}
+	{ }
 	// TODO: implement functionality
 
 	public override void Init()
