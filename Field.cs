@@ -20,6 +20,10 @@ class Field
 	{
 		return cards;
 	}
+	internal Card[] GetUsed()
+	{
+		return cards.Where(x => x != null).ToArray()!;
+	}
 
 	internal void Add(Card card, int zone)
 	{

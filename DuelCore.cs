@@ -939,6 +939,10 @@ class DuelCore : Core
 	{
 		return players[player].field.GetAll();
 	}
+	public Card[] GetUsedFieldImpl(int player)
+	{
+		return players[player].field.GetUsed();
+	}
 	public Card[] GetHandImpl(int player)
 	{
 		return players[player].hand.GetAll();

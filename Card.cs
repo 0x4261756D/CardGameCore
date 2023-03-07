@@ -88,6 +88,7 @@ public abstract class Card
 	public RegisterStateReachedTriggerDelegate RegisterStateReachedTrigger = (_, _) => { };
 	public RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
 	public GetFieldDelegate GetField = (_) => new Card?[0];
+	public GetFieldUsedDelegate GetFieldUsed = (_) => new Card[0];
 	public GetHandDelegate GetHand = (_) => new Card[0];
 	public SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
 	public DiscardDelegate Discard = (_) => { };
@@ -167,7 +168,7 @@ public abstract class Card
 public class ClientCoreDummyCard : Card
 {
 	public ClientCoreDummyCard() : base(GameConstants.CardType.UNKNOWN, GameConstants.PlayerClass.UNKNOWN, "UNINITIALIZED", "UNINITIALIZED", false, false)
-	{}
+	{ }
 	public override void Init()
 	{
 	}
