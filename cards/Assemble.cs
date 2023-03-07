@@ -26,10 +26,7 @@ class Assemble : Spell
 
 	public void CastEffect()
 	{
-		CreateTokenWithKeywords(player: Controller, power: 2, life: 1, name: "Construct", new KeyValuePair<Keyword, int>[]
-		{
-			new KeyValuePair<Keyword, int>(Keyword.Brittle, 0),
-		});
+		CreateToken(player: Controller, power: 2, life: 1, name: "Construct").RegisterKeyword(Keyword.Brittle);
 	}
 
 	public bool CastCondition()

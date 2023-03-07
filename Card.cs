@@ -91,8 +91,8 @@ public abstract class Card
 	public GetHandDelegate GetHand = (_) => new Card[0];
 	public SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
 	public DiscardDelegate Discard = (_) => { };
-	public CreateTokenDelegate CreateToken = (_, _, _, _) => { };
-	public CreateTokenWithKeywordsDelegate CreateTokenWithKeywords = (_, _, _, _, _) => { };
+	public CreateTokenDelegate CreateToken = (_, _, _, _) => new ClientCoreDummyCard();
+	public CreateTokenCopyDelegate CreateTokenCopy = (_, _) => new ClientCoreDummyCard();
 	public GetDiscardCountThisTurnDelegate GetDiscardCountThisTurn = (_) => -1;
 	public PlayerChangeLifeDelegate PlayerChangeLife = (_, _) => { };
 	public PlayerChangeMomentumDelegate PlayerChangeMomentum = (_, _) => { };
@@ -161,6 +161,15 @@ public abstract class Card
 	internal static CardStruct[] ToStruct(Card[] cards)
 	{
 		return cards.ToList().ConvertAll(x => x.ToStruct()).ToArray();
+	}
+}
+
+public class ClientCoreDummyCard : Card
+{
+	public ClientCoreDummyCard() : base(GameConstants.CardType.UNKNOWN, GameConstants.PlayerClass.UNKNOWN, "UNINITIALIZED", "UNINITIALIZED", false, false)
+	{}
+	public override void Init()
+	{
 	}
 }
 
@@ -236,30 +245,6 @@ public class Token : Creature
 			CardClass: GameConstants.PlayerClass.All
 		)
 	{ }
-	public Token(string Name,
-		string Text,
-		int OriginalCost,
-		int OriginalLife,
-		int OriginalPower,
-		KeyValuePair<Keyword, int>[] keywords) : base(
-			Name: Name,
-			Text: Text,
-			OriginalCost: OriginalCost,
-			OriginalLife: OriginalLife,
-			OriginalPower: OriginalPower,
-			CardClass: GameConstants.PlayerClass.All
-		)
-	{
-		foreach(KeyValuePair<Keyword, int> pair in keywords)
-		{
-			RegisterKeyword(pair.Key, pair.Value);
-			Text += $"\n[{Enum.GetName<Keyword>(pair.Key)}]";
-			if(pair.Value != 0)
-			{
-				Text += $" {pair.Value}";
-			}
-		}
-	}
 	public override void Init()
 	{
 		RegisterKeyword(Keyword.Token);

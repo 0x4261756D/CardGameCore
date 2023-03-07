@@ -99,7 +99,7 @@ class DuelCore : Core
 		c.SelectCards = SelectCardsImpl;
 		c.Discard = DiscardImpl;
 		c.CreateToken = CreateTokenImpl;
-		c.CreateTokenWithKeywords = CreateTokenWithKeywordsImpl;
+		c.CreateTokenCopy = CreateTokenCopyImpl;
 		c.GetDiscardCountThisTurn = GetDiscardCountThisTurnImpl;
 		c.PlayerChangeLife = PlayerChangeLifeImpl;
 		c.PlayerChangeMomentum = PlayerChangeMomentumImpl;
@@ -1014,38 +1014,35 @@ class DuelCore : Core
 		}
 	}
 
-	public void CreateTokenWithKeywordsImpl(int player, int power, int life, string name, KeyValuePair<Keyword, int>[] keywords)
+	public Card CreateTokenImpl(int player, int power, int life, string name)
 	{
 		if(!players[player].field.HasEmpty())
 		{
 			throw new Exception($"Tried to create a token but the field is full");
 		}
 		int zone = SelectZoneImpl(player);
-		players[player].field.Add(new Token
-		(
-			Name: name,
-			Text: "[Token]",
-			OriginalCost: 0,
-			OriginalLife: life,
-			OriginalPower: power,
-			keywords: keywords
-		), zone);
-	}
-	public void CreateTokenImpl(int player, int power, int life, string name)
-	{
-		if(!players[player].field.HasEmpty())
-		{
-			throw new Exception($"Tried to create a token but the field is full");
-		}
-		int zone = SelectZoneImpl(player);
-		players[player].field.Add(new Token
+		Token token = new Token
 		(
 			Name: name,
 			Text: "[Token]",
 			OriginalCost: 0,
 			OriginalLife: life,
 			OriginalPower: power
-		), zone);
+		);
+		players[player].field.Add(token, zone);
+		return token;
+	}
+	public Card CreateTokenCopyImpl(int player, Card card)
+	{
+		if(!players[player].field.HasEmpty())
+		{
+			throw new Exception($"Tried to create a token but the field is full");
+		}
+		int zone = SelectZoneImpl(player);
+		Card token = CreateBasicCard(card.GetType(), player);
+		token.RegisterKeyword(Keyword.Token);
+		players[player].field.Add(token, zone);
+		return token;
 	}
 	public int SelectZoneImpl(int player)
 	{
