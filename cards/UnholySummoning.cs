@@ -1,5 +1,6 @@
 // Scripted by 0x4261756D
 using CardGameCore;
+using static CardGameCore.CardUtils;
 using static CardGameUtils.GameConstants;
 
 class UnholySummoning : Spell
@@ -20,7 +21,7 @@ class UnholySummoning : Spell
 
 	private bool Condition()
 	{
-		return GetHand(Controller).Length > 0 && GetField(Controller).Any(x => x == null);
+		return GetHand(Controller).Length > 0 && HasEmpty(GetField(Controller));
 	}
 
 	private void CastEffect()

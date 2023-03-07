@@ -1,6 +1,7 @@
 // Scripted by 0x4261756D
 using CardGameCore;
 using static CardGameUtils.GameConstants;
+using static CardGameCore.CardUtils;
 
 class Assemble : Spell
 {
@@ -31,6 +32,6 @@ class Assemble : Spell
 
 	public bool CastCondition()
 	{
-		return GetField(Controller).Any(x => x == null);
+		return HasEmpty(GetField(Controller));
 	}
 }
