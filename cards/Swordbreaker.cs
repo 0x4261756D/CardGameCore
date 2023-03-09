@@ -1,6 +1,7 @@
 // Scripted by 0x4261756D
 using CardGameCore;
 using static CardGameUtils.GameConstants;
+using static CardGameCore.CardUtils;
 
 class Swordbreaker : Creature
 {
@@ -13,10 +14,25 @@ class Swordbreaker : Creature
 		OriginalLife: 4
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
 	}
 
+	public void CastEffect()
+	{
+		Card target = SelectCards(player: Controller, cards: GetBothFieldsUsed(), amount: 1, description: "Target creature to weaken")[0];
+		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: WeakenEffect, referrer: target));
+	}
+
+	public void WeakenEffect(Card target)
+	{
+		target.Power -= 3;
+	}
+
+	public bool CastCondition()
+	{
+		return HasUsed(GetField(Controller));
+	}
 }
