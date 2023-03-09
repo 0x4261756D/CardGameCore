@@ -13,10 +13,14 @@ class BlazingArchmage : Creature
 		OriginalLife: 6
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterGenericCastTrigger(trigger: new GenericCastTrigger(effect: GenericCastEfect), referrer: this);
 	}
 
+	public void GenericCastEfect()
+	{
+		Cast(Controller, new Ignite());
+	}
 }
