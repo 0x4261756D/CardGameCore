@@ -17,6 +17,10 @@ class Grave
 
 	internal void Add(Card card)
 	{
+		if(card.Keywords.ContainsKey(Keyword.Brittle))
+		{
+			return;
+		}
 		card.Location = GameConstants.Location.Grave;
 		cards.Add(card);
 	}
