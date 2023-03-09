@@ -117,6 +117,7 @@ public delegate Card CreateTokenCopyDelegate(int player, Card card);
 public delegate int GetDiscardCountThisTurnDelegate(int player);
 public delegate void PlayerChangeLifeDelegate(int player, int amount);
 public delegate void PlayerChangeMomentumDelegate(int player, int amount);
+public delegate void DestroyDelegate(Card c);
 
 public class LingeringEffectInfo
 {

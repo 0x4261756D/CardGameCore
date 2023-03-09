@@ -104,6 +104,7 @@ class DuelCore : Core
 		c.PlayerChangeLife = PlayerChangeLifeImpl;
 		c.PlayerChangeMomentum = PlayerChangeMomentumImpl;
 		c.Cast = CastImpl;
+		c.Destroy = DestroyImpl;
 		c.Init();
 		return c;
 	}
@@ -391,7 +392,7 @@ class DuelCore : Core
 							Card? c = player.field.GetByPosition(i);
 							if(c != null && c.Keywords.ContainsKey(Keyword.Brittle))
 							{
-								player.field.Remove(c);
+								DestroyImpl(c);
 							}
 						}
 					}
@@ -956,6 +957,10 @@ class DuelCore : Core
 	{
 		players[player].life += amount;
 		if(players[player].life < 0) players[player].life = 0;
+	}
+	public void DestroyImpl(Card c)
+	{
+		players[c.Controller].Destroy(c);
 	}
 	public Card[] SelectCardsImpl(int player, Card[] cards, int amount, string description)
 	{
