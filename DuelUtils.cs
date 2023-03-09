@@ -138,6 +138,7 @@ public delegate int GetDiscardCountThisTurnDelegate(int player);
 public delegate void PlayerChangeLifeDelegate(int player, int amount);
 public delegate void PlayerChangeMomentumDelegate(int player, int amount);
 public delegate void DestroyDelegate(Card c);
+public delegate bool AskYesNoDelegate(int player, string question);
 
 public class LingeringEffectInfo
 {
