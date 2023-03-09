@@ -98,6 +98,7 @@ class DuelCore : Core
 		c.RegisterStateReachedTrigger = RegisterStateReachedTriggerImpl;
 		c.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		c.GetField = GetFieldImpl;
+		c.GetFieldUsed = GetFieldUsedImpl;
 		c.GetHand = GetHandImpl;
 		c.SelectCards = SelectCardsImpl;
 		c.Discard = DiscardImpl;
@@ -968,7 +969,7 @@ class DuelCore : Core
 	{
 		return players[player].field.GetAll();
 	}
-	public Card[] GetUsedFieldImpl(int player)
+	public Card[] GetFieldUsedImpl(int player)
 	{
 		return players[player].field.GetUsed();
 	}
