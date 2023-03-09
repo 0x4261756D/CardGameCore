@@ -7,6 +7,7 @@ using static CardGameUtils.Functions;
 using static CardGameUtils.Structs.NetworkingStructs;
 
 namespace CardGameCore;
+// TODO: Everywhere where triggers are used, process opponent's responses instead of just executing the effect
 
 class DuelCore : Core
 {
@@ -35,6 +36,7 @@ class DuelCore : Core
 	public int momentumBase = GameConstants.START_MOMENTUM;
 
 	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
+	private Dictionary<int, List<GenericCastTrigger>> genericCastTriggers = new Dictionary<int, List<GenericCastTrigger>>();
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
 	private Dictionary<int, List<YouDiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<YouDiscardTrigger>>();
 	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new Dictionary<int, List<StateReachedTrigger>>();
@@ -90,6 +92,7 @@ class DuelCore : Core
 		count++;
 		c.Controller = controller;
 		c.RegisterCastTrigger = RegisterCastTriggerImpl;
+		c.RegisterGenericCastTrigger = RegisterGenericCastTriggerImpl;
 		c.RegisterRevelationTrigger = RegisterRevelationTriggerImpl;
 		c.RegisterYouDiscardTrigger = RegisterYouDiscardTriggerImpl;
 		c.RegisterStateReachedTrigger = RegisterStateReachedTriggerImpl;
@@ -892,6 +895,22 @@ class DuelCore : Core
 			// TODO: Add handling of opponent's responses here
 			while(chain.Pop()) { }
 		}
+		foreach(Player p in players)
+		{
+			foreach(Card c in p.field.GetUsed())
+			{
+				if(genericCastTriggers.ContainsKey(card.uid))
+				{
+					foreach(GenericCastTrigger trigger in genericCastTriggers[card.uid])
+					{
+						if(trigger.condition())
+						{
+							trigger.effect();
+						}
+					}
+				}
+			}
+		}
 		EvaluateLingeringEffects();
 		SendFieldUpdates();
 	}
@@ -903,6 +922,14 @@ class DuelCore : Core
 			castTriggers[referrer.uid] = new List<CastTrigger>();
 		}
 		castTriggers[referrer.uid].Add(trigger);
+	}
+	public void RegisterGenericCastTriggerImpl(GenericCastTrigger trigger, Card referrer)
+	{
+		if(!genericCastTriggers.ContainsKey(referrer.uid))
+		{
+			genericCastTriggers[referrer.uid] = new List<GenericCastTrigger>();
+		}
+		genericCastTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterRevelationTriggerImpl(RevelationTrigger trigger, Card referrer)
 	{

@@ -98,10 +98,27 @@ public class RevelationTrigger : Trigger
 	}
 }
 
+public class GenericCastTrigger : Trigger
+{
+	public GameConstants.Location influenceLocation;
+
+	public GenericCastTrigger(Effect effect, TriggerCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+		: base(effect, condition)
+	{
+		this.influenceLocation = influenceLocation;
+	}
+	public GenericCastTrigger(Effect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+		: base(effect)
+	{
+		this.influenceLocation = influenceLocation;
+	}
+}
+
 public delegate bool TriggerCondition();
 public delegate void Effect();
 
 public delegate void RegisterCastTriggerDelegate(CastTrigger trigger, Card referrer);
+public delegate void RegisterGenericCastTriggerDelegate(GenericCastTrigger trigger, Card referrer);
 public delegate void RegisterRevelationTriggerDelegate(RevelationTrigger trigger, Card referrer);
 public delegate void RegisterYouDiscardTriggerDelegate(YouDiscardTrigger trigger, Card referrer);
 public delegate void RegisterStateReachedTriggerDelegate(StateReachedTrigger trigger, Card referrer);

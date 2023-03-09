@@ -83,6 +83,7 @@ public abstract class Card
 	}
 
 	public RegisterCastTriggerDelegate RegisterCastTrigger = (_, _) => { };
+	public RegisterGenericCastTriggerDelegate RegisterGenericCastTrigger = (_, _) => { };
 	public RegisterRevelationTriggerDelegate RegisterRevelationTrigger = (_, _) => { };
 	public RegisterYouDiscardTriggerDelegate RegisterYouDiscardTrigger = (_, _) => { };
 	public RegisterStateReachedTriggerDelegate RegisterStateReachedTrigger = (_, _) => { };
