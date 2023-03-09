@@ -18,14 +18,17 @@ class EternalArmy : Spell
 		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
 	}
 
-	public void CastEffect(){
-		for(int emptyZones = FIELD_SIZE - GetFieldUsed(Controller).Length; emptyZones >= 0; emptyZones--){
+	public void CastEffect()
+	{
+		for(int emptyZones = FIELD_SIZE - GetFieldUsed(Controller).Length; emptyZones >= 0; emptyZones--)
+		{
 			CreateToken(player: Controller, power: 5, life: 1, name: "Construct");
 		}
 		//Implement giving Death Trigger
 	}
 
-	public bool CastCondition(){
+	public bool CastCondition()
+	{
 		return true;
 	}
 
