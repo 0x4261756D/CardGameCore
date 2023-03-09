@@ -17,12 +17,14 @@ class FieryIllusion : Spell
 		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
 	}
 
-	private void CastEffect(){
+	private void CastEffect()
+	{
 		CreateToken(player: Controller, power: 0, life: 1, name: "Illusion").RegisterKeyword(Keyword.Decaying);
 		CreateToken(player: Controller, power: 0, life: 1, name: "Illusion").RegisterKeyword(Keyword.Decaying);
 	}
 
-	public bool CastCondition(){
+	public bool CastCondition()
+	{
 		return FIELD_SIZE - GetFieldUsed(Controller).Length > 1;
 	}
 }

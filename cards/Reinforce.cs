@@ -17,7 +17,8 @@ class Reinforce : Spell
 		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: GainEffect), referrer: this);
 	}
 
-	public void CastEffect(){
+	public void CastEffect()
+	{
 		Card target = SelectCards(player: Controller, cards: GetBothFieldsUsed(), amount: 1, description: "Target creature to reinforce")[0];
 		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: BuffEffect, referrer: target));
 	}
@@ -28,12 +29,14 @@ class Reinforce : Spell
 	}
 
 
-	public void BuffEffect(Card target){
+	public void BuffEffect(Card target)
+	{
 		target.Life += 2;
 		target.Keywords.Remove(Keyword.Brittle);
 	}
 
-	public bool CastCondition(){
+	public bool CastCondition()
+	{
 		return GetBothFieldsUsed().Length > 0;
 	}
 
