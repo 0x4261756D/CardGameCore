@@ -90,6 +90,7 @@ public abstract class Card
 	public RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
 	public GetFieldDelegate GetField = (_) => new Card?[0];
 	public GetFieldUsedDelegate GetFieldUsed = (_) => new Card[0];
+	public GetBothFieldsUsedDelegate GetBothFieldsUsed = () => new Card[0];
 	public GetHandDelegate GetHand = (_) => new Card[0];
 	public SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
 	public DiscardDelegate Discard = (_) => { };

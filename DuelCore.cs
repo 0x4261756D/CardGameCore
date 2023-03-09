@@ -99,6 +99,7 @@ class DuelCore : Core
 		c.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		c.GetField = GetFieldImpl;
 		c.GetFieldUsed = GetFieldUsedImpl;
+		c.GetBothFieldsUsed = GetBothFieldsUsedImpl;
 		c.GetHand = GetHandImpl;
 		c.SelectCards = SelectCardsImpl;
 		c.Discard = DiscardImpl;
@@ -972,6 +973,15 @@ class DuelCore : Core
 	public Card[] GetFieldUsedImpl(int player)
 	{
 		return players[player].field.GetUsed();
+	}
+	public Card[] GetBothFieldsUsedImpl()
+	{
+		List<Card> cards = new List<Card>();
+		foreach(Player player in players)
+		{
+			cards.Concat(player.field.GetUsed());
+		}
+		return cards.ToArray();
 	}
 	public Card[] GetHandImpl(int player)
 	{
