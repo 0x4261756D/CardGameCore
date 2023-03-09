@@ -19,7 +19,7 @@ class Weaponsmith : Creature
 		RegisterLingeringEffect(new LingeringEffectInfo(BuffEffect, this));
 	}
 
-	private void BuffEffect()
+	private void BuffEffect(Card _)
 	{
 		foreach(Card? card in GetField(this.Controller))
 		{

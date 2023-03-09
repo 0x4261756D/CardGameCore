@@ -25,7 +25,7 @@ class AbyssalTitan : Creature
 	{
 		PlayerChangeLife(player: Controller, amount: 5);
 	}
-	private void CostReductionEffect()
+	private void CostReductionEffect(Card _)
 	{
 		this.Cost -= GetDiscardCountThisTurn(player: Controller);
 	}

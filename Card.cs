@@ -88,6 +88,7 @@ public abstract class Card
 	public RegisterYouDiscardTriggerDelegate RegisterYouDiscardTrigger = (_, _) => { };
 	public RegisterStateReachedTriggerDelegate RegisterStateReachedTrigger = (_, _) => { };
 	public RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
+	public RegisterTemporaryLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => { };
 	public GetFieldDelegate GetField = (_) => new Card?[0];
 	public GetFieldUsedDelegate GetFieldUsed = (_) => new Card[0];
 	public GetBothFieldsUsedDelegate GetBothFieldsUsed = () => new Card[0];

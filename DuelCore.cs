@@ -41,6 +41,7 @@ class DuelCore : Core
 	private Dictionary<int, List<YouDiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<YouDiscardTrigger>>();
 	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new Dictionary<int, List<StateReachedTrigger>>();
 	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
+	private Dictionary<int, List<LingeringEffectInfo>> temporaryLingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
 
 	public DuelCore()
 	{
@@ -97,6 +98,7 @@ class DuelCore : Core
 		c.RegisterYouDiscardTrigger = RegisterYouDiscardTriggerImpl;
 		c.RegisterStateReachedTrigger = RegisterStateReachedTriggerImpl;
 		c.RegisterLingeringEffect = RegisterLingeringEffectImpl;
+		c.RegisterTemporaryLingeringEffect = RegisterTemporaryLingeringEffectImpl;
 		c.GetField = GetFieldImpl;
 		c.GetFieldUsed = GetFieldUsedImpl;
 		c.GetBothFieldsUsed = GetBothFieldsUsedImpl;
@@ -219,13 +221,26 @@ class DuelCore : Core
 		{
 			foreach(Card? card in player.field.GetAll())
 			{
-				if(card != null && lingeringEffects.ContainsKey(card.uid))
+				if(card != null)
 				{
-					foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
+					if(lingeringEffects.ContainsKey(card.uid))
 					{
-						if(info.influenceLocation.HasFlag(card.Location))
+						foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
 						{
-							info.effect();
+							if(info.influenceLocation.HasFlag(card.Location))
+							{
+								info.effect(info.referrer);
+							}
+						}
+					}
+					if(temporaryLingeringEffects.ContainsKey(card.uid))
+					{
+						foreach(LingeringEffectInfo info in temporaryLingeringEffects[card.uid])
+						{
+							if(info.influenceLocation.HasFlag(card.Location))
+							{
+								info.effect(info.referrer);
+							}
 						}
 					}
 				}
@@ -966,6 +981,14 @@ class DuelCore : Core
 		}
 		lingeringEffects[info.referrer.uid].Add(info);
 	}
+	public void RegisterTemporaryLingeringEffectImpl(LingeringEffectInfo info)
+	{
+		if(!temporaryLingeringEffects.ContainsKey(info.referrer.uid))
+		{
+			temporaryLingeringEffects[info.referrer.uid] = new List<LingeringEffectInfo>();
+		}
+		temporaryLingeringEffects[info.referrer.uid].Add(info);
+	}
 	public Card?[] GetFieldImpl(int player)
 	{
 		return players[player].field.GetAll();
@@ -976,10 +999,10 @@ class DuelCore : Core
 	}
 	public Card[] GetBothFieldsUsedImpl()
 	{
-		List<Card> cards = new List<Card>();
+		IEnumerable<Card> cards = new List<Card>();
 		foreach(Player player in players)
 		{
-			cards.Concat(player.field.GetUsed());
+			cards = cards.Concat(player.field.GetUsed());
 		}
 		return cards.ToArray();
 	}
@@ -997,9 +1020,10 @@ class DuelCore : Core
 		players[player].life += amount;
 		if(players[player].life < 0) players[player].life = 0;
 	}
-	public void DestroyImpl(Card c)
+	public void DestroyImpl(Card card)
 	{
-		players[c.Controller].Destroy(c);
+		temporaryLingeringEffects.Remove(card.uid);
+		players[card.Controller].Destroy(card);
 	}
 	public Card[] SelectCardsImpl(int player, Card[] cards, int amount, string description)
 	{

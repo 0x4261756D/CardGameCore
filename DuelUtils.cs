@@ -116,6 +116,7 @@ public class GenericCastTrigger : Trigger
 
 public delegate bool TriggerCondition();
 public delegate void Effect();
+public delegate void TargetingEffect(Card target);
 
 public delegate void RegisterCastTriggerDelegate(CastTrigger trigger, Card referrer);
 public delegate void RegisterGenericCastTriggerDelegate(GenericCastTrigger trigger, Card referrer);
@@ -123,6 +124,7 @@ public delegate void RegisterRevelationTriggerDelegate(RevelationTrigger trigger
 public delegate void RegisterYouDiscardTriggerDelegate(YouDiscardTrigger trigger, Card referrer);
 public delegate void RegisterStateReachedTriggerDelegate(StateReachedTrigger trigger, Card referrer);
 public delegate void RegisterLingeringEffectDelegate(LingeringEffectInfo info);
+public delegate void RegisterTemporaryLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate void CastDelegate(int player, Card card);
 public delegate Card?[] GetFieldDelegate(int player);
 public delegate Card[] GetFieldUsedDelegate(int player);
@@ -139,11 +141,11 @@ public delegate void DestroyDelegate(Card c);
 
 public class LingeringEffectInfo
 {
-	public Effect effect;
+	public TargetingEffect effect;
 	public Card referrer;
 	public GameConstants.Location influenceLocation;
 
-	public LingeringEffectInfo(Effect effect, Card referrer, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public LingeringEffectInfo(TargetingEffect effect, Card referrer, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
 		this.effect = effect;
 		this.referrer = referrer;
