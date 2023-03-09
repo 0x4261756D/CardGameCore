@@ -26,7 +26,7 @@ class EnormousTitan : Creature
 		PlayerChangeLife(player: Controller, amount: 3);
 	}
 
-	private void CostReductionEffect()
+	private void CostReductionEffect(Card _)
 	{
 		this.Cost -= GetFieldUsed(1 - Controller).Length;
 	}

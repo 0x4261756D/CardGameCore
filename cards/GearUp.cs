@@ -14,7 +14,7 @@ class GearUp : Spell
 	{ }
 	// TODO: implement functionality
 
-	public void Init(){
+	public override void Init(){
 		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
 	}
 

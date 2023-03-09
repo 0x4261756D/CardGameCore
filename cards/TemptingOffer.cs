@@ -21,7 +21,7 @@ class TemptingOffer : Spell
 		Card[] target = SelectCards(cards: GetHand(Controller), amount: 2, player: Controller, description: "Select cards to discard");
 		Discard(target[0]);
 		Discard(target[1]);
-		PlayerChangeMomentum(PlayerChangeLife: Controller, amount: 2);
+		PlayerChangeMomentum(player: Controller, amount: 2);
 	}
 
 	public bool CastCondition(){

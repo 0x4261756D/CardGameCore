@@ -19,7 +19,7 @@ class EternalArmy : Spell
 	}
 
 	public void CastEffect(){
-		for(int emptyZones = FIELD_SIZE - GetFieldUsed(Controller); emptyZones > 0; emptyZones--){
+		for(int emptyZones = FIELD_SIZE - GetFieldUsed(Controller).Length; emptyZones >= 0; emptyZones--){
 			CreateToken(player: Controller, power: 5, life: 1, name: "Construct");
 		}
 		//Implement giving Death Trigger
