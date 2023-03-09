@@ -14,6 +14,7 @@ class CommandToAttack : Spell
 
 	public override void Init()
 	{
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
 	}
 
 }

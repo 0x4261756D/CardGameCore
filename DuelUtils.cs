@@ -7,6 +7,7 @@ public enum Keyword
 	Colossal,
 	Brittle,
 	Token,
+	Decaying,
 }
 
 public class Trigger

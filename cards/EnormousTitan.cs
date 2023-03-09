@@ -1,4 +1,4 @@
-// Scripted by 0x4261756D
+// Scripted by Dotlof
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
@@ -13,10 +13,22 @@ class EnormousTitan : Creature
 		OriginalLife: 8
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterKeyword(Keyword.Colossal, 1);
+		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: CostReductionEffect, referrer: this, influenceLocation: Location.Hand));
+		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: GainEffect), referrer: this);
+	}
+
+	private void GainEffect()
+	{
+		PlayerChangeLife(player: Controller, amount: 3);
+	}
+
+	private void CostReductionEffect()
+	{
+		this.Cost -= GetFieldUsed(1 - Controller).Length;
 	}
 
 }
