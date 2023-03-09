@@ -102,6 +102,7 @@ public abstract class Card
 	public PlayerChangeMomentumDelegate PlayerChangeMomentum = (_, _) => { };
 	public CastDelegate Cast = (_, _) => { };
 	public DestroyDelegate Destroy = (_) => { };
+	public AskYesNoDelegate AskYesNo = (_, _) => false;
 
 	public void ClearModifications()
 	{

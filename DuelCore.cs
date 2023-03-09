@@ -112,6 +112,7 @@ class DuelCore : Core
 		c.PlayerChangeMomentum = PlayerChangeMomentumImpl;
 		c.Cast = CastImpl;
 		c.Destroy = DestroyImpl;
+		c.AskYesNo = AskYesNoImpl;
 		c.Init();
 		return c;
 	}
@@ -282,7 +283,7 @@ class DuelCore : Core
 					// Mulligan
 					for(int i = 0; i < players.Length; i++)
 					{
-						if(AskYesNo(player: i, question: "Mulligan?"))
+						if(AskYesNoImpl(player: i, question: "Mulligan?"))
 						{
 							Card[] cards = SelectCardsCustom(i, "Select cards to mulligan", players[i].hand.GetAll(), (x) => true);
 							foreach(Card card in cards)
@@ -791,7 +792,7 @@ class DuelCore : Core
 		return options.ToArray();
 	}
 
-	public bool AskYesNo(int player, string question)
+	public bool AskYesNoImpl(int player, string question)
 	{
 		SendPacketToPlayer(new DuelPackets.YesNoRequest { question = question }, player);
 		return ReceivePacketFromPlayer<DuelPackets.YesNoResponse>(player).result;
