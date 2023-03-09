@@ -42,13 +42,18 @@ class Player
 	private void CastGeneric(Card card)
 	{
 		momentum -= card.Cost;
-		hand.Remove(card);
 	}
 
 	internal void CastCreature(Card card, int zone)
 	{
 		CastGeneric(card);
 		field.Add(card, zone);
+	}
+	internal void CastSpell(Card card)
+	{
+		CastGeneric(card);
+		// TODO: Show this to the players
+		grave.Add(card);
 	}
 
 	internal void ClearCardModifications()

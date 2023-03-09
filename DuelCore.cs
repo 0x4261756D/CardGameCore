@@ -668,21 +668,7 @@ class DuelCore : Core
 				Card card = players[player].hand.GetByUID(uid);
 				if(option == "Cast")
 				{
-					switch(card.CardType)
-					{
-						case GameConstants.CardType.Creature:
-						{
-							players[player].CastCreature(card, SelectZoneImpl(player));
-						}
-						break;
-						case GameConstants.CardType.Spell:
-						{
-							players[player].hand.Remove(card);
-						}
-						break;
-						default:
-							throw new NotImplementedException($"Casting {card.CardType} cards");
-					}
+					players[player].hand.Remove(card);
 					CastImpl(player, card);
 				}
 				else
@@ -880,6 +866,21 @@ class DuelCore : Core
 	}
 	private void CastImpl(int player, Card card)
 	{
+		switch(card.CardType)
+		{
+			case GameConstants.CardType.Creature:
+			{
+				players[player].CastCreature(card, SelectZoneImpl(player));
+			}
+			break;
+			case GameConstants.CardType.Spell:
+			{
+				players[player].CastSpell(card);
+			}
+			break;
+			default:
+				throw new NotImplementedException($"Casting {card.CardType} cards");
+		}
 		if(castTriggers.ContainsKey(card.uid))
 		{
 			EffectChain chain = new EffectChain(players.Length);
