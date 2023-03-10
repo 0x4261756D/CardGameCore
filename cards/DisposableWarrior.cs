@@ -1,4 +1,4 @@
-// Scripted by 0x4261756D
+// Scripted by Dotlof
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
@@ -13,10 +13,20 @@ class DisposableWarrior : Creature
 		OriginalLife: 1
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect, CastCondition), referrer: this);
+	}
+
+	public void RevelationEffect()
+	{
+		Cast(Controller, this);
+	}
+
+	private bool CastCondition()
+	{
+		return GetFieldUsed(Controller).Length < 6;
 	}
 
 }
