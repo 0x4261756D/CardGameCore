@@ -19,13 +19,14 @@ class EssenceDrainer : Creature
 		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
 	}
 
-	public void CastEffect(){
-		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: BuffEffect, referrer: this));
-	}
-
-	public void BuffEffect(Card target){
-		target.Life += GetDiscardCountThisTurn(player: Controller);
-		target.Power += GetDiscardCountThisTurn(player: Controller);
+	public void CastEffect()
+	{
+		int count = GetDiscardCountThisTurn(player: Controller);
+		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (target) =>
+		{
+    	target.Power += count;
+    	target.Life += count;
+		}, referrer: this));
 	}
 
 	public bool CastCondition(){
