@@ -127,6 +127,7 @@ public delegate void RegisterStateReachedTriggerDelegate(StateReachedTrigger tri
 public delegate void RegisterLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate void RegisterTemporaryLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate void CastDelegate(int player, Card card);
+public delegate void DrawDelegate(int player, int amount);
 public delegate Card?[] GetFieldDelegate(int player);
 public delegate Card[] GetFieldUsedDelegate(int player);
 public delegate Card[] GetBothFieldsUsedDelegate();

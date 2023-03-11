@@ -111,6 +111,7 @@ class DuelCore : Core
 		c.PlayerChangeLife = PlayerChangeLifeImpl;
 		c.PlayerChangeMomentum = PlayerChangeMomentumImpl;
 		c.Cast = CastImpl;
+		c.Draw = DrawImpl;
 		c.Destroy = DestroyImpl;
 		c.AskYesNo = AskYesNoImpl;
 		c.Init();
@@ -881,6 +882,10 @@ class DuelCore : Core
 			options = players[player].field.GetMovementOptions(position, momentum),
 		}, player);
 		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
+	}
+	private void DrawImpl(int player, int amount)
+	{
+		players[player].Draw(amount);
 	}
 	private void CastImpl(int player, Card card)
 	{

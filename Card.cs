@@ -101,6 +101,7 @@ public abstract class Card
 	public PlayerChangeLifeDelegate PlayerChangeLife = (_, _) => { };
 	public PlayerChangeMomentumDelegate PlayerChangeMomentum = (_, _) => { };
 	public CastDelegate Cast = (_, _) => { };
+	public DrawDelegate Draw = (_, _) => { };
 	public DestroyDelegate Destroy = (_) => { };
 	public AskYesNoDelegate AskYesNo = (_, _) => false;
 
