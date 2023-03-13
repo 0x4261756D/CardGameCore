@@ -8,20 +8,26 @@ on:
 
 jobs:
   fix-formatting:
-    runs-on: windows-latest
-    
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
     env:
-      Test_Project_Path: CardGameCore
-    
+      Test_Project_Path: CardGameCore                           # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
+
     steps:
     - name: Checkout
-      uses: action/checkout@v3
+      uses: actions/checkout@v3
       with:
         submodules: recursive
+
+    # Install the .NET Core workload
     - name: Install .NET Core
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
+
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Restore the application
+      run: dotnet restore
     - name: Format
       run: dotnet format
     - name: Commit changes
