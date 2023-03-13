@@ -24,12 +24,13 @@ class EssenceDrainer : Creature
 		int count = GetDiscardCountThisTurn(player: Controller);
 		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (target) =>
 		{
-    	target.Power += count;
-    	target.Life += count;
+			target.Power += count;
+			target.Life += count;
 		}, referrer: this));
 	}
 
-	public bool CastCondition(){
+	public bool CastCondition()
+	{
 		return true;
 	}
 

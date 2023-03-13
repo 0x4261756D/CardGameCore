@@ -24,11 +24,13 @@ class DelveintoMadness : Spell
 		Cast(Controller, this);
 	}
 
-	private bool CastCondition(){
+	private bool CastCondition()
+	{
 		return true;
 	}
 
-	public void CastEffect(){
+	public void CastEffect()
+	{
 		Draw(Controller, 1);
 		Card target = SelectCards(cards: GetHand(Controller), amount: 1, player: Controller, description: "Select card to discard")[0];
 		Discard(target);
