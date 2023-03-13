@@ -19,11 +19,13 @@ class Firecracker : Creature
 		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
 	}
 
-	private bool CastCondition(){
+	private bool CastCondition()
+	{
 		return true;
 	}
 
-	public void CastEffect(){
+	public void CastEffect()
+	{
 		Cast(Controller, new Ignite());
 	}
 

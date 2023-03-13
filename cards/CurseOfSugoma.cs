@@ -18,17 +18,20 @@ class CurseofSugoma : Spell
 		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
 	}
 
-	public void CastEffect(){
+	public void CastEffect()
+	{
 		Card target = SelectCards(player: Controller, cards: GetBothFieldsUsed(), amount: 1, description: "Target creature to curse")[0];
 		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: CurseEffect, referrer: target));
 	}
 
-	public void CurseEffect(Card target){
+	public void CurseEffect(Card target)
+	{
 		target.Power += 2;
 		target.Life -= 1;
 	}
 
-	private bool CastCondition(){
+	private bool CastCondition()
+	{
 		return GetFieldUsed(Controller).Length > 0;
 	}
 

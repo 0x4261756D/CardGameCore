@@ -17,15 +17,17 @@ class Equalizer : Spell
 		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
 	}
 
-	public void CastEffect(){
+	public void CastEffect()
+	{
 		Card target = SelectCards(player: Controller, cards: GetBothFieldsUsed(), amount: 1, description: "Target creature to equalize stats")[0];
 		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: BuffEffect, referrer: target));
 	}
 
-		public void BuffEffect(Card target)
+	public void BuffEffect(Card target)
 	{
 		bool useLife = (target.Life >= target.Power);
-		if(useLife){
+		if(useLife)
+		{
 			target.Power = target.Life;
 		}
 		else target.Life = target.Power;

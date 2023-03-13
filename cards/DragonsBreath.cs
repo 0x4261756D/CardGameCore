@@ -11,7 +11,7 @@ class DragonsBreath : Spell
 		Text: "{Cast}: All creatures gain -3/-0 and [Decaying]."
 		)
 	{ }
-	
+
 	public override void Init()
 	{
 		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
@@ -20,17 +20,20 @@ class DragonsBreath : Spell
 	public void CastEffect()
 	{
 		Card[] cardsOnField = GetBothFieldsUsed();
-		foreach(Card card in cardsOnField){
+		foreach(Card card in cardsOnField)
+		{
 			card.RegisterKeyword(Keyword.Decaying);
 			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: DebuffEffect, referrer: card));
 		}
 	}
 
-	public void DebuffEffect(Card target){
+	public void DebuffEffect(Card target)
+	{
 		target.Power -= 3;
 	}
 
-	private bool CastCondition(){
+	private bool CastCondition()
+	{
 		return GetBothFieldsUsed().Length > 0;
 	}
 
