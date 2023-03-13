@@ -13,7 +13,7 @@ class DevotedDefender : Creature
 		OriginalLife: 5
 		)
 	{ }
-	// TODO: implement functionality
+	//Vanilla, doesn't need functionality ~Dotlof
 
 	public override void Init()
 	{

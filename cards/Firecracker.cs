@@ -1,4 +1,4 @@
-// Scripted by 0x4261756D
+// Scripted by Dotlof
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
@@ -13,10 +13,18 @@ class Firecracker : Creature
 		OriginalLife: 3
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
+	}
+
+	private bool CastCondition(){
+		return true;
+	}
+
+	public void CastEffect(){
+		Cast(Controller, new Ignite());
 	}
 
 }

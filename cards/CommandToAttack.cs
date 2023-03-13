@@ -1,3 +1,4 @@
+//Scripted by Dotlof
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
@@ -10,11 +11,26 @@ class CommandToAttack : Spell
 		Text: "{Cast}: For each of your opponents creatures create a 2/1 Construct token with [Brittle] and [Decaying]."
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
-		//RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
+	}
+
+	public void CastEffect()
+	{
+		Card[] enemyCards = GetFieldUsed(1 - Controller);
+		foreach(Card card in enemyCards)
+		{
+			Card token = CreateToken(player: Controller, power: 2, life: 1, name: "Construct");
+			token.RegisterKeyword(Keyword.Decaying);
+			token.RegisterKeyword(Keyword.Brittle);
+		}
+	}
+
+	private bool CastCondition()
+	{
+		return GetFieldUsed(1 - Controller).Length <= GetFieldUsed(Controller).Length;
 	}
 
 }

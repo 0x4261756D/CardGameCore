@@ -1,4 +1,4 @@
-// Scripted by 0x4261756D
+// Scripted by Dotlof
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
@@ -11,10 +11,25 @@ class CurseofSugoma : Spell
 		Text: "{Cast}: Target creature gains +2/-1.\n{Discard}: Target creature gains decaying."
 		)
 	{ }
-	// TODO: implement functionality
+	// TODO: implement Discard effect
 
 	public override void Init()
 	{
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
+	}
+
+	public void CastEffect(){
+		Card target = SelectCards(player: Controller, cards: GetBothFieldsUsed(), amount: 1, description: "Target creature to curse")[0];
+		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: CurseEffect, referrer: target));
+	}
+
+	public void CurseEffect(Card target){
+		target.Power += 2;
+		target.Life -= 1;
+	}
+
+	private bool CastCondition(){
+		return GetFieldUsed(Controller).Length > 0;
 	}
 
 }

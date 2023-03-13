@@ -1,4 +1,4 @@
-// Scripted by 0x4261756D
+// Scripted by Dotlof
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
@@ -12,10 +12,31 @@ class PreparetheAltar : Spell
 		CanBeClassAbility: true
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
-	{
+	{				
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
+		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: GainDiscardEffect), referrer: this);
 	}
+
+
+	public void GainDiscardEffect(){
+		PlayerChangeMomentum(player: Controller, amount: 1);
+		bool doDiscard = AskYesNo(player: Controller, question: "Discard 1?");
+		if(doDiscard){
+			Card target = SelectCards(cards: GetHand(Controller), amount: 1, player: Controller, description: "Select card to discard")[0];
+			Discard(target);
+		}
+	}
+
+	public void CastEffect(){
+		Card target = SelectCards(cards: GetHand(Controller), amount: 1, player: Controller, description: "Select card to discard")[0];
+		PlayerChangeMomentum(player: Controller, amount: target.Cost);
+	}
+
+	public bool CastCondition(){
+		return GetHand(Controller).Length > 0;
+	}
+
 
 }

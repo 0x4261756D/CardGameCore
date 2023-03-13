@@ -13,10 +13,24 @@ class EssenceDrainer : Creature
 		OriginalLife: 1
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
+	}
+
+	public void CastEffect()
+	{
+		int count = GetDiscardCountThisTurn(player: Controller);
+		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (target) =>
+		{
+    	target.Power += count;
+    	target.Life += count;
+		}, referrer: this));
+	}
+
+	public bool CastCondition(){
+		return true;
 	}
 
 }

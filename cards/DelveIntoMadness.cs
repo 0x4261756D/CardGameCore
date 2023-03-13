@@ -1,4 +1,4 @@
-// Scripted by 0x4261756D
+// Scripted by Dotlof
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
@@ -12,10 +12,26 @@ class DelveintoMadness : Spell
 		CanBeClassAbility: true
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
+		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect, CastCondition), referrer: this);
+	}
+
+	public void RevelationEffect()
+	{
+		Cast(Controller, this);
+	}
+
+	private bool CastCondition(){
+		return true;
+	}
+
+	public void CastEffect(){
+		Draw(Controller, 1);
+		Card target = SelectCards(cards: GetHand(Controller), amount: 1, player: Controller, description: "Select card to discard")[0];
+		Discard(target);
 	}
 
 }
