@@ -101,6 +101,7 @@ class DuelCore : Core
 		c.RegisterVictoriousTrigger = RegisterVictoriousTriggerImpl;
 		c.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		c.RegisterTemporaryLingeringEffect = RegisterTemporaryLingeringEffectImpl;
+		c.GetGrave = GetGraveImpl;
 		c.GetField = GetFieldImpl;
 		c.GetFieldUsed = GetFieldUsedImpl;
 		c.GetBothFieldsUsed = GetBothFieldsUsedImpl;
@@ -1056,6 +1057,10 @@ class DuelCore : Core
 	public Card[] GetFieldUsedImpl(int player)
 	{
 		return players[player].field.GetUsed();
+	}
+	public Card[] GetGraveImpl(int player)
+	{
+		return players[player].grave.GetAll();
 	}
 	public Card[] GetBothFieldsUsedImpl()
 	{

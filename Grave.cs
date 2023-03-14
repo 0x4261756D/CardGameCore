@@ -24,4 +24,9 @@ class Grave
 		card.Location = GameConstants.Location.Grave;
 		cards.Add(card);
 	}
+
+	internal Card[] GetAll()
+	{
+		return cards.ToArray();
+	}
 }
