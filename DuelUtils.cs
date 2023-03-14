@@ -47,18 +47,21 @@ public class StateReachedTrigger : Trigger
 {
 	public GameConstants.Location influenceLocation;
 	public GameConstants.State state;
+	public bool oneshot, wasTriggered;
 
-	public StateReachedTrigger(Effect effect, TriggerCondition condition, GameConstants.State state, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public StateReachedTrigger(Effect effect, TriggerCondition condition, GameConstants.State state, GameConstants.Location influenceLocation = GameConstants.Location.Field, bool oneshot = false)
 		: base(effect, condition)
 	{
 		this.influenceLocation = influenceLocation;
 		this.state = state;
+		this.oneshot = oneshot;
 	}
-	public StateReachedTrigger(Effect effect, GameConstants.State state, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public StateReachedTrigger(Effect effect, GameConstants.State state, GameConstants.Location influenceLocation = GameConstants.Location.Field, bool oneshot = false)
 		: base(effect)
 	{
 		this.influenceLocation = influenceLocation;
 		this.state = state;
+		this.oneshot = oneshot;
 	}
 }
 

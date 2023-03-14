@@ -479,8 +479,14 @@ class DuelCore : Core
 							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
 							{
 								trigger.effect();
+								trigger.wasTriggered = true;
+							}
+							else
+							{
+								trigger.wasTriggered = false;
 							}
 						}
+						stateReachedTriggers[card.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
 					}
 				}
 				foreach(Card? card in player.field.GetAll())
@@ -492,8 +498,14 @@ class DuelCore : Core
 							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
 							{
 								trigger.effect();
+								trigger.wasTriggered = true;
+							}
+							else
+							{
+								trigger.wasTriggered = false;
 							}
 						}
+						stateReachedTriggers[card.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
 					}
 				}
 			}
