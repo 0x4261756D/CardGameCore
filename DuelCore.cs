@@ -34,6 +34,7 @@ class DuelCore : Core
 	public int turn, turnPlayer, initPlayer;
 	public int? markedZone = null;
 	public int momentumBase = GameConstants.START_MOMENTUM;
+	public bool rewardClaimed = false;
 
 	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
 	private Dictionary<int, List<GenericCastTrigger>> genericCastTriggers = new Dictionary<int, List<GenericCastTrigger>>();
@@ -226,6 +227,32 @@ class DuelCore : Core
 		}
 		foreach(Player player in players)
 		{
+			if(!rewardClaimed && lingeringEffects.ContainsKey(player.quest.uid))
+			{
+				foreach(LingeringEffectInfo info in lingeringEffects[player.quest.uid])
+				{
+					info.effect(info.referrer);
+					if(player.quest.Progress >= player.quest.Goal)
+					{
+						player.quest.Reward();
+						rewardClaimed = true;
+						break;
+					}
+				}
+			}
+			if(!rewardClaimed && temporaryLingeringEffects.ContainsKey(player.quest.uid))
+			{
+				foreach(LingeringEffectInfo info in temporaryLingeringEffects[player.quest.uid])
+				{
+					info.effect(info.referrer);
+					if(player.quest.Progress >= player.quest.Goal)
+					{
+						player.quest.Reward();
+						rewardClaimed = true;
+						break;
+					}
+				}
+			}
 			foreach(Card? card in player.field.GetAll())
 			{
 				if(card != null)
@@ -473,6 +500,22 @@ class DuelCore : Core
 		{
 			foreach(Player player in players)
 			{
+				foreach(StateReachedTrigger trigger in stateReachedTriggers[player.quest.uid])
+				{
+					if(!rewardClaimed && trigger.state == state && trigger.condition())
+					{
+						trigger.effect();
+						trigger.wasTriggered = true;
+						if(player.quest.Progress >= player.quest.Goal)
+						{
+							player.quest.Reward();
+							rewardClaimed = true;
+							break;
+						}
+					}
+				}
+				stateReachedTriggers[player.quest.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
+
 				foreach(Card card in player.hand.GetAll())
 				{
 					if(stateReachedTriggers.ContainsKey(card.uid))
@@ -970,11 +1013,27 @@ class DuelCore : Core
 		}
 		foreach(Player p in players)
 		{
-			foreach(Card c in p.field.GetUsed())
+			if(genericCastTriggers.ContainsKey(p.quest.uid))
 			{
-				if(genericCastTriggers.ContainsKey(card.uid))
+				foreach(GenericCastTrigger trigger in genericCastTriggers[p.quest.uid])
 				{
-					foreach(GenericCastTrigger trigger in genericCastTriggers[card.uid])
+					if(!rewardClaimed && trigger.condition(castCard: card))
+					{
+						trigger.effect(castCard: card);
+						if(p.quest.Progress >= p.quest.Goal)
+						{
+							p.quest.Reward();
+							rewardClaimed = true;
+							break;
+						}
+					}
+				}
+			}
+			foreach(Card possiblyTriggeringCard in p.field.GetUsed())
+			{
+				if(genericCastTriggers.ContainsKey(possiblyTriggeringCard.uid))
+				{
+					foreach(GenericCastTrigger trigger in genericCastTriggers[possiblyTriggeringCard.uid])
 					{
 						if(trigger.condition(castCard: card))
 						{
@@ -1137,6 +1196,22 @@ class DuelCore : Core
 		{
 			foreach(Player player in players)
 			{
+				if(youDiscardTriggers.ContainsKey(player.quest.uid))
+				{
+					foreach(YouDiscardTrigger trigger in youDiscardTriggers[player.quest.uid])
+					{
+						if(!rewardClaimed && trigger.condition())
+						{
+							trigger.effect();
+							if(player.quest.Progress >= player.quest.Goal)
+							{
+								player.quest.Reward();
+								rewardClaimed = true;
+								break;
+							}
+						}
+					}
+				}
 				foreach(Card c in player.hand.GetAll())
 				{
 					if(youDiscardTriggers.ContainsKey(c.uid))
