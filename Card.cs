@@ -98,6 +98,7 @@ public abstract class Card
 	public static GetCardsInLocationDelegate GetHand = (_) => new Card[0];
 	public static SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
 	public static DiscardDelegate Discard = (_) => { };
+	public static DiscardAmountDelegate DiscardAmount = (_, _) => { };
 	public static CreateTokenDelegate CreateToken = (_, _, _, _) => new ClientCoreDummyCard();
 	public static CreateTokenCopyDelegate CreateTokenCopy = (_, _) => new ClientCoreDummyCard();
 	public static GetDiscardCountXTurnsAgoDelegate GetDiscardCountXTurnsAgo = (_, _) => -1;

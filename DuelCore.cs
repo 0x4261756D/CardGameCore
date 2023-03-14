@@ -93,6 +93,7 @@ class DuelCore : Core
 		Card.GetHand = GetHandImpl;
 		Card.SelectCards = SelectCardsImpl;
 		Card.Discard = DiscardImpl;
+		Card.DiscardAmount = DiscardAmountImpl;
 		Card.CreateToken = CreateTokenImpl;
 		Card.CreateTokenCopy = CreateTokenCopyImpl;
 		Card.GetDiscardCountXTurnsAgo = GetDiscardCountXTurnsAgoImpl;
@@ -1198,6 +1199,14 @@ class DuelCore : Core
 		}
 		// TODO: Make this nicer?
 		return response.uids.ToList().ConvertAll(x => cards.First(y => y.uid == x)).ToArray();
+	}
+	public void DiscardAmountImpl(int player, int amount)
+	{
+		Card[] targets = SelectCardsImpl(player: player, amount: amount, cards: players[player].hand.GetAll(), description: "Select cards to discard");
+		foreach (Card target in targets)
+		{
+			DiscardImpl(target);
+		}
 	}
 	public void DiscardImpl(Card card)
 	{

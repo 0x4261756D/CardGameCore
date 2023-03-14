@@ -27,8 +27,7 @@ class DelveintoMadness : Spell
 	public void CastEffect()
 	{
 		Draw(Controller, 1);
-		Card target = SelectCards(cards: GetHand(Controller), amount: 1, player: Controller, description: "Select card to discard")[0];
-		Discard(target);
+		DiscardAmount(player: Controller, amount: 1);
 	}
 
 }

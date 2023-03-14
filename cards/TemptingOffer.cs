@@ -19,9 +19,7 @@ class TemptingOffer : Spell
 
 	public void CastEffect()
 	{
-		Card[] target = SelectCards(cards: GetHand(Controller), amount: 2, player: Controller, description: "Select cards to discard");
-		Discard(target[0]);
-		Discard(target[1]);
+		DiscardAmount(player: Controller, amount: 2);
 		PlayerChangeMomentum(player: Controller, amount: 2);
 	}
 

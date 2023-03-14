@@ -26,8 +26,7 @@ class PreparetheAltar : Spell
 		bool doDiscard = AskYesNo(player: Controller, question: "Discard 1?");
 		if(doDiscard)
 		{
-			Card target = SelectCards(cards: GetHand(Controller), amount: 1, player: Controller, description: "Select card to discard")[0];
-			Discard(target);
+			DiscardAmount(player: Controller, amount: 1);
 		}
 	}
 

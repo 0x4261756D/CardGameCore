@@ -150,6 +150,7 @@ public delegate Card?[] GetWholeFieldDelegate(int player);
 public delegate Card[] GetBothFieldsUsedDelegate();
 public delegate Card[] SelectCardsDelegate(int player, Card[] cards, int amount, string description);
 public delegate void DiscardDelegate(Card card);
+public delegate void DiscardAmountDelegate(int player, int amount);
 public delegate Card CreateTokenDelegate(int player, int power, int life, string name);
 public delegate Card CreateTokenCopyDelegate(int player, Card card);
 public delegate int GetDiscardCountXTurnsAgoDelegate(int player, int turns);
