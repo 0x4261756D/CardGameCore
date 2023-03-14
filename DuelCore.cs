@@ -594,7 +594,8 @@ class DuelCore : Core
 	{
 		for(int i = 0; i < damage; i++)
 		{
-			Card c = players[player].deck.Pop();
+			Card c = players[player].deck.GetAt(0);
+			players[player].deck.MoveToBottom(0);
 			Card?[] shownCards = new Card[2];
 			shownCards[player] = c;
 			SendFieldUpdates(shownCards: shownCards);
@@ -608,9 +609,9 @@ class DuelCore : Core
 					}
 				}
 			}
-			players[player].grave.Add(c);
 			SendFieldUpdates();
 		}
+		players[player].deck.Shuffle();
 	}
 	private void MarkNextZoneOrContinue()
 	{
