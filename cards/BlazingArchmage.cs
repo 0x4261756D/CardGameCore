@@ -16,11 +16,16 @@ class BlazingArchmage : Creature
 
 	public override void Init()
 	{
-		RegisterGenericCastTrigger(trigger: new GenericCastTrigger(effect: GenericCastEfect), referrer: this);
+		RegisterGenericCastTrigger(trigger: new GenericCastTrigger(effect: CastIgniteEffect, condition: CastIgniteCondition), referrer: this);
 	}
 
-	public void GenericCastEfect()
+	public void CastIgniteEffect(Card target)
 	{
 		Cast(Controller, new Ignite());
+	}
+
+	public bool CastIgniteCondition(Card target)
+	{
+		return target.Name != "Ignite";
 	}
 }
