@@ -1214,7 +1214,7 @@ class DuelCore : Core
 	public void DiscardAmountImpl(int player, int amount)
 	{
 		Card[] targets = SelectCardsImpl(player: player, amount: amount, cards: players[player].hand.GetAll(), description: "Select cards to discard");
-		foreach (Card target in targets)
+		foreach(Card target in targets)
 		{
 			DiscardImpl(target);
 		}
