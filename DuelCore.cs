@@ -1079,6 +1079,15 @@ class DuelCore : Core
 	}
 	public void PlayerChangeLifeImpl(int player, int amount)
 	{
+		if(amount < 0)
+		{
+			DealDamage(player, damage: amount);
+		}
+		else
+		{
+			players[player].life += amount;
+		}
+	}
 	public int GetIgniteDamageImpl(int player)
 	{
 		return players[player].igniteDamage;
