@@ -100,7 +100,8 @@ public abstract class Card
 	public DiscardDelegate Discard = (_) => { };
 	public CreateTokenDelegate CreateToken = (_, _, _, _) => new ClientCoreDummyCard();
 	public CreateTokenCopyDelegate CreateTokenCopy = (_, _) => new ClientCoreDummyCard();
-	public GetDiscardCountThisTurnDelegate GetDiscardCountThisTurn = (_) => -1;
+	public GetDiscardCountXTurnsAgoDelegate GetDiscardCountXTurnsAgo = (_, _) => -1;
+	public GetDamageDealtXTurnsAgoDelegate GetDamageDealtXTurnsAgo = (_, _) => -1;
 	public PlayerChangeLifeDelegate PlayerChangeLife = (_, _) => { };
 	public PlayerChangeMomentumDelegate PlayerChangeMomentum = (_, _) => { };
 	public CastDelegate Cast = (_, _) => { };

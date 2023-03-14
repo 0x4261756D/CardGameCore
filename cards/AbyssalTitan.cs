@@ -27,6 +27,6 @@ class AbyssalTitan : Creature
 	}
 	private void CostReductionEffect(Card _)
 	{
-		this.Cost -= GetDiscardCountThisTurn(player: Controller);
+		this.Cost -= GetDiscardCountXTurnsAgo(player: Controller, turns: 0);
 	}
 }

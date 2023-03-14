@@ -111,7 +111,8 @@ class DuelCore : Core
 		c.Discard = DiscardImpl;
 		c.CreateToken = CreateTokenImpl;
 		c.CreateTokenCopy = CreateTokenCopyImpl;
-		c.GetDiscardCountThisTurn = GetDiscardCountThisTurnImpl;
+		c.GetDiscardCountXTurnsAgo = GetDiscardCountXTurnsAgoImpl;
+		c.GetDamageDealtXTurnsAgo = GetDamageDealtXTurnsAgoImpl;
 		c.PlayerChangeLife = PlayerChangeLifeImpl;
 		c.PlayerChangeMomentum = PlayerChangeMomentumImpl;
 		c.Cast = CastImpl;
@@ -340,7 +341,8 @@ class DuelCore : Core
 					{
 						player.Draw(1);
 						player.ability.Position = 0;
-						player.discardCountThisTurn = 0;
+						player.discardCounts.Add(0);
+						player.dealtDamages.Add(0);
 						player.momentum = momentumBase;
 					}
 					initPlayer = turnPlayer;
@@ -577,6 +579,7 @@ class DuelCore : Core
 	private void DealDamage(int player, int damage)
 	{
 		players[player].life -= damage;
+		players[1 - player].dealtDamages[turn] += damage;
 		Reveal(player, damage);
 		CheckIfLost(player);
 	}
@@ -1192,6 +1195,7 @@ class DuelCore : Core
 			throw new Exception($"Tried to discard a card that is not in the hand but at {card.Location}");
 		}
 		players[card.Controller].Discard(card);
+		players[card.Controller].discardCounts[turn]++;
 		if(youDiscardTriggers.Count > 0)
 		{
 			foreach(Player player in players)
@@ -1280,9 +1284,24 @@ class DuelCore : Core
 		}, player);
 		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
 	}
-	public int GetDiscardCountThisTurnImpl(int player)
+	public int GetDiscardCountXTurnsAgoImpl(int player, int turns)
 	{
-		return players[player].discardCountThisTurn;
+		if(turn < turns)
+		{
+			Log($"Attempted to get discard count before the game began ({turn - turns}) for player {players[player].name}", severity: LogSeverity.Warning);
+			return 0;
+		}
+		return players[player].discardCounts[turn - turns];
+	}
+
+	public int GetDamageDealtXTurnsAgoImpl(int player, int turns)
+	{
+		if(turn < turns)
+		{
+			Log($"Attempted to get damage dealt before the game began ({turn - turns}) for player {players[player].name}", severity: LogSeverity.Warning);
+			return 0;
+		}
+		return players[player].dealtDamages[turn - turns];
 	}
 
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent

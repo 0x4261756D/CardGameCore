@@ -17,7 +17,7 @@ class Player
 	public Card ability;
 	public Quest quest;
 	public int life, progress, momentum;
-	public int discardCountThisTurn = 0;
+	public List<int> discardCounts = new List<int>(), dealtDamages = new List<int>();
 	public int igniteDamage = 1;
 	public Player(CoreConfig.PlayerConfig config, int number, Deck deck, GameConstants.PlayerClass playerClass, Card ability, Quest quest)
 	{
@@ -68,7 +68,6 @@ class Player
 	{
 		hand.Remove(card);
 		grave.Add(card);
-		discardCountThisTurn++;
 	}
 	internal void Destroy(Card card)
 	{

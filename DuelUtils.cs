@@ -152,7 +152,8 @@ public delegate Card[] SelectCardsDelegate(int player, Card[] cards, int amount,
 public delegate void DiscardDelegate(Card card);
 public delegate Card CreateTokenDelegate(int player, int power, int life, string name);
 public delegate Card CreateTokenCopyDelegate(int player, Card card);
-public delegate int GetDiscardCountThisTurnDelegate(int player);
+public delegate int GetDiscardCountXTurnsAgoDelegate(int player, int turns);
+public delegate int GetDamageDealtXTurnsAgoDelegate(int player, int turns);
 public delegate void PlayerChangeLifeDelegate(int player, int amount);
 public delegate void PlayerChangeMomentumDelegate(int player, int amount);
 public delegate void DestroyDelegate(Card c);

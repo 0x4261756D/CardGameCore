@@ -21,7 +21,7 @@ class EssenceDrainer : Creature
 
 	public void CastEffect()
 	{
-		int count = GetDiscardCountThisTurn(player: Controller);
+		int count = GetDiscardCountXTurnsAgo(player: Controller, turns: 0);
 		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (target) =>
 		{
 			target.Power += count;
