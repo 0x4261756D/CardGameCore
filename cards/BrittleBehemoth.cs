@@ -1,5 +1,6 @@
 // Scripted by 0x4261756D
 using CardGameCore;
+using static CardGameCore.CardUtils;
 using static CardGameUtils.GameConstants;
 
 class BrittleBehemoth : Creature
@@ -13,10 +14,37 @@ class BrittleBehemoth : Creature
 		OriginalLife: 4
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterKeyword(Keyword.Brittle);
+		RegisterVictoriousTrigger(trigger: new Trigger(effect: VictoriousEffect), referrer: this);
+		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect, condition: RevelationCondition), referrer: this);
 	}
+
+	public void VictoriousEffect()
+	{
+		Keywords.Remove(Keyword.Brittle);
+		RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: ResetBrittleEffect, state: State.TurnEnd, influenceLocation: Location.ALL, oneshot: true), referrer: this);
+	}
+
+	public void ResetBrittleEffect()
+	{
+		RegisterKeyword(Keyword.Brittle);
+	}
+
+	public void RevelationEffect()
+	{
+		Card target = SelectCards(player: Controller, cards: FilterValid(cards: GetBothFieldsUsed(), isValid: Filter), amount: 1, description: "Select creature to frighten")[0];
+		target.CanMove = false;
+		RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: () => target.CanMove = true, state: State.TurnEnd, influenceLocation: Location.ALL, oneshot: true), referrer: target);
+	}
+
+	public bool RevelationCondition()
+	{
+		return ContainsValid(cards: GetBothFieldsUsed(), isValid: Filter);
+	}
+
+	public bool Filter(Card card) => card.Power < 7;
 
 }
