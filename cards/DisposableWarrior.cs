@@ -26,7 +26,7 @@ class DisposableWarrior : Creature
 
 	private bool CastCondition()
 	{
-		return GetFieldUsed(Controller).Length < 6;
+		return GetFieldUsed(Controller).Length < FIELD_SIZE;
 	}
 
 }
