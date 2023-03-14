@@ -121,6 +121,7 @@ class DuelCore : Core
 		c.AskYesNo = AskYesNoImpl;
 		c.GetIgniteDamage = GetIgniteDamageImpl;
 		c.ChangeIgniteDamage = ChangeIgniteDamageImpl;
+		c.GetTurn = GetTurnImpl;
 		c.Init();
 		return c;
 	}
@@ -977,6 +978,11 @@ class DuelCore : Core
 			options = players[player].field.GetMovementOptions(position, momentum),
 		}, player);
 		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
+	}
+
+	private int GetTurnImpl()
+	{
+		return turn;
 	}
 	private void DrawImpl(int player, int amount)
 	{

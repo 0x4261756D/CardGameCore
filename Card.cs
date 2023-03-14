@@ -110,6 +110,7 @@ public abstract class Card
 	public AskYesNoDelegate AskYesNo = (_, _) => false;
 	public GetIgniteDamageDelegate GetIgniteDamage = (_) => -1;
 	public ChangeIgniteDamageDelegate ChangeIgniteDamage = (_, _) => { };
+	public GetTurnDelegate GetTurn = () => -1;
 
 	public void ClearModifications()
 	{
