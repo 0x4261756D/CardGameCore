@@ -17,7 +17,7 @@ class Player
 	public Card ability, quest;
 	public int life, progress, momentum;
 	public int discardCountThisTurn = 0;
-	public Player(CoreConfig.PlayerConfig config, int number, Deck deck, GameConstants.PlayerClass playerClass, Card ability, Card quest)
+	public int igniteDamage = 1;
 	{
 		this.deck = deck;
 		this.id = config.id;

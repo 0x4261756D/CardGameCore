@@ -117,6 +117,8 @@ class DuelCore : Core
 		c.Draw = DrawImpl;
 		c.Destroy = DestroyImpl;
 		c.AskYesNo = AskYesNoImpl;
+		c.GetIgniteDamage = GetIgniteDamageImpl;
+		c.ChangeIgniteDamage = ChangeIgniteDamageImpl;
 		c.Init();
 		return c;
 	}
@@ -1077,8 +1079,13 @@ class DuelCore : Core
 	}
 	public void PlayerChangeLifeImpl(int player, int amount)
 	{
-		players[player].life += amount;
-		CheckIfLost(player);
+	public int GetIgniteDamageImpl(int player)
+	{
+		return players[player].igniteDamage;
+	}
+	public void ChangeIgniteDamageImpl(int player, int amount)
+	{
+		players[player].igniteDamage += amount;
 	}
 	public void PlayerChangeMomentumImpl(int player, int amount)
 	{
