@@ -12,10 +12,21 @@ class Ignite : Spell
 		CanBeClassAbility: true
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterCastTrigger(trigger: new CastTrigger(effect: IgniteEffect), referrer: this);
+		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect), referrer: this);
+	}
+
+	public void IgniteEffect()
+	{
+		PlayerChangeLife(player: 1 - Controller, amount: -GetIgniteDamage(Controller));
+	}
+
+	public void RevelationEffect()
+	{
+		Cast(card: this, player: Controller);
 	}
 
 }
