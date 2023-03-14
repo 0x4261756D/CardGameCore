@@ -88,7 +88,7 @@ public abstract class Card
 	public RegisterRevelationTriggerDelegate RegisterRevelationTrigger = (_, _) => { };
 	public RegisterYouDiscardTriggerDelegate RegisterYouDiscardTrigger = (_, _) => { };
 	public RegisterStateReachedTriggerDelegate RegisterStateReachedTrigger = (_, _) => { };
-	public RegisterVictoriousTriggerDelegate RegisterVictoriousTrigger = (_, _) => {};
+	public RegisterVictoriousTriggerDelegate RegisterVictoriousTrigger = (_, _) => { };
 	public RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
 	public RegisterTemporaryLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => { };
 	public GetFieldDelegate GetField = (_) => new Card?[0];
