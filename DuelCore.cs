@@ -38,6 +38,7 @@ class DuelCore : Core
 	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
 	private Dictionary<int, List<GenericCastTrigger>> genericCastTriggers = new Dictionary<int, List<GenericCastTrigger>>();
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
+	private Dictionary<int, List<Trigger>> victoriousTriggers = new Dictionary<int, List<Trigger>>();
 	private Dictionary<int, List<YouDiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<YouDiscardTrigger>>();
 	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new Dictionary<int, List<StateReachedTrigger>>();
 	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
@@ -97,6 +98,7 @@ class DuelCore : Core
 		c.RegisterRevelationTrigger = RegisterRevelationTriggerImpl;
 		c.RegisterYouDiscardTrigger = RegisterYouDiscardTriggerImpl;
 		c.RegisterStateReachedTrigger = RegisterStateReachedTriggerImpl;
+		c.RegisterVictoriousTrigger = RegisterVictoriousTriggerImpl;
 		c.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		c.RegisterTemporaryLingeringEffect = RegisterTemporaryLingeringEffectImpl;
 		c.GetField = GetFieldImpl;
@@ -384,10 +386,30 @@ class DuelCore : Core
 							if(card0.Life == 0)
 							{
 								players[0].Destroy(card0);
+								if(victoriousTriggers.ContainsKey(card1.uid))
+								{
+									foreach(Trigger trigger in victoriousTriggers[card1.uid])
+									{
+										if(trigger.condition())
+										{
+											trigger.effect();
+										}
+									}
+								}
 							}
 							if(card1.Life == 0)
 							{
 								players[1].Destroy(card1);
+								if(victoriousTriggers.ContainsKey(card0.uid))
+								{
+									foreach(Trigger trigger in victoriousTriggers[card0.uid])
+									{
+										if(trigger.condition())
+										{
+											trigger.effect();
+										}
+									}
+								}
 							}
 						}
 					}
@@ -994,6 +1016,14 @@ class DuelCore : Core
 			temporaryLingeringEffects[info.referrer.uid] = new List<LingeringEffectInfo>();
 		}
 		temporaryLingeringEffects[info.referrer.uid].Add(info);
+	}
+	public void RegisterVictoriousTriggerImpl(Trigger info, Card referrer)
+	{
+		if(!victoriousTriggers.ContainsKey(referrer.uid))
+		{
+			victoriousTriggers[referrer.uid] = new List<Trigger>();
+		}
+		victoriousTriggers[referrer.uid].Add(info);
 	}
 	public Card?[] GetFieldImpl(int player)
 	{

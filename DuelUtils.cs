@@ -124,6 +124,7 @@ public delegate void RegisterGenericCastTriggerDelegate(GenericCastTrigger trigg
 public delegate void RegisterRevelationTriggerDelegate(RevelationTrigger trigger, Card referrer);
 public delegate void RegisterYouDiscardTriggerDelegate(YouDiscardTrigger trigger, Card referrer);
 public delegate void RegisterStateReachedTriggerDelegate(StateReachedTrigger trigger, Card referrer);
+public delegate void RegisterVictoriousTriggerDelegate(Trigger trigger, Card referrer);
 public delegate void RegisterLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate void RegisterTemporaryLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate void CastDelegate(int player, Card card);
