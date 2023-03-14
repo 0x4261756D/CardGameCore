@@ -12,10 +12,26 @@ class BurningImp : Creature
 		OriginalLife: 2
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterGenericCastTrigger(trigger: new GenericCastTrigger(condition: BuffCondition, effect: BuffEffect), referrer: this);
+	}
+
+	public bool BuffCondition(Card castCard)
+	{
+		return castCard.Name == "Ignite";
+	}
+
+	public void BuffEffect(Card castCard)
+	{
+		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: Buff, referrer: this));
+	}
+
+	public void Buff(Card _)
+	{
+		this.Life += 2;
+		this.Power += 2;
 	}
 
 }
