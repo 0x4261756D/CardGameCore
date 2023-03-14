@@ -107,7 +107,7 @@ public abstract class Card
 	public DrawDelegate Draw = (_, _) => { };
 	public DestroyDelegate Destroy = (_) => { };
 	public AskYesNoDelegate AskYesNo = (_, _) => false;
-	public GetIgniteDamageDelegate GetIgniteDamage = (_) => 0;
+	public GetIgniteDamageDelegate GetIgniteDamage = (_) => -1;
 	public ChangeIgniteDamageDelegate ChangeIgniteDamage = (_, _) => { };
 
 	public void ClearModifications()
