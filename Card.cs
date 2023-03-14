@@ -91,10 +91,11 @@ public abstract class Card
 	public RegisterVictoriousTriggerDelegate RegisterVictoriousTrigger = (_, _) => { };
 	public RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
 	public RegisterTemporaryLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => { };
-	public GetFieldDelegate GetField = (_) => new Card?[0];
-	public GetFieldUsedDelegate GetFieldUsed = (_) => new Card[0];
+	public GetCardsInLocationDelegate GetGrave = (_) => new Card[0];
+	public GetWholeFieldDelegate GetField = (_) => new Card?[0];
+	public GetCardsInLocationDelegate GetFieldUsed = (_) => new Card[0];
 	public GetBothFieldsUsedDelegate GetBothFieldsUsed = () => new Card[0];
-	public GetHandDelegate GetHand = (_) => new Card[0];
+	public GetCardsInLocationDelegate GetHand = (_) => new Card[0];
 	public SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
 	public DiscardDelegate Discard = (_) => { };
 	public CreateTokenDelegate CreateToken = (_, _, _, _) => new ClientCoreDummyCard();

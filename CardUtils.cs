@@ -12,6 +12,11 @@ public class CardUtils
 		return cards.Any(x => x != null);
 	}
 
+	public static Card[] GetForBoth(GetCardsInLocationDelegate accessor)
+	{
+		return accessor(0).Concat(accessor(1)).ToArray();
+	}
+
 	public delegate bool IsValid(Card card);
 	public static bool ContainsValid(Card[] cards, IsValid isValid)
 	{
