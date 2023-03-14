@@ -26,6 +26,13 @@ public class Trigger
 		this.effect = effect;
 		this.condition = () => true;
 	}
+
+	// NOTE: This is only used for inheritance
+	protected Trigger()
+	{
+		effect = () => { };
+		condition = () => true;
+	}
 }
 
 public class YouDiscardTrigger : Trigger
@@ -105,21 +112,27 @@ public class RevelationTrigger : Trigger
 public class GenericCastTrigger : Trigger
 {
 	public GameConstants.Location influenceLocation;
+	public new GenericCastTriggerCondition condition;
+	public new GenericCastTriggerEffect effect;
 
-	public GenericCastTrigger(Effect effect, TriggerCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
-		: base(effect, condition)
+	public GenericCastTrigger(GenericCastTriggerEffect effect, GenericCastTriggerCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
 		this.influenceLocation = influenceLocation;
+		this.condition = condition;
+		this.effect = effect;
 	}
-	public GenericCastTrigger(Effect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field)
-		: base(effect)
+	public GenericCastTrigger(GenericCastTriggerEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
 		this.influenceLocation = influenceLocation;
+		this.condition = (_) => true;
+		this.effect = effect;
 	}
 }
 
 public delegate bool TriggerCondition();
 public delegate void Effect();
+public delegate bool GenericCastTriggerCondition(Card castCard);
+public delegate void GenericCastTriggerEffect(Card castCard);
 public delegate void TargetingEffect(Card target);
 
 public delegate void RegisterCastTriggerDelegate(CastTrigger trigger, Card referrer);

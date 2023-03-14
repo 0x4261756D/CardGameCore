@@ -973,9 +973,9 @@ class DuelCore : Core
 				{
 					foreach(GenericCastTrigger trigger in genericCastTriggers[card.uid])
 					{
-						if(trigger.condition())
+						if(trigger.condition(castCard: card))
 						{
-							trigger.effect();
+							trigger.effect(castCard: card);
 						}
 					}
 				}
