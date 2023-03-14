@@ -112,6 +112,8 @@ public abstract class Card
 	public static GetIgniteDamageDelegate GetIgniteDamage = (_) => -1;
 	public static ChangeIgniteDamageDelegate ChangeIgniteDamage = (_, _) => { };
 	public static GetTurnDelegate GetTurn = () => -1;
+	public static GetPlayerLifeDelegate GetPlayerLife = (_) => -1;
+	public static PayLifeDelegate PayLife = (_, _) => { };
 
 	public void ClearModifications()
 	{

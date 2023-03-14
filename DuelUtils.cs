@@ -162,6 +162,8 @@ public delegate bool AskYesNoDelegate(int player, string question);
 public delegate int GetIgniteDamageDelegate(int player);
 public delegate void ChangeIgniteDamageDelegate(int player, int amount);
 public delegate int GetTurnDelegate();
+public delegate int GetPlayerLifeDelegate(int player);
+public delegate void PayLifeDelegate(int player, int amount);
 
 public class LingeringEffectInfo
 {

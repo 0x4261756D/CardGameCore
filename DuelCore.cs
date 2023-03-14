@@ -107,6 +107,8 @@ class DuelCore : Core
 		Card.GetIgniteDamage = GetIgniteDamageImpl;
 		Card.ChangeIgniteDamage = ChangeIgniteDamageImpl;
 		Card.GetTurn = GetTurnImpl;
+		Card.GetPlayerLife = GetPlayerLifeImpl;
+		Card.PayLife = PayLifeImpl;
 	}
 
 	public override void Init()
@@ -991,6 +993,10 @@ class DuelCore : Core
 	{
 		return turn;
 	}
+	private int GetPlayerLifeImpl(int player)
+	{
+		return players[player].life;
+	}
 	private void DrawImpl(int player, int amount)
 	{
 		players[player].Draw(amount);
@@ -1162,6 +1168,11 @@ class DuelCore : Core
 		{
 			players[player].life += amount;
 		}
+	}
+	public void PayLifeImpl(int player, int amount)
+	{
+		players[player].life -= amount;
+		CheckIfLost(player);
 	}
 	public int GetIgniteDamageImpl(int player)
 	{
