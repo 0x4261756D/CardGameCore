@@ -13,10 +13,24 @@ class BurningTitan : Creature
 		OriginalLife: 8
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterKeyword(Keyword.Colossal, 1);
+		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: CostReductionEffect, referrer: this, influenceLocation: Location.Hand));
+		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: GainEffect), referrer: this);
+	}
+
+	private void GainEffect()
+	{
+		PlayerChangeLife(player: Controller, amount: 5);
+	}
+	private void CostReductionEffect(Card _)
+	{
+		if(GetTurn() > 0)
+		{
+			this.Cost -= GetDamageDealtXTurnsAgo(player: Controller, turns: 1);
+		}
 	}
 
 }
