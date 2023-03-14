@@ -109,6 +109,10 @@ class Field
 			Functions.Log($"Called CanMove for an empty position", severity: Functions.LogSeverity.Warning);
 			return false;
 		}
+		if(!card.CanMove)
+		{
+			return false;
+		}
 		int movementCost = 1 + card.Keywords.GetValueOrDefault(Keyword.Colossal, 0);
 		for(int i = Math.Max(0, position - (momentum / movementCost)); i < position; i++)
 		{
