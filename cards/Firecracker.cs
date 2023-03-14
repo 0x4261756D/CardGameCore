@@ -16,12 +16,7 @@ class Firecracker : Creature
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
-	}
-
-	private bool CastCondition()
-	{
-		return true;
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
 	}
 
 	public void CastEffect()

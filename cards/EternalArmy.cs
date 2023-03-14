@@ -15,7 +15,7 @@ class EternalArmy : Spell
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
 	}
 
 	public void CastEffect()
@@ -25,11 +25,6 @@ class EternalArmy : Spell
 			CreateToken(player: Controller, power: 5, life: 1, name: "Construct");
 		}
 		//Implement giving Death Trigger
-	}
-
-	public bool CastCondition()
-	{
-		return true;
 	}
 
 }

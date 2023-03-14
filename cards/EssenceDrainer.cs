@@ -16,7 +16,7 @@ class EssenceDrainer : Creature
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
 	}
 
 	public void CastEffect()
@@ -27,11 +27,6 @@ class EssenceDrainer : Creature
 			target.Power += count;
 			target.Life += count;
 		}, referrer: this));
-	}
-
-	public bool CastCondition()
-	{
-		return true;
 	}
 
 }

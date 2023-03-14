@@ -15,18 +15,13 @@ class DelveintoMadness : Spell
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
-		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect, CastCondition), referrer: this);
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
+		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect), referrer: this);
 	}
 
 	public void RevelationEffect()
 	{
 		Cast(Controller, this);
-	}
-
-	private bool CastCondition()
-	{
-		return true;
 	}
 
 	public void CastEffect()
