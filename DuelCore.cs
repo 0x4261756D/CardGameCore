@@ -65,7 +65,7 @@ class DuelCore : Core
 				Log($"Player {Program.config.duel_config.players[i].name} has no quest, {Program.config.duel_config.players[i].decklist[2]} is no suitable ability");
 				return;
 			}
-			Card quest = CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[2].Substring(1))!, i);
+			Quest quest = (Quest)CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[2].Substring(1))!, i);
 			for(int j = 3; j < Program.config.duel_config.players[i].decklist.Length; j++)
 			{
 				deck.Add(CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[j])!, i));

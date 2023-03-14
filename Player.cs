@@ -14,10 +14,12 @@ class Player
 	public string name;
 	public bool passed;
 	public GameConstants.PlayerClass playerClass;
-	public Card ability, quest;
+	public Card ability;
+	public Quest quest;
 	public int life, progress, momentum;
 	public int discardCountThisTurn = 0;
 	public int igniteDamage = 1;
+	public Player(CoreConfig.PlayerConfig config, int number, Deck deck, GameConstants.PlayerClass playerClass, Card ability, Quest quest)
 	{
 		this.deck = deck;
 		this.id = config.id;
