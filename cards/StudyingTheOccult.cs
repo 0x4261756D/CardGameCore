@@ -17,4 +17,9 @@ class StudyingtheOccult : Quest
 	{
 	}
 
+	public override void Reward()
+	{
+		throw new NotImplementedException();
+	}
+
 }

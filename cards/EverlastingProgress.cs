@@ -17,4 +17,9 @@ class EverlastingProgress : Quest
 	{
 	}
 
+	public override void Reward()
+	{
+		throw new NotImplementedException();
+	}
+
 }

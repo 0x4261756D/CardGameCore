@@ -17,4 +17,7 @@ class BurningPassion : Quest
 	{
 	}
 
+	public override void Reward()
+	{
+	}
 }

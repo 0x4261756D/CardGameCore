@@ -228,6 +228,18 @@ public abstract class Spell : Card
 
 public abstract class Quest : Card
 {
+	public int Progress
+	{
+		get => this.Position;
+		set => this.Position = value;
+	}
+	public int Goal
+	{
+		get => this.Cost;
+	}
+
+	public abstract void Reward();
+
 	public Quest(string Name, string Text, int ProgressGoal, GameConstants.PlayerClass CardClass) : base(
 		CardType: GameConstants.CardType.Quest,
 		CardClass: CardClass,
