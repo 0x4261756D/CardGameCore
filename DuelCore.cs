@@ -434,9 +434,21 @@ class DuelCore : Core
 						for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 						{
 							Card? c = player.field.GetByPosition(i);
-							if(c != null && c.Keywords.ContainsKey(Keyword.Brittle))
+							if(c != null)
 							{
-								DestroyImpl(c);
+								if(c.Keywords.ContainsKey(Keyword.Brittle))
+								{
+									DestroyImpl(c);
+								}
+								if(c.Keywords.ContainsKey(Keyword.Decaying))
+								{
+									c.BaseLife -= 1;
+									EvaluateLingeringEffects();
+									if(c.Life == 0)
+									{
+										DestroyImpl(c);
+									}
+								}
 							}
 						}
 					}
