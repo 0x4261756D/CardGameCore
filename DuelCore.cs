@@ -89,7 +89,6 @@ class DuelCore : Core
 		Card.GetGrave = GetGraveImpl;
 		Card.GetField = GetFieldImpl;
 		Card.GetFieldUsed = GetFieldUsedImpl;
-		Card.GetBothFieldsUsed = GetBothFieldsUsedImpl;
 		Card.GetHand = GetHandImpl;
 		Card.SelectCards = SelectCardsImpl;
 		Card.Discard = DiscardImpl;
@@ -1145,15 +1144,6 @@ class DuelCore : Core
 	public Card[] GetGraveImpl(int player)
 	{
 		return players[player].grave.GetAll();
-	}
-	public Card[] GetBothFieldsUsedImpl()
-	{
-		IEnumerable<Card> cards = new List<Card>();
-		foreach(Player player in players)
-		{
-			cards = cards.Concat(player.field.GetUsed());
-		}
-		return cards.ToArray();
 	}
 	public Card[] GetHandImpl(int player)
 	{

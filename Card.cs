@@ -94,7 +94,6 @@ public abstract class Card
 	public static GetCardsInLocationDelegate GetGrave = (_) => new Card[0];
 	public static GetWholeFieldDelegate GetField = (_) => new Card?[0];
 	public static GetCardsInLocationDelegate GetFieldUsed = (_) => new Card[0];
-	public static GetBothFieldsUsedDelegate GetBothFieldsUsed = () => new Card[0];
 	public static GetCardsInLocationDelegate GetHand = (_) => new Card[0];
 	public static SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
 	public static DiscardDelegate Discard = (_) => { };

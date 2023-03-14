@@ -147,7 +147,6 @@ public delegate void CastDelegate(int player, Card card);
 public delegate void DrawDelegate(int player, int amount);
 public delegate Card[] GetCardsInLocationDelegate(int player);
 public delegate Card?[] GetWholeFieldDelegate(int player);
-public delegate Card[] GetBothFieldsUsedDelegate();
 public delegate Card[] SelectCardsDelegate(int player, Card[] cards, int amount, string description);
 public delegate void DiscardDelegate(Card card);
 public delegate void DiscardAmountDelegate(int player, int amount);

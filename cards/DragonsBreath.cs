@@ -1,6 +1,7 @@
 //Scripted by Dotlof
 using CardGameCore;
 using static CardGameUtils.GameConstants;
+using static CardGameCore.CardUtils;
 
 class DragonsBreath : Spell
 {
@@ -19,8 +20,7 @@ class DragonsBreath : Spell
 
 	public void CastEffect()
 	{
-		Card[] cardsOnField = GetBothFieldsUsed();
-		foreach(Card card in cardsOnField)
+		foreach(Card card in GetForBoth(GetFieldUsed))
 		{
 			card.RegisterKeyword(Keyword.Decaying);
 			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: DebuffEffect, referrer: card));
@@ -34,7 +34,7 @@ class DragonsBreath : Spell
 
 	private bool CastCondition()
 	{
-		return GetBothFieldsUsed().Length > 0;
+		return GetForBoth(GetFieldUsed).Length > 0;
 	}
 
 }

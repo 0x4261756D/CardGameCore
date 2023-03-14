@@ -22,13 +22,13 @@ class BrilliantMedic : Creature
 
 	public void HealEffect()
 	{
-		if(!HasUsed(GetBothFieldsUsed()) || AskYesNo(player: Controller, question: "Heal player?"))
+		if(!HasUsed(GetForBoth(GetFieldUsed)) || AskYesNo(player: Controller, question: "Heal player?"))
 		{
 			PlayerChangeLife(player: AskYesNo(player: Controller, question: "Heal you?") ? Controller : 1 - Controller, amount: 4);
 		}
 		else
 		{
-			Card target = SelectCards(player: Controller, cards: GetBothFieldsUsed(), amount: 1, description: "Select healing target")[0];
+			Card target = SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Select healing target")[0];
 			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: HealCardEffect, referrer: target));
 		}
 	}
