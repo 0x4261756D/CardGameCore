@@ -11,13 +11,24 @@ class BurningPassion : Quest
 		ProgressGoal: 15
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterGenericCastTrigger(trigger: new GenericCastTrigger(effect: ProgressionEffect, condition: Condition), referrer: this);
+	}
+
+	public void ProgressionEffect(Card castCard)
+	{
+		this.Progress++;
+	}
+
+	public bool Condition(Card castCard)
+	{
+		return castCard.Name == "Ignite";
 	}
 
 	public override void Reward()
 	{
+		ChangeIgniteDamage(player: Controller, amount: 1);
 	}
 }
