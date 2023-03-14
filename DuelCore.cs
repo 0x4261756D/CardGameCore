@@ -47,6 +47,7 @@ class DuelCore : Core
 
 	public DuelCore()
 	{
+		RegisterScriptingFunctions();
 		sha = SHA384.Create();
 		players = new Player[Program.config.duel_config!.players.Length];
 		playerStreams = new NetworkStream[Program.config.duel_config.players.Length];
@@ -75,6 +76,38 @@ class DuelCore : Core
 		}
 	}
 
+	public void RegisterScriptingFunctions()
+	{
+		Card.RegisterCastTrigger = RegisterCastTriggerImpl;
+		Card.RegisterGenericCastTrigger = RegisterGenericCastTriggerImpl;
+		Card.RegisterRevelationTrigger = RegisterRevelationTriggerImpl;
+		Card.RegisterYouDiscardTrigger = RegisterYouDiscardTriggerImpl;
+		Card.RegisterStateReachedTrigger = RegisterStateReachedTriggerImpl;
+		Card.RegisterVictoriousTrigger = RegisterVictoriousTriggerImpl;
+		Card.RegisterLingeringEffect = RegisterLingeringEffectImpl;
+		Card.RegisterTemporaryLingeringEffect = RegisterTemporaryLingeringEffectImpl;
+		Card.GetGrave = GetGraveImpl;
+		Card.GetField = GetFieldImpl;
+		Card.GetFieldUsed = GetFieldUsedImpl;
+		Card.GetBothFieldsUsed = GetBothFieldsUsedImpl;
+		Card.GetHand = GetHandImpl;
+		Card.SelectCards = SelectCardsImpl;
+		Card.Discard = DiscardImpl;
+		Card.CreateToken = CreateTokenImpl;
+		Card.CreateTokenCopy = CreateTokenCopyImpl;
+		Card.GetDiscardCountXTurnsAgo = GetDiscardCountXTurnsAgoImpl;
+		Card.GetDamageDealtXTurnsAgo = GetDamageDealtXTurnsAgoImpl;
+		Card.PlayerChangeLife = PlayerChangeLifeImpl;
+		Card.PlayerChangeMomentum = PlayerChangeMomentumImpl;
+		Card.Cast = CastImpl;
+		Card.Draw = DrawImpl;
+		Card.Destroy = DestroyImpl;
+		Card.AskYesNo = AskYesNoImpl;
+		Card.GetIgniteDamage = GetIgniteDamageImpl;
+		Card.ChangeIgniteDamage = ChangeIgniteDamageImpl;
+		Card.GetTurn = GetTurnImpl;
+	}
+
 	public override void Init()
 	{
 		HandleNetworking();
@@ -94,34 +127,6 @@ class DuelCore : Core
 		c.uid = count;
 		count++;
 		c.Controller = controller;
-		c.RegisterCastTrigger = RegisterCastTriggerImpl;
-		c.RegisterGenericCastTrigger = RegisterGenericCastTriggerImpl;
-		c.RegisterRevelationTrigger = RegisterRevelationTriggerImpl;
-		c.RegisterYouDiscardTrigger = RegisterYouDiscardTriggerImpl;
-		c.RegisterStateReachedTrigger = RegisterStateReachedTriggerImpl;
-		c.RegisterVictoriousTrigger = RegisterVictoriousTriggerImpl;
-		c.RegisterLingeringEffect = RegisterLingeringEffectImpl;
-		c.RegisterTemporaryLingeringEffect = RegisterTemporaryLingeringEffectImpl;
-		c.GetGrave = GetGraveImpl;
-		c.GetField = GetFieldImpl;
-		c.GetFieldUsed = GetFieldUsedImpl;
-		c.GetBothFieldsUsed = GetBothFieldsUsedImpl;
-		c.GetHand = GetHandImpl;
-		c.SelectCards = SelectCardsImpl;
-		c.Discard = DiscardImpl;
-		c.CreateToken = CreateTokenImpl;
-		c.CreateTokenCopy = CreateTokenCopyImpl;
-		c.GetDiscardCountXTurnsAgo = GetDiscardCountXTurnsAgoImpl;
-		c.GetDamageDealtXTurnsAgo = GetDamageDealtXTurnsAgoImpl;
-		c.PlayerChangeLife = PlayerChangeLifeImpl;
-		c.PlayerChangeMomentum = PlayerChangeMomentumImpl;
-		c.Cast = CastImpl;
-		c.Draw = DrawImpl;
-		c.Destroy = DestroyImpl;
-		c.AskYesNo = AskYesNoImpl;
-		c.GetIgniteDamage = GetIgniteDamageImpl;
-		c.ChangeIgniteDamage = ChangeIgniteDamageImpl;
-		c.GetTurn = GetTurnImpl;
 		c.Init();
 		return c;
 	}

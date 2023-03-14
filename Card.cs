@@ -83,34 +83,34 @@ public abstract class Card
 		ClearModifications();
 	}
 
-	public RegisterCastTriggerDelegate RegisterCastTrigger = (_, _) => { };
-	public RegisterGenericCastTriggerDelegate RegisterGenericCastTrigger = (_, _) => { };
-	public RegisterRevelationTriggerDelegate RegisterRevelationTrigger = (_, _) => { };
-	public RegisterYouDiscardTriggerDelegate RegisterYouDiscardTrigger = (_, _) => { };
-	public RegisterStateReachedTriggerDelegate RegisterStateReachedTrigger = (_, _) => { };
-	public RegisterVictoriousTriggerDelegate RegisterVictoriousTrigger = (_, _) => { };
-	public RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
-	public RegisterTemporaryLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => { };
-	public GetCardsInLocationDelegate GetGrave = (_) => new Card[0];
-	public GetWholeFieldDelegate GetField = (_) => new Card?[0];
-	public GetCardsInLocationDelegate GetFieldUsed = (_) => new Card[0];
-	public GetBothFieldsUsedDelegate GetBothFieldsUsed = () => new Card[0];
-	public GetCardsInLocationDelegate GetHand = (_) => new Card[0];
-	public SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
-	public DiscardDelegate Discard = (_) => { };
-	public CreateTokenDelegate CreateToken = (_, _, _, _) => new ClientCoreDummyCard();
-	public CreateTokenCopyDelegate CreateTokenCopy = (_, _) => new ClientCoreDummyCard();
-	public GetDiscardCountXTurnsAgoDelegate GetDiscardCountXTurnsAgo = (_, _) => -1;
-	public GetDamageDealtXTurnsAgoDelegate GetDamageDealtXTurnsAgo = (_, _) => -1;
-	public PlayerChangeLifeDelegate PlayerChangeLife = (_, _) => { };
-	public PlayerChangeMomentumDelegate PlayerChangeMomentum = (_, _) => { };
-	public CastDelegate Cast = (_, _) => { };
-	public DrawDelegate Draw = (_, _) => { };
-	public DestroyDelegate Destroy = (_) => { };
-	public AskYesNoDelegate AskYesNo = (_, _) => false;
-	public GetIgniteDamageDelegate GetIgniteDamage = (_) => -1;
-	public ChangeIgniteDamageDelegate ChangeIgniteDamage = (_, _) => { };
-	public GetTurnDelegate GetTurn = () => -1;
+	public static RegisterCastTriggerDelegate RegisterCastTrigger = (_, _) => { };
+	public static RegisterGenericCastTriggerDelegate RegisterGenericCastTrigger = (_, _) => { };
+	public static RegisterRevelationTriggerDelegate RegisterRevelationTrigger = (_, _) => { };
+	public static RegisterYouDiscardTriggerDelegate RegisterYouDiscardTrigger = (_, _) => { };
+	public static RegisterStateReachedTriggerDelegate RegisterStateReachedTrigger = (_, _) => { };
+	public static RegisterVictoriousTriggerDelegate RegisterVictoriousTrigger = (_, _) => { };
+	public static RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
+	public static RegisterTemporaryLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => { };
+	public static GetCardsInLocationDelegate GetGrave = (_) => new Card[0];
+	public static GetWholeFieldDelegate GetField = (_) => new Card?[0];
+	public static GetCardsInLocationDelegate GetFieldUsed = (_) => new Card[0];
+	public static GetBothFieldsUsedDelegate GetBothFieldsUsed = () => new Card[0];
+	public static GetCardsInLocationDelegate GetHand = (_) => new Card[0];
+	public static SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
+	public static DiscardDelegate Discard = (_) => { };
+	public static CreateTokenDelegate CreateToken = (_, _, _, _) => new ClientCoreDummyCard();
+	public static CreateTokenCopyDelegate CreateTokenCopy = (_, _) => new ClientCoreDummyCard();
+	public static GetDiscardCountXTurnsAgoDelegate GetDiscardCountXTurnsAgo = (_, _) => -1;
+	public static GetDamageDealtXTurnsAgoDelegate GetDamageDealtXTurnsAgo = (_, _) => -1;
+	public static PlayerChangeLifeDelegate PlayerChangeLife = (_, _) => { };
+	public static PlayerChangeMomentumDelegate PlayerChangeMomentum = (_, _) => { };
+	public static CastDelegate Cast = (_, _) => { };
+	public static DrawDelegate Draw = (_, _) => { };
+	public static DestroyDelegate Destroy = (_) => { };
+	public static AskYesNoDelegate AskYesNo = (_, _) => false;
+	public static GetIgniteDamageDelegate GetIgniteDamage = (_) => -1;
+	public static ChangeIgniteDamageDelegate ChangeIgniteDamage = (_, _) => { };
+	public static GetTurnDelegate GetTurn = () => -1;
 
 	public void ClearModifications()
 	{
