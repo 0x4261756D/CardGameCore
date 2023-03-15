@@ -34,7 +34,7 @@ class DarkBolt : Spell
 		else
 		{
 			PlayerChangeLife(player: AskYesNo(player: Controller, question: "Damage opponent?") ? 1 - Controller : Controller, amount: 3);
-		}	
+		}
 	}
 
 	private void DamageEffect(Card target)
