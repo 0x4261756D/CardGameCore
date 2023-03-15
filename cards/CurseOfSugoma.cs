@@ -1,7 +1,7 @@
-// Scripted by Dotlof
+// Scripted by Dotlof and 0x4261756D
 using CardGameCore;
-using static CardGameUtils.GameConstants;
 using static CardGameCore.CardUtils;
+using static CardGameUtils.GameConstants;
 
 class CurseofSugoma : Spell
 {
@@ -12,11 +12,20 @@ class CurseofSugoma : Spell
 		Text: "{Cast}: Target creature gains +2/-1.\n{Discard}: Target creature gains decaying."
 		)
 	{ }
-	// TODO: implement Discard effect
 
 	public override void Init()
 	{
 		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
+		RegisterDiscardTrigger(trigger: new DiscardTrigger(effect: DiscardEffect, condition: DiscardCondition), referrer: this);
+	}
+
+	public void DiscardEffect()
+	{
+		SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Select card to inflict the Curse of Sugoma upon")[0].RegisterKeyword(Keyword.Decaying);
+	}
+	public bool DiscardCondition()
+	{
+		return HasUsed(GetBothWholeFields());
 	}
 
 	public void CastEffect()
