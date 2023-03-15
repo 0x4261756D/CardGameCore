@@ -117,6 +117,7 @@ public abstract class Card
 	public static GetPlayerLifeDelegate GetPlayerLife = (_) => -1;
 	public static PayLifeDelegate PayLife = (_, _) => { };
 	public static GatherDelegate Gather = (_, _) => { };
+	public static MoveDelegate Move = (_, _) => { };
 
 	public void ClearModifications()
 	{

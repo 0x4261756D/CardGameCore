@@ -115,6 +115,7 @@ class DuelCore : Core
 		Card.GetPlayerLife = GetPlayerLifeImpl;
 		Card.PayLife = PayLifeImpl;
 		Card.Gather = GatherImpl;
+		Card.Move = MoveImpl;
 	}
 
 	public override void Init()
@@ -892,8 +893,7 @@ class DuelCore : Core
 					{
 						int zone = SelectMovementZone(player, card.Position, players[player].momentum);
 						players[player].momentum -= Math.Abs(card.Position - zone) * card.CalculateMovementCost();
-						players[player].field.Move(card.Position, zone);
-						SendFieldUpdates();
+						MoveImpl(card, zone);
 					}
 				}
 				else
@@ -905,6 +905,12 @@ class DuelCore : Core
 			default:
 				throw new NotImplementedException($"TakeAction at {location}");
 		}
+	}
+
+	public void MoveImpl(Card card, int zone)
+	{
+		players[card.Controller].field.Move(card.Position, zone);
+		SendFieldUpdates();
 	}
 
 	private string[] GetCardActions(int player, int uid, GameConstants.Location location)
