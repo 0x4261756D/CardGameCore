@@ -13,10 +13,16 @@ class CrumblingGiant : Creature
 		OriginalLife: 4
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterKeyword(Keyword.Brittle);
+		RegisterDeathTrigger(trigger: new Trigger(DeathEffect), referrer: this);
+	}
+
+	public void DeathEffect()
+	{
+		PlayerChangeLife(player: Controller, amount: 5);
 	}
 
 }
