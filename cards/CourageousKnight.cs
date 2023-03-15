@@ -13,10 +13,15 @@ class CourageousKnight : Creature
 		OriginalLife: 1
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterGenericCastTrigger(trigger: new GenericCastTrigger(effect: BuffEffect), referrer: this);
+	}
+
+	public void BuffEffect(Card _)
+	{
+		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => Power++, referrer: this));
 	}
 
 }
