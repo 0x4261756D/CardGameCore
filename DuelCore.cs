@@ -292,6 +292,18 @@ class DuelCore : Core
 				}
 			}
 		}
+		foreach(Player player in players)
+		{
+			Card[] cards = player.field.GetUsed();
+			for(int i = cards.Length - 1; i >= 0; i--)
+			{
+				Card card = cards[i];
+				if(card.Life == 0)
+				{
+					DestroyImpl(card);
+				}
+			}
+		}
 	}
 
 	private bool HandleGameLogic()
@@ -428,7 +440,7 @@ class DuelCore : Core
 							EvaluateLingeringEffects();
 							if(card0.Life == 0)
 							{
-								players[0].Destroy(card0);
+								DestroyImpl(card0);
 								if(victoriousTriggers.ContainsKey(card1.uid))
 								{
 									foreach(Trigger trigger in victoriousTriggers[card1.uid])
@@ -442,7 +454,7 @@ class DuelCore : Core
 							}
 							if(card1.Life == 0)
 							{
-								players[1].Destroy(card1);
+								DestroyImpl(card1);
 								if(victoriousTriggers.ContainsKey(card0.uid))
 								{
 									foreach(Trigger trigger in victoriousTriggers[card0.uid])
