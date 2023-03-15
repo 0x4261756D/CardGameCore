@@ -86,7 +86,8 @@ public abstract class Card
 	public static RegisterCastTriggerDelegate RegisterCastTrigger = (_, _) => { };
 	public static RegisterGenericCastTriggerDelegate RegisterGenericCastTrigger = (_, _) => { };
 	public static RegisterRevelationTriggerDelegate RegisterRevelationTrigger = (_, _) => { };
-	public static RegisterYouDiscardTriggerDelegate RegisterYouDiscardTrigger = (_, _) => { };
+	public static RegisterDiscardTriggerDelegate RegisterYouDiscardTrigger = (_, _) => { };
+	public static RegisterDiscardTriggerDelegate RegisterDiscardTrigger = (_, _) => { };
 	public static RegisterStateReachedTriggerDelegate RegisterStateReachedTrigger = (_, _) => { };
 	public static RegisterVictoriousTriggerDelegate RegisterVictoriousTrigger = (_, _) => { };
 	public static RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };

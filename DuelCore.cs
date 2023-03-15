@@ -40,7 +40,8 @@ class DuelCore : Core
 	private Dictionary<int, List<GenericCastTrigger>> genericCastTriggers = new Dictionary<int, List<GenericCastTrigger>>();
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
 	private Dictionary<int, List<Trigger>> victoriousTriggers = new Dictionary<int, List<Trigger>>();
-	private Dictionary<int, List<YouDiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<YouDiscardTrigger>>();
+	private Dictionary<int, List<DiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<DiscardTrigger>>();
+	private Dictionary<int, List<DiscardTrigger>> discardTriggers = new Dictionary<int, List<DiscardTrigger>>();
 	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new Dictionary<int, List<StateReachedTrigger>>();
 	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
 	private Dictionary<int, List<LingeringEffectInfo>> temporaryLingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
@@ -82,6 +83,7 @@ class DuelCore : Core
 		Card.RegisterGenericCastTrigger = RegisterGenericCastTriggerImpl;
 		Card.RegisterRevelationTrigger = RegisterRevelationTriggerImpl;
 		Card.RegisterYouDiscardTrigger = RegisterYouDiscardTriggerImpl;
+		Card.RegisterDiscardTrigger = RegisterDiscardTriggerImpl;
 		Card.RegisterStateReachedTrigger = RegisterStateReachedTriggerImpl;
 		Card.RegisterVictoriousTrigger = RegisterVictoriousTriggerImpl;
 		Card.RegisterLingeringEffect = RegisterLingeringEffectImpl;
@@ -1093,13 +1095,21 @@ class DuelCore : Core
 		}
 		revelationTriggers[referrer.uid].Add(trigger);
 	}
-	public void RegisterYouDiscardTriggerImpl(YouDiscardTrigger trigger, Card referrer)
+	public void RegisterYouDiscardTriggerImpl(DiscardTrigger trigger, Card referrer)
 	{
 		if(!youDiscardTriggers.ContainsKey(referrer.uid))
 		{
-			youDiscardTriggers[referrer.uid] = new List<YouDiscardTrigger>();
+			youDiscardTriggers[referrer.uid] = new List<DiscardTrigger>();
 		}
 		youDiscardTriggers[referrer.uid].Add(trigger);
+	}
+	public void RegisterDiscardTriggerImpl(DiscardTrigger trigger, Card referrer)
+	{
+		if(!discardTriggers.ContainsKey(referrer.uid))
+		{
+			discardTriggers[referrer.uid] = new List<DiscardTrigger>();
+		}
+		discardTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterStateReachedTriggerImpl(StateReachedTrigger trigger, Card referrer)
 	{
@@ -1227,13 +1237,23 @@ class DuelCore : Core
 		}
 		players[card.Controller].Discard(card);
 		players[card.Controller].discardCounts[turn]++;
+		if(discardTriggers.ContainsKey(card.uid))
+		{
+			foreach(DiscardTrigger trigger in discardTriggers[card.uid])
+			{
+				if(trigger.condition())
+				{
+					trigger.effect();
+				}
+			}
+		}
 		if(youDiscardTriggers.Count > 0)
 		{
 			foreach(Player player in players)
 			{
 				if(youDiscardTriggers.ContainsKey(player.quest.uid))
 				{
-					foreach(YouDiscardTrigger trigger in youDiscardTriggers[player.quest.uid])
+					foreach(DiscardTrigger trigger in youDiscardTriggers[player.quest.uid])
 					{
 						if(!rewardClaimed && trigger.condition())
 						{
@@ -1251,7 +1271,7 @@ class DuelCore : Core
 				{
 					if(youDiscardTriggers.ContainsKey(c.uid))
 					{
-						foreach(YouDiscardTrigger trigger in youDiscardTriggers[c.uid])
+						foreach(DiscardTrigger trigger in youDiscardTriggers[c.uid])
 						{
 							if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
 							{
@@ -1264,7 +1284,7 @@ class DuelCore : Core
 				{
 					if(c != null && youDiscardTriggers.ContainsKey(c.uid))
 					{
-						foreach(YouDiscardTrigger trigger in youDiscardTriggers[c.uid])
+						foreach(DiscardTrigger trigger in youDiscardTriggers[c.uid])
 						{
 							if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition())
 							{
