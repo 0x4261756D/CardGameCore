@@ -144,6 +144,7 @@ public delegate void RegisterVictoriousTriggerDelegate(Trigger trigger, Card ref
 public delegate void RegisterDeathTriggerDelegate(Trigger trigger, Card referrer);
 public delegate void RegisterLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate void RegisterTemporaryLingeringEffectDelegate(LingeringEffectInfo info);
+public delegate void RegisterActivatedEffectDelegate(ActivatedEffectInfo info);
 public delegate void CastDelegate(int player, Card card);
 public delegate void DrawDelegate(int player, int amount);
 public delegate Card[] GetCardsInLocationDelegate(int player);
@@ -177,6 +178,33 @@ public class LingeringEffectInfo
 		this.effect = effect;
 		this.referrer = referrer;
 		this.influenceLocation = influenceLocation;
+	}
+}
+
+
+public delegate bool ActivatedEffectCondition();
+public class ActivatedEffectInfo
+{
+	public ActivatedEffectCondition condition;
+	public Effect effect;
+	public string name;
+	public GameConstants.Location influenceLocation;
+	public Card referrer;
+	public int uses = 0, maxUses;
+
+	public ActivatedEffectInfo(string name, Effect effect, ActivatedEffectCondition condition, Card referrer, int maxUses = 1, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	{
+		this.condition = condition;
+		this.effect = effect;
+		this.name = name;
+		this.influenceLocation = influenceLocation;
+		this.referrer = referrer;
+		this.maxUses = maxUses;
+	}
+
+	public ActivatedEffectInfo(string name, Effect effect, Card referrer, int maxUses = 1, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+		: this(name, effect, () => true, referrer, maxUses, influenceLocation)
+	{
 	}
 }
 

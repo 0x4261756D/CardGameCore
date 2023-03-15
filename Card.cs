@@ -93,6 +93,7 @@ public abstract class Card
 	public static RegisterDeathTriggerDelegate RegisterDeathTrigger = (_, _) => { };
 	public static RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
 	public static RegisterTemporaryLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => { };
+	public static RegisterActivatedEffectDelegate RegisterActivatedEffect = (_) => { };
 	public static GetCardsInLocationDelegate GetGrave = (_) => new Card[0];
 	public static GetWholeFieldDelegate GetField = (_) => new Card?[0];
 	public static GetCardsInLocationDelegate GetFieldUsed = (_) => new Card[0];

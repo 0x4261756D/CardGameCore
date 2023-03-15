@@ -46,6 +46,7 @@ class DuelCore : Core
 	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new Dictionary<int, List<StateReachedTrigger>>();
 	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
 	private Dictionary<int, List<LingeringEffectInfo>> temporaryLingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
+	private Dictionary<int, List<ActivatedEffectInfo>> activatedEffects = new Dictionary<int, List<ActivatedEffectInfo>>();
 
 	public DuelCore()
 	{
@@ -90,6 +91,7 @@ class DuelCore : Core
 		Card.RegisterDeathTrigger = RegisterDeathTriggerImpl;
 		Card.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		Card.RegisterTemporaryLingeringEffect = RegisterTemporaryLingeringEffectImpl;
+		Card.RegisterActivatedEffect = RegisterActivatedEffectImpl;
 		Card.GetGrave = GetGraveImpl;
 		Card.GetField = GetFieldImpl;
 		Card.GetFieldUsed = GetFieldUsedImpl;
@@ -389,6 +391,13 @@ class DuelCore : Core
 						player.discardCounts.Add(0);
 						player.dealtDamages.Add(0);
 						player.momentum = momentumBase;
+					}
+					foreach(KeyValuePair<int, List<ActivatedEffectInfo>> lists in activatedEffects)
+					{
+						foreach(ActivatedEffectInfo list in lists.Value)
+						{
+							list.uses = 0;
+						}
 					}
 					initPlayer = turnPlayer;
 					ProcessStateReachedTriggers();
@@ -821,6 +830,20 @@ class DuelCore : Core
 			return;
 		}
 		players[player].passed = false;
+		if(activatedEffects.ContainsKey(uid))
+		{
+			foreach(ActivatedEffectInfo info in activatedEffects[uid])
+			{
+				if(info.influenceLocation.HasFlag(location) && option == info.name)
+				{
+					info.effect();
+					info.uses++;
+					SendFieldUpdates();
+					EvaluateLingeringEffects();
+					return;
+				}
+			}
+		}
 		switch(location)
 		{
 			case GameConstants.Location.Hand:
@@ -891,6 +914,16 @@ class DuelCore : Core
 			return new string[0];
 		}
 		List<string> options = new List<string>();
+		if(activatedEffects.ContainsKey(uid))
+		{
+			foreach(ActivatedEffectInfo info in activatedEffects[uid])
+			{
+				if(info.uses < info.maxUses && info.influenceLocation.HasFlag(location) && info.referrer.Location == location && info.condition())
+				{
+					options.Add(info.name);
+				}
+			}
+		}
 		switch(location)
 		{
 			case GameConstants.Location.Hand:
@@ -1168,6 +1201,14 @@ class DuelCore : Core
 			temporaryLingeringEffects[info.referrer.uid] = new List<LingeringEffectInfo>();
 		}
 		temporaryLingeringEffects[info.referrer.uid].Add(info);
+	}
+	public void RegisterActivatedEffectImpl(ActivatedEffectInfo info)
+	{
+		if(!activatedEffects.ContainsKey(info.referrer.uid))
+		{
+			activatedEffects[info.referrer.uid] = new List<ActivatedEffectInfo>();
+		}
+		activatedEffects[info.referrer.uid].Add(info);
 	}
 	public void RegisterVictoriousTriggerImpl(Trigger info, Card referrer)
 	{
