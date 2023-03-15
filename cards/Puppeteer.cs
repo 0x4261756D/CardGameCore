@@ -20,7 +20,8 @@ class Pupeteer : Creature
 		RegisterActivatedEffect(info: new ActivatedEffectInfo(name: "Move one of your creatures", effect: MoveEffect, condition: MoveCondition, referrer: this));
 	}
 
-	private bool MoveCondition(){
+	private bool MoveCondition()
+	{
 		return HasUsed(GetField(Controller));
 	}
 
