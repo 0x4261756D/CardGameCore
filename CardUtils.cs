@@ -16,6 +16,10 @@ public class CardUtils
 	{
 		return accessor(0).Concat(accessor(1)).ToArray();
 	}
+	public static Card?[] GetBothWholeFields()
+	{
+		return Card.GetField(0).Concat(Card.GetField(1)).ToArray();
+	}
 
 	public delegate bool IsValid(Card card);
 	public static bool ContainsValid(Card[] cards, IsValid isValid)
