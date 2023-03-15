@@ -16,7 +16,7 @@ class AcolyteofMadness : Creature
 
 	public override void Init()
 	{
-		RegisterYouDiscardTrigger(trigger: new YouDiscardTrigger(effect: DiscardEffect), referrer: this);
+		RegisterYouDiscardTrigger(trigger: new DiscardTrigger(effect: DiscardEffect), referrer: this);
 	}
 
 	public void DiscardEffect()
