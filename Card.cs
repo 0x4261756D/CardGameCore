@@ -90,6 +90,7 @@ public abstract class Card
 	public static RegisterDiscardTriggerDelegate RegisterDiscardTrigger = (_, _) => { };
 	public static RegisterStateReachedTriggerDelegate RegisterStateReachedTrigger = (_, _) => { };
 	public static RegisterVictoriousTriggerDelegate RegisterVictoriousTrigger = (_, _) => { };
+	public static RegisterDeathTriggerDelegate RegisterDeathTrigger = (_, _) => { };
 	public static RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
 	public static RegisterTemporaryLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => { };
 	public static GetCardsInLocationDelegate GetGrave = (_) => new Card[0];

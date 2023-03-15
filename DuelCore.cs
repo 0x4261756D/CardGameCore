@@ -40,6 +40,7 @@ class DuelCore : Core
 	private Dictionary<int, List<GenericCastTrigger>> genericCastTriggers = new Dictionary<int, List<GenericCastTrigger>>();
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
 	private Dictionary<int, List<Trigger>> victoriousTriggers = new Dictionary<int, List<Trigger>>();
+	private Dictionary<int, List<Trigger>> deathTriggers = new Dictionary<int, List<Trigger>>();
 	private Dictionary<int, List<DiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<DiscardTrigger>>();
 	private Dictionary<int, List<DiscardTrigger>> discardTriggers = new Dictionary<int, List<DiscardTrigger>>();
 	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new Dictionary<int, List<StateReachedTrigger>>();
@@ -86,6 +87,7 @@ class DuelCore : Core
 		Card.RegisterDiscardTrigger = RegisterDiscardTriggerImpl;
 		Card.RegisterStateReachedTrigger = RegisterStateReachedTriggerImpl;
 		Card.RegisterVictoriousTrigger = RegisterVictoriousTriggerImpl;
+		Card.RegisterDeathTrigger = RegisterDeathTriggerImpl;
 		Card.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		Card.RegisterTemporaryLingeringEffect = RegisterTemporaryLingeringEffectImpl;
 		Card.GetGrave = GetGraveImpl;
@@ -1143,6 +1145,14 @@ class DuelCore : Core
 		}
 		victoriousTriggers[referrer.uid].Add(info);
 	}
+	public void RegisterDeathTriggerImpl(Trigger info, Card referrer)
+	{
+		if(!deathTriggers.ContainsKey(referrer.uid))
+		{
+			deathTriggers[referrer.uid] = new List<Trigger>();
+		}
+		deathTriggers[referrer.uid].Add(info);
+	}
 	public Card?[] GetFieldImpl(int player)
 	{
 		return players[player].field.GetAll();
@@ -1200,6 +1210,16 @@ class DuelCore : Core
 	{
 		temporaryLingeringEffects.Remove(card.uid);
 		players[card.Controller].Destroy(card);
+		if(deathTriggers.ContainsKey(card.uid))
+		{
+			foreach(Trigger trigger in deathTriggers[card.uid])
+			{
+				if(trigger.condition())
+				{
+					trigger.effect();
+				}
+			}
+		}
 	}
 	public Card[] SelectCardsImpl(int player, Card[] cards, int amount, string description)
 	{
