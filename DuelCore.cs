@@ -936,19 +936,11 @@ class DuelCore : Core
 				}
 			}
 			break;
-			case GameConstants.Location.Quest:
-			{
-				if(players[player].quest.Position >= players[player].quest.Cost)
-				{
-					options.Add("Activate");
-				}
-			}
-			break;
 			case GameConstants.Location.Ability:
 			{
 				if(players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
 				{
-					options.Add("Activate");
+					options.Add("Use");
 				}
 			}
 			break;
