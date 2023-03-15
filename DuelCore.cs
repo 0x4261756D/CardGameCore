@@ -267,6 +267,29 @@ class DuelCore : Core
 					}
 				}
 			}
+			foreach(Card card in player.hand.GetAll())
+			{
+				if(lingeringEffects.ContainsKey(card.uid))
+				{
+					foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
+					{
+						if(info.influenceLocation.HasFlag(card.Location))
+						{
+							info.effect(info.referrer);
+						}
+					}
+				}
+				if(temporaryLingeringEffects.ContainsKey(card.uid))
+				{
+					foreach(LingeringEffectInfo info in temporaryLingeringEffects[card.uid])
+					{
+						if(info.influenceLocation.HasFlag(card.Location))
+						{
+							info.effect(info.referrer);
+						}
+					}
+				}
+			}
 			foreach(Card card in player.field.GetUsed())
 			{
 				if(lingeringEffects.ContainsKey(card.uid))
@@ -288,7 +311,6 @@ class DuelCore : Core
 							info.effect(info.referrer);
 						}
 					}
-
 				}
 			}
 		}
