@@ -167,6 +167,7 @@ public delegate int GetPlayerLifeDelegate(int player);
 public delegate void PayLifeDelegate(int player, int amount);
 public delegate void GatherDelegate(int player, int amount);
 public delegate void MoveDelegate(Card card, int zone);
+public delegate int SelectZoneDelegate(int choosingPlayer, int targetPlayer);
 
 public class LingeringEffectInfo
 {

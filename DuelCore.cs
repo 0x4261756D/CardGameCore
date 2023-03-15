@@ -116,6 +116,7 @@ class DuelCore : Core
 		Card.PayLife = PayLifeImpl;
 		Card.Gather = GatherImpl;
 		Card.Move = MoveImpl;
+		Card.SelectZone = SelectZoneImpl;
 	}
 
 	public override void Init()
@@ -1074,7 +1075,7 @@ class DuelCore : Core
 		{
 			case GameConstants.CardType.Creature:
 			{
-				players[player].CastCreature(card, SelectZoneImpl(player));
+				players[player].CastCreature(card, SelectZoneImpl(player, player));
 			}
 			break;
 			case GameConstants.CardType.Spell:
@@ -1394,7 +1395,7 @@ class DuelCore : Core
 		{
 			throw new Exception($"Tried to create a token but the field is full");
 		}
-		int zone = SelectZoneImpl(player);
+		int zone = SelectZoneImpl(player, player);
 		Token token = new Token
 		(
 			Name: name,
@@ -1412,23 +1413,33 @@ class DuelCore : Core
 		{
 			throw new Exception($"Tried to create a token but the field is full");
 		}
-		int zone = SelectZoneImpl(player);
+		int zone = SelectZoneImpl(choosingPlayer: player, targetPlayer: player);
 		Card token = CreateBasicCard(card.GetType(), player);
 		token.RegisterKeyword(Keyword.Token);
 		players[player].field.Add(token, zone);
 		return token;
 	}
-	public int SelectZoneImpl(int player)
+	public int SelectZoneImpl(int choosingPlayer, int targetPlayer)
 	{
+		bool[] options = players[targetPlayer].field.GetPlacementOptions();
+		if(choosingPlayer != targetPlayer)
+		{
+			options = options.Reverse().ToArray();
+		}
 		SendPacketToPlayer<DuelPackets.SelectZoneRequest>(new DuelPackets.SelectZoneRequest
 		{
-			options = players[player].field.GetPlacementOptions(),
-		}, player);
-		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
+			options = options,
+		}, choosingPlayer);
+		int zone = ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(choosingPlayer).zone;
+		if(choosingPlayer != targetPlayer)
+		{
+			zone = GameConstants.FIELD_SIZE - zone - 1;
+		}
+		return zone;
 	}
 	public int GetDiscardCountXTurnsAgoImpl(int player, int turns)
 	{
-		if(turn < turns)
+		if(turn < turns || players[player].discardCounts.Count <= turn - turns)
 		{
 			Log($"Attempted to get discard count before the game began ({turn - turns}) for player {players[player].name}", severity: LogSeverity.Warning);
 			return 0;
@@ -1438,7 +1449,7 @@ class DuelCore : Core
 
 	public int GetDamageDealtXTurnsAgoImpl(int player, int turns)
 	{
-		if(turn < turns)
+		if(turn < turns || players[player].dealtDamages.Count <= turn - turns)
 		{
 			Log($"Attempted to get damage dealt before the game began ({turn - turns}) for player {players[player].name}", severity: LogSeverity.Warning);
 			return 0;
