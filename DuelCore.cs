@@ -267,30 +267,28 @@ class DuelCore : Core
 					}
 				}
 			}
-			foreach(Card? card in player.field.GetAll())
+			foreach(Card card in player.field.GetUsed())
 			{
-				if(card != null)
+				if(lingeringEffects.ContainsKey(card.uid))
 				{
-					if(lingeringEffects.ContainsKey(card.uid))
+					foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
 					{
-						foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
+						if(info.influenceLocation.HasFlag(card.Location))
 						{
-							if(info.influenceLocation.HasFlag(card.Location))
-							{
-								info.effect(info.referrer);
-							}
+							info.effect(info.referrer);
 						}
 					}
-					if(temporaryLingeringEffects.ContainsKey(card.uid))
+				}
+				if(temporaryLingeringEffects.ContainsKey(card.uid))
+				{
+					foreach(LingeringEffectInfo info in temporaryLingeringEffects[card.uid])
 					{
-						foreach(LingeringEffectInfo info in temporaryLingeringEffects[card.uid])
+						if(info.influenceLocation.HasFlag(card.Location))
 						{
-							if(info.influenceLocation.HasFlag(card.Location))
-							{
-								info.effect(info.referrer);
-							}
+							info.effect(info.referrer);
 						}
 					}
+
 				}
 			}
 		}
