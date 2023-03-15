@@ -11,10 +11,22 @@ class CursedbyGreed : Spell
 		Text: "{Cast}: Pay 3 life. Draw 1.\n{Discard}: Draw 2."
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
+		RegisterDiscardTrigger(trigger: new DiscardTrigger(effect: DiscardEffect), referrer: this);
+	}
+
+	public void DiscardEffect()
+	{
+		Draw(player: Controller, amount: 2);
+	}
+
+	public void CastEffect()
+	{
+		PayLife(player: Controller, amount: 3);
+		Draw(player: Controller, amount: 1);
 	}
 
 }
