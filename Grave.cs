@@ -29,4 +29,9 @@ class Grave
 	{
 		return cards.ToArray();
 	}
+
+	internal void Remove(Card card)
+	{
+		cards.Remove(card);
+	}
 }

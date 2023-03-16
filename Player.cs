@@ -17,8 +17,9 @@ class Player
 	public Card ability;
 	public Quest quest;
 	public int life, progress, momentum;
-	public List<int> discardCounts = new List<int>(), dealtDamages = new List<int>();
-	public int igniteDamage = 1;
+	public List<int> discardCounts = new List<int>(), dealtDamages = new List<int>(), brittleDeathCounts = new List<int>();
+	public int baseIgniteDamage = 1, igniteDamage;
+	public Dictionary<string, int> castCounts = new Dictionary<string, int>();
 	public Player(CoreConfig.PlayerConfig config, int number, Deck deck, GameConstants.PlayerClass playerClass, Card ability, Quest quest)
 	{
 		this.deck = deck;
@@ -51,6 +52,7 @@ class Player
 
 	internal void ClearCardModifications()
 	{
+		igniteDamage = baseIgniteDamage;
 		hand.ClearCardModifications();
 		field.ClearCardModifications();
 	}
