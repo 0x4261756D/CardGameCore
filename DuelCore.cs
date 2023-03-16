@@ -41,6 +41,7 @@ class DuelCore : Core
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
 	private Dictionary<int, List<Trigger>> victoriousTriggers = new Dictionary<int, List<Trigger>>();
 	private Dictionary<int, List<Trigger>> deathTriggers = new Dictionary<int, List<Trigger>>();
+	private Dictionary<int, List<GenericDeathTrigger>> genericDeathTriggers = new Dictionary<int, List<GenericDeathTrigger>>();
 	private Dictionary<int, List<DiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<DiscardTrigger>>();
 	private Dictionary<int, List<DiscardTrigger>> discardTriggers = new Dictionary<int, List<DiscardTrigger>>();
 	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new Dictionary<int, List<StateReachedTrigger>>();
@@ -89,6 +90,7 @@ class DuelCore : Core
 		Card.RegisterStateReachedTrigger = RegisterStateReachedTriggerImpl;
 		Card.RegisterVictoriousTrigger = RegisterVictoriousTriggerImpl;
 		Card.RegisterDeathTrigger = RegisterDeathTriggerImpl;
+		Card.RegisterGenericDeathTrigger = RegisterGenericDeathTriggerImpl;
 		Card.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		Card.RegisterTemporaryLingeringEffect = RegisterTemporaryLingeringEffectImpl;
 		Card.RegisterActivatedEffect = RegisterActivatedEffectImpl;
@@ -1225,6 +1227,14 @@ class DuelCore : Core
 		}
 		deathTriggers[referrer.uid].Add(info);
 	}
+	public void RegisterGenericDeathTriggerImpl(GenericDeathTrigger info, Card referrer)
+	{
+		if(!genericDeathTriggers.ContainsKey(referrer.uid))
+		{
+			genericDeathTriggers[referrer.uid] = new List<GenericDeathTrigger>();
+		}
+		genericDeathTriggers[referrer.uid].Add(info);
+	}
 	public Card?[] GetFieldImpl(int player)
 	{
 		return players[player].field.GetAll();
@@ -1289,6 +1299,32 @@ class DuelCore : Core
 				if(trigger.condition())
 				{
 					trigger.effect();
+				}
+			}
+		}
+		foreach(Player player in players)
+		{
+			if(genericDeathTriggers.ContainsKey(player.quest.uid))
+			{
+				foreach(GenericDeathTrigger trigger in genericDeathTriggers[player.quest.uid])
+				{
+					if(trigger.condition(destroyedCard: card))
+					{
+						trigger.effect(destroyedCard: card);
+					}
+				}
+			}
+			foreach(Card fieldCard in player.field.GetUsed())
+			{
+				if(genericDeathTriggers.ContainsKey(fieldCard.uid))
+				{
+					foreach(GenericDeathTrigger trigger in genericDeathTriggers[player.quest.uid])
+					{
+						if(trigger.condition(destroyedCard: card))
+						{
+							trigger.effect(destroyedCard: card);
+						}
+					}
 				}
 			}
 		}

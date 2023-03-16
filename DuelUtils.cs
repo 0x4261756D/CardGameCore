@@ -129,10 +129,25 @@ public class GenericCastTrigger : Trigger
 	}
 }
 
+public class GenericDeathTrigger : Trigger
+{
+	public new GenericDeathTriggerCondition condition;
+	public new GenericDeathTriggerEffect effect;
+
+	public GenericDeathTrigger(GenericDeathTriggerEffect effect, GenericDeathTriggerCondition condition)
+	{
+		this.effect = effect;
+		this.condition = condition;
+	}
+	public GenericDeathTrigger(GenericDeathTriggerEffect effect) : this(effect, (_) => true) {}
+}
+
 public delegate bool TriggerCondition();
 public delegate void Effect();
 public delegate bool GenericCastTriggerCondition(Card castCard);
 public delegate void GenericCastTriggerEffect(Card castCard);
+public delegate bool GenericDeathTriggerCondition(Card destroyedCard);
+public delegate void GenericDeathTriggerEffect(Card destroyedCard);
 public delegate void TargetingEffect(Card target);
 
 public delegate void RegisterCastTriggerDelegate(CastTrigger trigger, Card referrer);
@@ -142,6 +157,7 @@ public delegate void RegisterDiscardTriggerDelegate(DiscardTrigger trigger, Card
 public delegate void RegisterStateReachedTriggerDelegate(StateReachedTrigger trigger, Card referrer);
 public delegate void RegisterVictoriousTriggerDelegate(Trigger trigger, Card referrer);
 public delegate void RegisterDeathTriggerDelegate(Trigger trigger, Card referrer);
+public delegate void RegisterGenericDeathTriggerDelegate(GenericDeathTrigger trigger, Card referrer);
 public delegate void RegisterLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate void RegisterTemporaryLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate void RegisterActivatedEffectDelegate(ActivatedEffectInfo info);
