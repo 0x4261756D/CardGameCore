@@ -9,7 +9,7 @@ class BrilliantMedic : Creature
 		Name: "Brilliant Medic",
 		CardClass: PlayerClass.All,
 		OriginalCost: 2,
-		Text: "{Cast}: Heal target creature or player by 4.",
+		Text: "{Cast}: Heal target any target by 4.",
 		OriginalPower: 2,
 		OriginalLife: 3
 		)
@@ -22,19 +22,6 @@ class BrilliantMedic : Creature
 
 	public void HealEffect()
 	{
-		if(!HasUsed(GetForBoth(GetFieldUsed)) || AskYesNo(player: Controller, question: "Heal player?"))
-		{
-			PlayerChangeLife(player: AskYesNo(player: Controller, question: "Heal you?") ? Controller : 1 - Controller, amount: 4);
-		}
-		else
-		{
-			Card target = SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Select healing target")[0];
-			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: HealCardEffect, referrer: target));
-		}
-	}
-
-	public void HealCardEffect(Card target)
-	{
-		target.Life += 4;
+		ChangeLifeOfAnyTarget(player: Controller, amount: 4, description: "Heal");
 	}
 }

@@ -26,19 +26,6 @@ class DarkBolt : Spell
 
 	private void CastEffect()
 	{
-		if(HasUsed(GetBothWholeFields()) && AskYesNo(player: Controller, question: "Target a creature?"))
-		{
-			Card target = SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Select target")[0];
-			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: DamageEffect, referrer: target));
-		}
-		else
-		{
-			PlayerChangeLife(player: AskYesNo(player: Controller, question: "Damage opponent?") ? 1 - Controller : Controller, amount: 3);
-		}
-	}
-
-	private void DamageEffect(Card target)
-	{
-		target.Life -= 3;
+		ChangeLifeOfAnyTarget(player: Controller, amount: -3, description: "Bolt");
 	}
 }

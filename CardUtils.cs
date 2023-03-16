@@ -1,5 +1,5 @@
 namespace CardGameCore;
-
+using static CardGameUtils.Functions;
 public class CardUtils
 {
 	public static bool HasEmpty(Card?[] cards)
@@ -29,5 +29,19 @@ public class CardUtils
 	public static Card[] FilterValid(Card[] cards, IsValid isValid)
 	{
 		return cards.Where(x => isValid(x)).ToArray();
+	}
+
+	public static void ChangeLifeOfAnyTarget(int player, int amount, string description = "Change life of")
+	{
+		Card[] fields = GetForBoth(Card.GetFieldUsed);
+		if(fields.Length > 0 && Card.AskYesNo(player: player, question: description + " a creature?"))
+		{
+			Card target = Card.SelectCards(player: player, cards: fields, amount: 1, description: "Select target to " + description.ToLower())[0];
+			Card.RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => target.Life += amount, referrer: target));
+		}
+		else
+		{
+			Card.PlayerChangeLife(player: Card.AskYesNo(player: player, question: description + " the opponent?") ? 1 - player : player, amount: amount);
+		}
 	}
 }
