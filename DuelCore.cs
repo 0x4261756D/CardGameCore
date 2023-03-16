@@ -342,6 +342,7 @@ class DuelCore : Core
 		{
 			if(state != GameConstants.State.UNINITIALIZED)
 			{
+				EvaluateLingeringEffects();
 				foreach(Player player in players)
 				{
 					if(player.life <= 0)
@@ -350,7 +351,6 @@ class DuelCore : Core
 					}
 				}
 			}
-			EvaluateLingeringEffects();
 			switch(state)
 			{
 				case GameConstants.State.UNINITIALIZED:
@@ -366,6 +366,9 @@ class DuelCore : Core
 						player.life = GameConstants.START_LIFE;
 						player.progress = 0;
 					}
+					turnPlayer = rnd.Next(100) / 50;
+					initPlayer = turnPlayer;
+					turn = 0;
 					SendFieldUpdates();
 					// Mulligan
 					for(int i = 0; i < players.Length; i++)
@@ -383,8 +386,6 @@ class DuelCore : Core
 							SendFieldUpdates();
 						}
 					}
-					turnPlayer = rnd.Next(100) / 50;
-					turn = 0;
 					state = GameConstants.State.TurnStart;
 				}
 				break;
