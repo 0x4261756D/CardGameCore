@@ -121,7 +121,7 @@ public abstract class Card
 	public static GetTurnDelegate GetTurn = () => -1;
 	public static GetPlayerLifeDelegate GetPlayerLife = (_) => -1;
 	public static PayLifeDelegate PayLife = (_, _) => { };
-	public static GatherDelegate Gather = (_, _) => { };
+	public static GatherDelegate Gather = (_, _) => new ClientCoreDummyCard();
 	public static MoveDelegate Move = (_, _) => { };
 	public static SelectZoneDelegate SelectZone = (_, _) => -1;
 	public static AddToHandDelegate AddToHand = (_, _) => { };

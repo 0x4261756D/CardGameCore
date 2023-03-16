@@ -1340,13 +1340,14 @@ class DuelCore : Core
 			players[player].life += amount;
 		}
 	}
-	public void GatherImpl(int player, int amount)
+	public Card GatherImpl(int player, int amount)
 	{
 		Card[] possibleCards = players[player].deck.GetRange(0, amount);
 		Card target = SelectCardsImpl(player: player, cards: possibleCards, amount: 1, description: "Select card to gather")[0];
 		players[player].deck.Remove(target);
 		players[player].hand.Add(target);
 		players[player].deck.Shuffle();
+		return target;
 	}
 	public void PayLifeImpl(int player, int amount)
 	{
@@ -1355,6 +1356,7 @@ class DuelCore : Core
 	}
 	public int GetIgniteDamageImpl(int player)
 	{
+		EvaluateLingeringEffects();
 		return players[player].igniteDamage;
 	}
 	public void ChangeIgniteDamageImpl(int player, int amount)

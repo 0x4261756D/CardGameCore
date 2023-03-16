@@ -181,7 +181,7 @@ public delegate void ChangeIgniteDamageDelegate(int player, int amount);
 public delegate int GetTurnDelegate();
 public delegate int GetPlayerLifeDelegate(int player);
 public delegate void PayLifeDelegate(int player, int amount);
-public delegate void GatherDelegate(int player, int amount);
+public delegate Card GatherDelegate(int player, int amount);
 public delegate void MoveDelegate(Card card, int zone);
 public delegate int SelectZoneDelegate(int choosingPlayer, int targetPlayer);
 public delegate void AddToHandDelegate(int player, Card card);
