@@ -1,3 +1,4 @@
+using System.Text;
 using CardGameUtils;
 using CardGameUtils.Structs;
 
@@ -130,6 +131,24 @@ public abstract class Card
 
 	public virtual CardStruct ToStruct()
 	{
+		StringBuilder text = new StringBuilder();
+		if(Keywords.Count > 0)
+		{
+			foreach (var keyword in Keywords)
+			{
+				text.Append($"[{keyword.Key}] ");
+				if(keyword.Value != 0)
+				{
+					if(keyword.Key == Keyword.Colossal)
+					{
+						text.Append('+');
+					}
+					text.Append($"{keyword.Value}");
+				}
+				text.AppendLine();
+			}
+		}
+		text.Append(Text);
 		return new CardStruct(name: Name,
 			text: Text,
 			card_type: CardType,
