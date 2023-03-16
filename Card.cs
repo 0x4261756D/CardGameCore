@@ -106,8 +106,9 @@ public abstract class Card
 	public static DiscardAmountDelegate DiscardAmount = (_, _) => { };
 	public static CreateTokenDelegate CreateToken = (_, _, _, _) => new ClientCoreDummyCard();
 	public static CreateTokenCopyDelegate CreateTokenCopy = (_, _) => new ClientCoreDummyCard();
-	public static GetDiscardCountXTurnsAgoDelegate GetDiscardCountXTurnsAgo = (_, _) => -1;
-	public static GetDamageDealtXTurnsAgoDelegate GetDamageDealtXTurnsAgo = (_, _) => -1;
+	public static GetYXTurnsAgoDelegate GetDiscardCountXTurnsAgo = (_, _) => -1;
+	public static GetYXTurnsAgoDelegate GetDamageDealtXTurnsAgo = (_, _) => -1;
+	public static GetYXTurnsAgoDelegate GetBrittleDeathCountXTurnsAgo = (_, _) => -1;
 	public static PlayerChangeLifeDelegate PlayerChangeLife = (_, _) => { };
 	public static PlayerChangeMomentumDelegate PlayerChangeMomentum = (_, _) => { };
 	public static CastDelegate Cast = (_, _) => { };
@@ -116,12 +117,15 @@ public abstract class Card
 	public static AskYesNoDelegate AskYesNo = (_, _) => false;
 	public static GetIgniteDamageDelegate GetIgniteDamage = (_) => -1;
 	public static ChangeIgniteDamageDelegate ChangeIgniteDamage = (_, _) => { };
+	public static ChangeIgniteDamageDelegate ChangeIgniteDamageTemporary = (_, _) => { };
 	public static GetTurnDelegate GetTurn = () => -1;
 	public static GetPlayerLifeDelegate GetPlayerLife = (_) => -1;
 	public static PayLifeDelegate PayLife = (_, _) => { };
 	public static GatherDelegate Gather = (_, _) => { };
 	public static MoveDelegate Move = (_, _) => { };
 	public static SelectZoneDelegate SelectZone = (_, _) => -1;
+	public static AddToHandDelegate AddToHand = (_, _) => { };
+	public static GetCastCountDelegate GetCastCount = (_, _) => -1;
 
 	public void ClearModifications()
 	{

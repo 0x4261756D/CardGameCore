@@ -107,6 +107,7 @@ class DuelCore : Core
 		Card.CreateTokenCopy = CreateTokenCopyImpl;
 		Card.GetDiscardCountXTurnsAgo = GetDiscardCountXTurnsAgoImpl;
 		Card.GetDamageDealtXTurnsAgo = GetDamageDealtXTurnsAgoImpl;
+		Card.GetBrittleDeathCountXTurnsAgo = GetBrittleDeathCountXTurnsAgoImpl;
 		Card.PlayerChangeLife = PlayerChangeLifeImpl;
 		Card.PlayerChangeMomentum = PlayerChangeMomentumImpl;
 		Card.Cast = CastImpl;
@@ -115,12 +116,15 @@ class DuelCore : Core
 		Card.AskYesNo = AskYesNoImpl;
 		Card.GetIgniteDamage = GetIgniteDamageImpl;
 		Card.ChangeIgniteDamage = ChangeIgniteDamageImpl;
+		Card.ChangeIgniteDamageTemporary = ChangeIgniteDamageTemporaryImpl;
 		Card.GetTurn = GetTurnImpl;
 		Card.GetPlayerLife = GetPlayerLifeImpl;
 		Card.PayLife = PayLifeImpl;
 		Card.Gather = GatherImpl;
 		Card.Move = MoveImpl;
 		Card.SelectZone = SelectZoneImpl;
+		Card.AddToHand = AddToHandImpl;	
+		Card.GetCastCount = GetCastCountImpl;
 	}
 
 	public override void Init()
@@ -397,7 +401,9 @@ class DuelCore : Core
 						player.ability.Position = 0;
 						player.discardCounts.Add(0);
 						player.dealtDamages.Add(0);
+						player.brittleDeathCounts.Add(0);
 						player.momentum = momentumBase;
+						player.castCounts.Clear();
 					}
 					foreach(KeyValuePair<int, List<ActivatedEffectInfo>> lists in activatedEffects)
 					{
@@ -1107,7 +1113,10 @@ class DuelCore : Core
 		}, player);
 		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
 	}
-
+	private int GetCastCountImpl(int player, string name)
+	{
+		return players[player].castCounts.GetValueOrDefault(name, 0);
+	}
 	private int GetTurnImpl()
 	{
 		return turn;
@@ -1138,6 +1147,11 @@ class DuelCore : Core
 			default:
 				throw new NotImplementedException($"Casting {card.CardType} cards");
 		}
+		if(!players[player].castCounts.ContainsKey(card.Name))
+		{
+			players[player].castCounts[card.Name] = 0;
+		}
+		players[player].castCounts[card.Name]++;
 		if(castTriggers.ContainsKey(card.uid))
 		{
 			EffectChain chain = new EffectChain(players.Length);
@@ -1341,12 +1355,46 @@ class DuelCore : Core
 	}
 	public void ChangeIgniteDamageImpl(int player, int amount)
 	{
+		players[player].baseIgniteDamage += amount;
+	}
+	public void ChangeIgniteDamageTemporaryImpl(int player, int amount)
+	{
 		players[player].igniteDamage += amount;
 	}
 	public void PlayerChangeMomentumImpl(int player, int amount)
 	{
-		players[player].life += amount;
-		if(players[player].life < 0) players[player].life = 0;
+		players[player].momentum += amount;
+		if(players[player].momentum < 0) players[player].momentum = 0;
+	}
+	public void AddToHandImpl(int player, Card card)
+	{
+		switch(card.Location)
+		{
+			case GameConstants.Location.Deck:
+				players[card.Controller].deck.Remove(card);
+			break;
+			case GameConstants.Location.Hand:
+			{
+				if(card.Controller == player)
+				{
+					Log($"Tried to add {card.Name} from the hand to the same hand", severity: LogSeverity.Warning);
+				}
+				else
+				{
+					players[card.Controller].hand.Remove(card);
+				}
+			}
+			break;
+			case GameConstants.Location.Field:
+				players[card.Controller].field.Remove(card);
+			break;
+			case GameConstants.Location.Grave:
+				players[card.Controller].grave.Remove(card);
+			break;
+			default:
+				throw new Exception($"Cannot add a card from {card.Location} to hand");
+		}
+		players[player].hand.Add(card);
 	}
 	public void DestroyImpl(Card card)
 	{
@@ -1552,6 +1600,15 @@ class DuelCore : Core
 			return 0;
 		}
 		return players[player].dealtDamages[turn - turns];
+	}
+	public int GetBrittleDeathCountXTurnsAgoImpl(int player, int turns)
+	{
+		if(turn < turns || players[player].brittleDeathCounts.Count <= turn - turns)
+		{
+			Log($"Attempted to get brittle death count before the game began ({turn - turns}) for player {players[player].name}", severity: LogSeverity.Warning);
+			return 0;
+		}
+		return players[player].brittleDeathCounts[turn - turns];
 	}
 
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent

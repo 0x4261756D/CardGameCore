@@ -171,8 +171,7 @@ public delegate void DiscardDelegate(Card card);
 public delegate void DiscardAmountDelegate(int player, int amount);
 public delegate Card CreateTokenDelegate(int player, int power, int life, string name);
 public delegate Card CreateTokenCopyDelegate(int player, Card card);
-public delegate int GetDiscardCountXTurnsAgoDelegate(int player, int turns);
-public delegate int GetDamageDealtXTurnsAgoDelegate(int player, int turns);
+public delegate int GetYXTurnsAgoDelegate(int player, int turns);
 public delegate void PlayerChangeLifeDelegate(int player, int amount);
 public delegate void PlayerChangeMomentumDelegate(int player, int amount);
 public delegate void DestroyDelegate(Card card);
@@ -185,6 +184,8 @@ public delegate void PayLifeDelegate(int player, int amount);
 public delegate void GatherDelegate(int player, int amount);
 public delegate void MoveDelegate(Card card, int zone);
 public delegate int SelectZoneDelegate(int choosingPlayer, int targetPlayer);
+public delegate void AddToHandDelegate(int player, Card card);
+public delegate int GetCastCountDelegate(int player, string name);
 
 public class LingeringEffectInfo
 {
