@@ -1438,7 +1438,8 @@ class DuelCore : Core
 			Text: "[Token]",
 			OriginalCost: 0,
 			OriginalLife: life,
-			OriginalPower: power
+			OriginalPower: power,
+			Controller: player
 		);
 		players[player].field.Add(token, zone);
 		return token;

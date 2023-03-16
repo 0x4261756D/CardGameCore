@@ -290,7 +290,8 @@ public class Token : Creature
 		string Text,
 		int OriginalCost,
 		int OriginalLife,
-		int OriginalPower) : base(
+		int OriginalPower,
+		int Controller) : base(
 			Name: Name,
 			Text: Text,
 			OriginalCost: OriginalCost,
@@ -298,7 +299,9 @@ public class Token : Creature
 			OriginalPower: OriginalPower,
 			CardClass: GameConstants.PlayerClass.All
 		)
-	{ }
+	{
+		this.Controller = Controller;
+	}
 	public override void Init()
 	{
 		RegisterKeyword(Keyword.Token);
