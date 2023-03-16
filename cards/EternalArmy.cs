@@ -1,6 +1,7 @@
-// Scripted by 0x4261756D
+// Scripted by Dotlof and 0x4261756D
 using CardGameCore;
 using static CardGameUtils.GameConstants;
+using static CardGameCore.CardUtils;
 
 class EternalArmy : Spell
 {
@@ -11,7 +12,6 @@ class EternalArmy : Spell
 		Text: "{Cast}: Create any number of 5/1 Construct tokens with \"{Death}: Create a 1/1 Construct.\"."
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
@@ -22,9 +22,25 @@ class EternalArmy : Spell
 	{
 		for(int emptyZones = FIELD_SIZE - GetFieldUsed(Controller).Length; emptyZones >= 0; emptyZones--)
 		{
-			CreateToken(player: Controller, power: 5, life: 1, name: "Construct");
+			if(AskYesNo(player: Controller, question: "Create another Construct?"))
+			{
+				Card token = CreateToken(player: Controller, power: 5, life: 1, name: "Construct");
+				RegisterDeathTrigger(trigger: new Trigger(effect: DeathEffect, condition: DeathCondition), referrer: token);
+			}
+			else
+			{
+				break;
+			}
 		}
-		//Implement giving Death Trigger
 	}
 
+	private bool DeathCondition()
+	{
+		return HasEmpty(GetField(Controller));
+	}
+
+	private void DeathEffect()
+	{
+		CreateToken(player: Controller, power: 1, life: 1, name: "Construct");
+	}
 }
