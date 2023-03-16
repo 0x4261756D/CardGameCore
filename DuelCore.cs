@@ -1186,7 +1186,9 @@ class DuelCore : Core
 			}
 		}
 		EvaluateLingeringEffects();
-		SendFieldUpdates();
+		Card?[] shownCards = new Card[2];
+		shownCards[player] = card;
+		SendFieldUpdates(shownCards: shownCards);
 	}
 
 	public void RegisterCastTriggerImpl(CastTrigger trigger, Card referrer)
