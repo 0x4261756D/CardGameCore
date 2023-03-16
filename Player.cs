@@ -40,21 +40,12 @@ class Player
 			hand.Add(deck.Pop());
 		}
 	}
-
-	private void CastGeneric(Card card)
-	{
-		momentum -= card.Cost;
-	}
-
 	internal void CastCreature(Card card, int zone)
 	{
-		CastGeneric(card);
 		field.Add(card, zone);
 	}
 	internal void CastSpell(Card card)
 	{
-		CastGeneric(card);
-		// TODO: Show this to the players
 		grave.Add(card);
 	}
 

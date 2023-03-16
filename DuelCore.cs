@@ -879,6 +879,7 @@ class DuelCore : Core
 				if(option == "Cast")
 				{
 					players[player].hand.Remove(card);
+					players[player].momentum -= card.Cost;
 					CastImpl(player, card);
 				}
 				else
