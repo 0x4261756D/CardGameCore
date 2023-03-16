@@ -123,7 +123,7 @@ class DuelCore : Core
 		Card.Gather = GatherImpl;
 		Card.Move = MoveImpl;
 		Card.SelectZone = SelectZoneImpl;
-		Card.AddToHand = AddToHandImpl;	
+		Card.AddToHand = AddToHandImpl;
 		Card.GetCastCount = GetCastCountImpl;
 	}
 
@@ -457,7 +457,7 @@ class DuelCore : Core
 					Card? card1 = players[1].field.GetByPosition(GetMarkedZoneForPlayer(1));
 					if(card0 != null && attackTriggers.ContainsKey(card0.uid))
 					{
-						foreach (Trigger trigger in attackTriggers[card0.uid])
+						foreach(Trigger trigger in attackTriggers[card0.uid])
 						{
 							if(trigger.condition())
 							{
@@ -467,7 +467,7 @@ class DuelCore : Core
 					}
 					if(card1 != null && attackTriggers.ContainsKey(card1.uid))
 					{
-						foreach (Trigger trigger in attackTriggers[card1.uid])
+						foreach(Trigger trigger in attackTriggers[card1.uid])
 						{
 							if(trigger.condition())
 							{
@@ -1378,7 +1378,7 @@ class DuelCore : Core
 		{
 			case GameConstants.Location.Deck:
 				players[card.Controller].deck.Remove(card);
-			break;
+				break;
 			case GameConstants.Location.Hand:
 			{
 				if(card.Controller == player)
@@ -1393,10 +1393,10 @@ class DuelCore : Core
 			break;
 			case GameConstants.Location.Field:
 				players[card.Controller].field.Remove(card);
-			break;
+				break;
 			case GameConstants.Location.Grave:
 				players[card.Controller].grave.Remove(card);
-			break;
+				break;
 			default:
 				throw new Exception($"Cannot add a card from {card.Location} to hand");
 		}

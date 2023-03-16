@@ -148,7 +148,7 @@ public abstract class Card
 		StringBuilder text = new StringBuilder();
 		if(Keywords.Count > 0)
 		{
-			foreach (var keyword in Keywords)
+			foreach(var keyword in Keywords)
 			{
 				text.Append($"[{keyword.Key}] ");
 				if(keyword.Value != 0)

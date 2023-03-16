@@ -139,7 +139,7 @@ public class GenericDeathTrigger : Trigger
 		this.effect = effect;
 		this.condition = condition;
 	}
-	public GenericDeathTrigger(GenericDeathTriggerEffect effect) : this(effect, (_) => true) {}
+	public GenericDeathTrigger(GenericDeathTriggerEffect effect) : this(effect, (_) => true) { }
 }
 
 public delegate bool TriggerCondition();

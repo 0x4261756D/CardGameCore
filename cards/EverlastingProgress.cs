@@ -34,7 +34,7 @@ class EverlastingProgress : Quest
 
 	private void RewardEffect(Card target)
 	{
-		foreach (Card card in GetFieldUsed(Controller))
+		foreach(Card card in GetFieldUsed(Controller))
 		{
 			card.Keywords.Remove(Keyword.Brittle);
 		}

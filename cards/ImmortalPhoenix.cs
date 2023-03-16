@@ -27,7 +27,7 @@ class ImmortalPhoenix : Creature
 
 	private void PhoenixEffect(Card target)
 	{
-		foreach (Card card in GetFieldUsed(player: Controller))
+		foreach(Card card in GetFieldUsed(player: Controller))
 		{
 			if(card.Name == this.Name)
 			{

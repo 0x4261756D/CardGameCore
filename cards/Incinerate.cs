@@ -20,7 +20,7 @@ class Incinerate : Spell
 
 	private void DestroyEffect()
 	{
-		foreach (Card card in GetForBoth(GetFieldUsed))
+		foreach(Card card in GetForBoth(GetFieldUsed))
 		{
 			Destroy(card);
 		}
