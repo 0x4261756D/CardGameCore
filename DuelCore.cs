@@ -493,8 +493,8 @@ class DuelCore : Core
 						}
 						else
 						{
-							card0.BaseLife -= card1.BasePower;
-							card1.BaseLife -= card0.BasePower;
+							RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => card0.BaseLife -= card1.BasePower, referrer: card0));
+							RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => card1.BaseLife -= card0.BasePower, referrer: card1));
 							EvaluateLingeringEffects();
 							if(card0.Life == 0)
 							{
