@@ -156,6 +156,7 @@ public delegate void RegisterRevelationTriggerDelegate(RevelationTrigger trigger
 public delegate void RegisterDiscardTriggerDelegate(DiscardTrigger trigger, Card referrer);
 public delegate void RegisterStateReachedTriggerDelegate(StateReachedTrigger trigger, Card referrer);
 public delegate void RegisterVictoriousTriggerDelegate(Trigger trigger, Card referrer);
+public delegate void RegisterAttackTriggerDelegate(Trigger trigger, Card referrer);
 public delegate void RegisterDeathTriggerDelegate(Trigger trigger, Card referrer);
 public delegate void RegisterGenericDeathTriggerDelegate(GenericDeathTrigger trigger, Card referrer);
 public delegate void RegisterLingeringEffectDelegate(LingeringEffectInfo info);

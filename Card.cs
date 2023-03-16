@@ -91,6 +91,7 @@ public abstract class Card
 	public static RegisterDiscardTriggerDelegate RegisterDiscardTrigger = (_, _) => { };
 	public static RegisterStateReachedTriggerDelegate RegisterStateReachedTrigger = (_, _) => { };
 	public static RegisterVictoriousTriggerDelegate RegisterVictoriousTrigger = (_, _) => { };
+	public static RegisterAttackTriggerDelegate RegisterAttackTrigger = (_, _) => { };
 	public static RegisterDeathTriggerDelegate RegisterDeathTrigger = (_, _) => { };
 	public static RegisterGenericDeathTriggerDelegate RegisterGenericDeathTrigger = (_, _) => { };
 	public static RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };

@@ -40,6 +40,7 @@ class DuelCore : Core
 	private Dictionary<int, List<GenericCastTrigger>> genericCastTriggers = new Dictionary<int, List<GenericCastTrigger>>();
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
 	private Dictionary<int, List<Trigger>> victoriousTriggers = new Dictionary<int, List<Trigger>>();
+	private Dictionary<int, List<Trigger>> attackTriggers = new Dictionary<int, List<Trigger>>();
 	private Dictionary<int, List<Trigger>> deathTriggers = new Dictionary<int, List<Trigger>>();
 	private Dictionary<int, List<GenericDeathTrigger>> genericDeathTriggers = new Dictionary<int, List<GenericDeathTrigger>>();
 	private Dictionary<int, List<DiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<DiscardTrigger>>();
@@ -89,6 +90,7 @@ class DuelCore : Core
 		Card.RegisterDiscardTrigger = RegisterDiscardTriggerImpl;
 		Card.RegisterStateReachedTrigger = RegisterStateReachedTriggerImpl;
 		Card.RegisterVictoriousTrigger = RegisterVictoriousTriggerImpl;
+		Card.RegisterAttackTrigger = RegisterAttackTriggerImpl;
 		Card.RegisterDeathTrigger = RegisterDeathTriggerImpl;
 		Card.RegisterGenericDeathTrigger = RegisterGenericDeathTriggerImpl;
 		Card.RegisterLingeringEffect = RegisterLingeringEffectImpl;
@@ -446,6 +448,26 @@ class DuelCore : Core
 					}
 					Card? card0 = players[0].field.GetByPosition(GetMarkedZoneForPlayer(0));
 					Card? card1 = players[1].field.GetByPosition(GetMarkedZoneForPlayer(1));
+					if(card0 != null && attackTriggers.ContainsKey(card0.uid))
+					{
+						foreach (Trigger trigger in attackTriggers[card0.uid])
+						{
+							if(trigger.condition())
+							{
+								trigger.effect();
+							}
+						}
+					}
+					if(card1 != null && attackTriggers.ContainsKey(card1.uid))
+					{
+						foreach (Trigger trigger in attackTriggers[card1.uid])
+						{
+							if(trigger.condition())
+							{
+								trigger.effect();
+							}
+						}
+					}
 					if(card0 == null)
 					{
 						if(card1 != null)
@@ -1218,6 +1240,14 @@ class DuelCore : Core
 			victoriousTriggers[referrer.uid] = new List<Trigger>();
 		}
 		victoriousTriggers[referrer.uid].Add(info);
+	}
+	public void RegisterAttackTriggerImpl(Trigger info, Card referrer)
+	{
+		if(!attackTriggers.ContainsKey(referrer.uid))
+		{
+			attackTriggers[referrer.uid] = new List<Trigger>();
+		}
+		attackTriggers[referrer.uid].Add(info);
 	}
 	public void RegisterDeathTriggerImpl(Trigger info, Card referrer)
 	{
