@@ -965,7 +965,29 @@ class DuelCore : Core
 				if(card.Cost <= players[player].momentum &&
 					!(state.HasFlag(GameConstants.State.BattleStart) && card.CardType == GameConstants.CardType.Creature))
 				{
-					options.Add("Cast");
+					bool canCast = true;
+					if(castTriggers.ContainsKey(card.uid))
+					{
+						foreach(CastTrigger trigger in castTriggers[card.uid])
+						{
+							canCast = trigger.condition();
+							if(!canCast)
+							{
+								break;
+							}
+						}
+					}
+					else
+					{
+						if(card.CardType == GameConstants.CardType.Spell)
+						{
+							canCast = false;
+						}
+					}
+					if(canCast)
+					{
+						options.Add("Cast");
+					}
 				}
 			}
 			break;
@@ -986,6 +1008,9 @@ class DuelCore : Core
 				}
 			}
 			break;
+			case GameConstants.Location.Quest:
+				Log("Quests are not foreseen to have activated abilities", severity: LogSeverity.Warning);
+				break;
 			default:
 				throw new NotImplementedException($"GetCardActions at {location}");
 		}
