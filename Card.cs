@@ -16,7 +16,14 @@ public abstract class Card
 		get => _life;
 		set
 		{
-			_life = value;
+			if(value - _life > damageCap)
+			{
+				_life -= damageCap;
+			}
+			else
+			{
+				_life = value;
+			}
 			if(_life < 0) _life = 0;
 		}
 	}
@@ -43,6 +50,7 @@ public abstract class Card
 	public bool IsClassAbility, CanBeClassAbility;
 	public int Controller;
 	public bool CanMove = true;
+	public int damageCap, baseDamageCap;
 	public Dictionary<Keyword, int> Keywords = new Dictionary<Keyword, int>();
 	public abstract void Init();
 
@@ -132,6 +140,7 @@ public abstract class Card
 		Life = BaseLife;
 		Power = BasePower;
 		Cost = BaseCost;
+		damageCap = baseDamageCap;
 	}
 
 	public virtual CardStruct ToStruct()
