@@ -1119,6 +1119,7 @@ class DuelCore : Core
 	private void DrawImpl(int player, int amount)
 	{
 		players[player].Draw(amount);
+		SendFieldUpdates();
 	}
 	private void CastImpl(int player, Card card)
 	{
