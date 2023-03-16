@@ -7,7 +7,7 @@ class Rekindle : Spell
 		Name: "Rekindle",
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 1,
-		Text: "{Cast}: Draw X, where X is the amount of Damage \"Ignite\" would deal \n {Revelation:} Draw 1."
+		Text: "{Cast}: Draw X, where X is the amount of Damage \"Ignite\" would deal \n {Revelation}: Draw 1."
 		)
 	{ }
 	// TODO: implement functionality
