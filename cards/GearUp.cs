@@ -13,7 +13,6 @@ class GearUp : Spell
 		CanBeClassAbility: true
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{

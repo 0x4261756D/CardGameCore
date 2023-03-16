@@ -1,5 +1,6 @@
 // Scripted by 0x4261756D
 using CardGameCore;
+using static CardGameCore.CardUtils;
 using static CardGameUtils.GameConstants;
 
 class Ignite : Spell
@@ -13,6 +14,13 @@ class Ignite : Spell
 		)
 	{ }
 
+	private Card? forcedTarget = null;
+
+	public Ignite(Card forcedTarget) : this()
+	{
+		this.forcedTarget = forcedTarget;
+	}
+
 	public override void Init()
 	{
 		RegisterCastTrigger(trigger: new CastTrigger(effect: IgniteEffect), referrer: this);
@@ -21,7 +29,19 @@ class Ignite : Spell
 
 	public void IgniteEffect()
 	{
-		PlayerChangeLife(player: 1 - Controller, amount: -GetIgniteDamage(Controller));
+		if(forcedTarget == null)
+		{
+			ChangeLifeOfAnyTarget(player: Controller, amount: -GetIgniteDamage(Controller), description: "Damage");
+		}
+		else
+		{
+			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: DamageEffect, referrer: forcedTarget));
+		}
+	}
+
+	private void DamageEffect(Card target)
+	{
+		target.Life -= GetIgniteDamage(Controller);
 	}
 
 	public void RevelationEffect()

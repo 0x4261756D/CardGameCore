@@ -13,10 +13,10 @@ class PointlessInvention : Creature
 		OriginalLife: 1
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		this.damageCap = 1;
 	}
 
 }

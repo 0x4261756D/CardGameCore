@@ -13,10 +13,32 @@ class ImmortalPhoenix : Creature
 		OriginalLife: 2
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterDeathTrigger(trigger: new Trigger(effect: DeathEffect), referrer: this);
 	}
 
+	private void DeathEffect()
+	{
+		AddToHand(player: Controller, card: this);
+		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: PhoenixEffect, referrer: this, influenceLocation: Location.ALL));
+	}
+
+	private void PhoenixEffect(Card target)
+	{
+		foreach (Card card in GetFieldUsed(player: Controller))
+		{
+			if(card.Name == this.Name)
+			{
+				RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: BuffEffect, referrer: card));
+			}
+		}
+	}
+
+	private void BuffEffect(Card target)
+	{
+		target.Life++;
+		target.Power++;
+	}
 }

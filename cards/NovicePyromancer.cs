@@ -1,6 +1,7 @@
 // Scripted by 0x4261756D
 using CardGameCore;
 using static CardGameUtils.GameConstants;
+using static CardGameCore.CardUtils;
 
 class NovicePyromancer : Creature
 {
@@ -13,9 +14,14 @@ class NovicePyromancer : Creature
 		OriginalPower: 2
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterGenericDeathTrigger(trigger: new GenericDeathTrigger(effect: DamageEffect), referrer: this);
+	}
+
+	private void DamageEffect(Card destroyedCard)
+	{
+		ChangeLifeOfAnyTarget(player: Controller, amount: -1, "Damage");
 	}
 }
