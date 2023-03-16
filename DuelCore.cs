@@ -1255,6 +1255,10 @@ class DuelCore : Core
 	}
 	public void RegisterLingeringEffectImpl(LingeringEffectInfo info)
 	{
+		if(info.influenceLocation == GameConstants.Location.ALL)
+		{
+			info.referrer = players[info.referrer.Controller].quest;
+		}
 		if(!lingeringEffects.ContainsKey(info.referrer.uid))
 		{
 			lingeringEffects[info.referrer.uid] = new List<LingeringEffectInfo>();
