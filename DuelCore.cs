@@ -1406,6 +1406,10 @@ class DuelCore : Core
 	{
 		temporaryLingeringEffects.Remove(card.uid);
 		players[card.Controller].Destroy(card);
+		if(card.Keywords.ContainsKey(Keyword.Brittle))
+		{
+			players[card.Controller].brittleDeathCounts[turn]++;
+		}
 		if(deathTriggers.ContainsKey(card.uid))
 		{
 			foreach(Trigger trigger in deathTriggers[card.uid])
