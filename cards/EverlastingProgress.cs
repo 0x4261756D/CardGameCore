@@ -11,15 +11,32 @@ class EverlastingProgress : Quest
 		Text: "{A creature with brittle dies}: Gain 1 progress.\n{Reward}: All creatures you control lose brittle."
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterGenericDeathTrigger(trigger: new GenericDeathTrigger(effect: ProgressEffect, condition: ProgressCondition), referrer: this);
+	}
+
+	private bool ProgressCondition(Card destroyedCard)
+	{
+		return destroyedCard.Keywords.ContainsKey(Keyword.Brittle);
+	}
+
+	private void ProgressEffect(Card destroyedCard)
+	{
+		Progress++;
 	}
 
 	public override void Reward()
 	{
-		throw new NotImplementedException();
+		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: RewardEffect, referrer: this, influenceLocation: Location.Quest));
 	}
 
+	private void RewardEffect(Card target)
+	{
+		foreach (Card card in GetFieldUsed(Controller))
+		{
+			card.Keywords.Remove(Keyword.Brittle);
+		}
+	}
 }
