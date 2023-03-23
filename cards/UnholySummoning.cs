@@ -31,12 +31,12 @@ class UnholySummoning : Spell
 
 	private bool Condition()
 	{
-		return GetHand(Controller).Length > 0 && HasEmpty(GetField(Controller));
+		return GetDiscardable(Controller).Length > 0 && HasEmpty(GetField(Controller));
 	}
 
 	private void CastEffect()
 	{
-		Card target = SelectCards(cards: GetHand(Controller), amount: 1, player: Controller, description: "Select card to discard")[0];
+		Card target = SelectCards(cards: GetDiscardable(Controller), amount: 1, player: Controller, description: "Select card to discard")[0];
 		Discard(target);
 		CreateToken(player: Controller, power: target.Cost, life: target.Cost, name: "Horror");
 	}

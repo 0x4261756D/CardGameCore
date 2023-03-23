@@ -37,7 +37,7 @@ class SugomaGodoftheAbyss : Creature
 
 	public bool ActivatedCondition()
 	{
-		return HasUsed(GetBothWholeFields()) && GetHand(Controller).Length > 0;
+		return HasUsed(GetBothWholeFields()) && GetDiscardable(Controller).Length > 0;
 	}
 
 	public override bool CanBeDiscarded()

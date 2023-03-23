@@ -33,7 +33,7 @@ class CallingtheAbyss : Spell
 
 	public bool CastCondition()
 	{
-		return GetHand(Controller).Length >= 6;
+		return GetDiscardable(Controller).Length >= 6;
 	}
 
 }

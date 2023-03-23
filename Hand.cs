@@ -33,6 +33,11 @@ class Hand
 		cards.Remove(c);
 	}
 
+	internal Card[] GetDiscardable()
+	{
+		return cards.Where(card => card.CanBeDiscarded()).ToArray();
+	}
+
 	internal CardStruct[] ToHiddenStruct()
 	{
 		return cards.ConvertAll(x => new CardStruct()).ToArray();

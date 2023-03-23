@@ -25,7 +25,7 @@ class TemptingOffer : Spell
 
 	public bool CastCondition()
 	{
-		return GetHand(Controller).Length > 1;
+		return GetDiscardable(Controller).Length > 1;
 	}
 
 }

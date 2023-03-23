@@ -128,6 +128,7 @@ class DuelCore : Core
 		Card.ReturnCardsToDeck = ReturnCardsToDeckImpl;
 		Card.Reveal = RevealImpl;
 		Card.DealDamage = DealDamageImpl;
+		Card.GetDiscardable = GetDiscardableImpl;
 	}
 
 	public override void Init()
@@ -1405,6 +1406,10 @@ class DuelCore : Core
 		}
 		players[player].hand.Add(card);
 	}
+	public Card[] GetDiscardableImpl(int player)
+	{
+		return players[player].hand.GetDiscardable();
+	}
 	public void DestroyImpl(Card card)
 	{
 		temporaryLingeringEffects.Remove(card.uid);
@@ -1513,7 +1518,7 @@ class DuelCore : Core
 	}
 	public void DiscardAmountImpl(int player, int amount)
 	{
-		Card[] targets = SelectCardsImpl(player: player, amount: amount, cards: players[player].hand.GetAll(), description: "Select cards to discard");
+		Card[] targets = SelectCardsImpl(player: player, amount: amount, cards: players[player].hand.GetDiscardable(), description: "Select cards to discard");
 		foreach(Card target in targets)
 		{
 			DiscardImpl(target);
