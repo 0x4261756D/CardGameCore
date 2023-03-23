@@ -1,6 +1,7 @@
 // Scripted by 0x4261756D
 using CardGameCore;
 using static CardGameUtils.GameConstants;
+using static CardGameCore.CardUtils;
 
 class SugomaGodoftheAbyss : Creature
 {
@@ -13,10 +14,35 @@ class SugomaGodoftheAbyss : Creature
 		OriginalLife: 15
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterKeyword(Keyword.Colossal, 5);
+		RegisterActivatedEffect(info: new ActivatedEffectInfo(name: "Activate", effect: ActivatedEffect, condition: ActivatedCondition, referrer: this));
+		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect), referrer: this);
+	}
+
+	public void RevelationEffect()
+	{
+		DealDamage(player: Controller, damage: 1);
+		PlayerChangeMomentum(player: Controller, amount: 1);
+	}
+
+	public void ActivatedEffect()
+	{
+		DiscardAmount(player: Controller, amount: 1);
+		Card target = SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Select card to destroy")[0];
+		Destroy(target);
+	}
+
+	public bool ActivatedCondition()
+	{
+		return HasUsed(GetBothWholeFields()) && GetHand(Controller).Length > 0;
+	}
+
+	public override bool CanBeDiscarded()
+	{
+		return false;
 	}
 
 }

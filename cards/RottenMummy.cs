@@ -13,9 +13,20 @@ class RottenMummy : Creature
 		OriginalPower: 3
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterKeyword(Keyword.Decaying);
+		RegisterDeathTrigger(trigger: new Trigger(effect: DeathEffect, condition: DeathCondition), referrer: this);
+	}
+
+	public void DeathEffect()
+	{
+		DiscardAmount(player: Controller, amount: 1);
+	}
+
+	public bool DeathCondition()
+	{
+		return GetHand(Controller).Length > 0;
 	}
 }

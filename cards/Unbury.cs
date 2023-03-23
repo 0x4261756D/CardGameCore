@@ -1,6 +1,7 @@
 // Scripted by 0x4261756D
 using CardGameCore;
 using static CardGameUtils.GameConstants;
+using static CardGameCore.CardUtils;
 
 class Unbury : Spell
 {
@@ -11,10 +12,15 @@ class Unbury : Spell
 		Text: "{Cast}: Return all creatures from the graves to the decks."
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
+	}
+
+	public void CastEffect()
+	{
+		ReturnCardsToDeck(FilterValid(cards: GetForBoth(GetGrave), card => card.CardType == CardType.Creature));
 	}
 
 }

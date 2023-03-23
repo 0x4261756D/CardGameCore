@@ -13,10 +13,21 @@ class TreasureChest : Creature
 		OriginalLife: 4
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterDeathTrigger(trigger: new Trigger(effect: DeathEffect), referrer: this);
+		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect), referrer: this);
+	}
+
+	public void RevelationEffect()
+	{
+		Reveal(player: Controller, damage: 2);
+	}
+
+	public void DeathEffect()
+	{
+		Draw(player: Controller, amount: 2);
 	}
 
 }

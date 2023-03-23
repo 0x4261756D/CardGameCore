@@ -13,10 +13,21 @@ class RottingHydra : Creature
 		OriginalLife: 6
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterKeyword(Keyword.Decaying);
+		RegisterVictoriousTrigger(trigger: new Trigger(effect: VictoriousEffect), referrer: this);
+	}
+
+	public void VictoriousEffect()
+	{
+		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: BuffEffect, referrer: this));
+	}
+
+	public void BuffEffect(Card _)
+	{
+		this.Life += 3;
 	}
 
 }

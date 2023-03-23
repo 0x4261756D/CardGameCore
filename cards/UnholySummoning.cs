@@ -12,11 +12,21 @@ class UnholySummoning : Spell
 		Text: "{Cast}: Discard 1. Create an X/X Horror token with [Decaying] where X is the discarded Card's Momentum cost.\n{Discard}: Create a 3/2 Horror Token."
 		)
 	{ }
-	// TODO: implement discard trigger
 
 	public override void Init()
 	{
 		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: Condition), referrer: this);
+		RegisterDiscardTrigger(trigger: new DiscardTrigger(effect: DiscardEffect, condition: DiscardCondition), referrer: this);
+	}
+
+	public bool DiscardCondition()
+	{
+		return HasEmpty(GetField(Controller));
+	}
+
+	public void DiscardEffect()
+	{
+		CreateToken(player: Controller, power: 3, life: 2, name: "Horror");
 	}
 
 	private bool Condition()
