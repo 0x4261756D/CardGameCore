@@ -134,6 +134,9 @@ public abstract class Card
 	public static SelectZoneDelegate SelectZone = (_, _) => -1;
 	public static AddToHandDelegate AddToHand = (_, _) => { };
 	public static GetCastCountDelegate GetCastCount = (_, _) => -1;
+	public static ReturnCardsToDeckDelegate ReturnCardsToDeck = (_) => { };
+	public static RevealDelegate Reveal = (_, _) => { };
+	public static DealDamageDelegate DealDamage = (_, _) => { };
 
 	public void ClearModifications()
 	{
@@ -142,6 +145,8 @@ public abstract class Card
 		Cost = BaseCost;
 		damageCap = baseDamageCap;
 	}
+
+	public virtual bool CanBeDiscarded() => true;
 
 	public virtual CardStruct ToStruct()
 	{

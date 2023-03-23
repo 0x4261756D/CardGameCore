@@ -186,6 +186,9 @@ public delegate void MoveDelegate(Card card, int zone);
 public delegate int SelectZoneDelegate(int choosingPlayer, int targetPlayer);
 public delegate void AddToHandDelegate(int player, Card card);
 public delegate int GetCastCountDelegate(int player, string name);
+public delegate void ReturnCardsToDeckDelegate(Card[] cards);
+public delegate void RevealDelegate(int player, int damage);
+public delegate void DealDamageDelegate(int player, int damage);
 
 public class LingeringEffectInfo
 {

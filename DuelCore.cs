@@ -125,6 +125,9 @@ class DuelCore : Core
 		Card.SelectZone = SelectZoneImpl;
 		Card.AddToHand = AddToHandImpl;
 		Card.GetCastCount = GetCastCountImpl;
+		Card.ReturnCardsToDeck = ReturnCardsToDeckImpl;
+		Card.Reveal = RevealImpl;
+		Card.DealDamage = DealDamageImpl;
 	}
 
 	public override void Init()
@@ -480,7 +483,7 @@ class DuelCore : Core
 						if(card1 != null)
 						{
 							// Deal damage to player
-							DealDamage(0, card1.Power);
+							DealDamageImpl(0, card1.Power);
 							if(players[0].life <= 0)
 							{
 								return true;
@@ -491,7 +494,7 @@ class DuelCore : Core
 					{
 						if(card1 == null)
 						{
-							DealDamage(1, card0.Power);
+							DealDamageImpl(1, card0.Power);
 							if(players[1].life <= 0)
 							{
 								return true;
@@ -663,14 +666,14 @@ class DuelCore : Core
 		}
 	}
 
-	private void DealDamage(int player, int damage)
+	private void DealDamageImpl(int player, int damage)
 	{
 		players[player].life -= damage;
 		players[1 - player].dealtDamages[turn] += damage;
-		Reveal(player, damage);
+		RevealImpl(player, damage);
 		CheckIfLost(player);
 	}
-	private void Reveal(int player, int damage)
+	private void RevealImpl(int player, int damage)
 	{
 		for(int i = 0; i < damage; i++)
 		{
@@ -1333,7 +1336,7 @@ class DuelCore : Core
 	{
 		if(amount < 0)
 		{
-			DealDamage(player, damage: amount);
+			DealDamageImpl(player, damage: amount);
 		}
 		else
 		{
@@ -1444,6 +1447,47 @@ class DuelCore : Core
 						}
 					}
 				}
+			}
+		}
+	}
+	public bool RemoveCardFromItsLocation(Card card)
+	{
+		switch(card.Location)
+		{
+			case GameConstants.Location.Hand:
+				players[card.Controller].hand.Remove(card);
+				break;
+			case GameConstants.Location.Field:
+				players[card.Controller].field.Remove(card);
+				break;
+			case GameConstants.Location.Grave:
+				players[card.Controller].grave.Remove(card);
+				break;
+			default:
+				return false;
+		}
+		return true;
+	}
+	public void ReturnCardsToDeckImpl(Card[] cards)
+	{
+		bool[] shouldShuffle = new bool[players.Length];
+		foreach(Card card in cards)
+		{
+			if(RemoveCardFromItsLocation(card))
+			{
+				shouldShuffle[card.Controller] = true;
+				players[card.Controller].deck.Add(card);
+			}
+			else
+			{
+				Log($"Could not move {card} from {card.Location} to deck.");
+			}
+		}
+		for(int i = 0; i < shouldShuffle.Length; i++)
+		{
+			if(shouldShuffle[i])
+			{
+				players[i].deck.Shuffle();
 			}
 		}
 	}
