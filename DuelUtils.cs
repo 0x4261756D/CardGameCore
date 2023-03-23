@@ -190,6 +190,7 @@ public delegate void ReturnCardsToDeckDelegate(Card[] cards);
 public delegate void RevealDelegate(int player, int damage);
 public delegate void DealDamageDelegate(int player, int damage);
 public delegate Card[] GetDiscardableDelegate(int player);
+public delegate void RefreshAbilityDelegate(int player);
 
 public class LingeringEffectInfo
 {

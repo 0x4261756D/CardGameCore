@@ -129,6 +129,7 @@ class DuelCore : Core
 		Card.Reveal = RevealImpl;
 		Card.DealDamage = DealDamageImpl;
 		Card.GetDiscardable = GetDiscardableImpl;
+		Card.RefreshAbility = ResetAbilityImpl;
 	}
 
 	public override void Init()
@@ -372,7 +373,6 @@ class DuelCore : Core
 						player.Draw(GameConstants.START_HAND_SIZE);
 						player.momentum = momentumBase;
 						player.life = GameConstants.START_LIFE;
-						player.progress = 0;
 					}
 					turnPlayer = rnd.Next(100) / 50;
 					initPlayer = turnPlayer;
@@ -1207,6 +1207,11 @@ class DuelCore : Core
 		Card?[] shownCards = new Card[2];
 		shownCards[player] = card;
 		SendFieldUpdates(shownCards: shownCards);
+	}
+
+	public void ResetAbilityImpl(int player)
+	{
+		players[player].ability.Position = 0;
 	}
 
 	public void RegisterCastTriggerImpl(CastTrigger trigger, Card referrer)

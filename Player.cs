@@ -16,7 +16,7 @@ class Player
 	public GameConstants.PlayerClass playerClass;
 	public Card ability;
 	public Quest quest;
-	public int life, progress, momentum;
+	public int life, momentum;
 	public List<int> discardCounts = new List<int>(), dealtDamages = new List<int>(), brittleDeathCounts = new List<int>();
 	public int baseIgniteDamage = 1, igniteDamage;
 	public Dictionary<string, int> castCounts = new Dictionary<string, int>();

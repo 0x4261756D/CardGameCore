@@ -138,6 +138,7 @@ public abstract class Card
 	public static RevealDelegate Reveal = (_, _) => { };
 	public static DealDamageDelegate DealDamage = (_, _) => { };
 	public static GetDiscardableDelegate GetDiscardable = (_) => new Card[0];
+	public static RefreshAbilityDelegate RefreshAbility = (_) => { };
 
 	public void ClearModifications()
 	{
