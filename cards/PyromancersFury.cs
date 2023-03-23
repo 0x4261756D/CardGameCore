@@ -32,7 +32,7 @@ class PyromancersFury : Spell
 	{
 		ChangeIgniteDamage(player: Controller, amount: 1);
 		discardTriggerActive = true;
-		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: ResetEffect, referrer: this,  influenceLocation: Location.ALL));
+		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: ResetEffect, referrer: this, influenceLocation: Location.ALL));
 	}
 
 	public void ResetEffect(Card _)
