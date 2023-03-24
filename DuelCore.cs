@@ -403,14 +403,9 @@ class DuelCore : Core
 					foreach(Player player in players)
 					{
 						player.ability.Position = 0;
-						player.discardCounts.Add(0);
-						player.dealtDamages.Add(0);
-						player.brittleDeathCounts.Add(0);
-						player.deathCounts.Add(0);
 						player.momentum = momentumBase;
 						player.castCounts.Clear();
 						player.Draw(1);
-						turn++;
 					}
 					foreach(KeyValuePair<int, List<ActivatedEffectInfo>> lists in activatedEffects)
 					{
@@ -571,12 +566,17 @@ class DuelCore : Core
 								}
 							}
 						}
+						player.discardCounts.Add(0);
+						player.dealtDamages.Add(0);
+						player.brittleDeathCounts.Add(0);
+						player.deathCounts.Add(0);
 					}
 					turnPlayer = 1 - turnPlayer;
 					if(GameConstants.MOMENTUM_INCREMENT_TURNS.Contains(turn))
 					{
 						momentumBase++;
 					}
+					turn++;
 					state = GameConstants.State.TurnStart;
 				}
 				break;
