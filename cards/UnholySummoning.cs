@@ -38,6 +38,6 @@ class UnholySummoning : Spell
 	{
 		Card target = SelectCards(cards: GetDiscardable(Controller), amount: 1, player: Controller, description: "Select card to discard")[0];
 		Discard(target);
-		CreateToken(player: Controller, power: target.Cost, life: target.Cost, name: "Horror");
+		CreateToken(player: Controller, power: target.Cost, life: target.Cost, name: "Horror").RegisterKeyword(Keyword.Decaying);
 	}
 }
