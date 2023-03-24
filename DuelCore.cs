@@ -374,6 +374,10 @@ class DuelCore : Core
 						player.Draw(GameConstants.START_HAND_SIZE);
 						player.momentum = momentumBase;
 						player.life = GameConstants.START_LIFE;
+						player.discardCounts.Add(0);
+						player.dealtDamages.Add(0);
+						player.brittleDeathCounts.Add(0);
+						player.deathCounts.Add(0);
 					}
 					turnPlayer = rnd.Next(100) / 50;
 					initPlayer = turnPlayer;
