@@ -261,29 +261,27 @@ class DuelCore : Core
 		}
 		foreach(Player player in players)
 		{
-			if(!rewardClaimed && lingeringEffects.ContainsKey(player.quest.uid))
+			if(lingeringEffects.ContainsKey(player.quest.uid))
 			{
 				foreach(LingeringEffectInfo info in lingeringEffects[player.quest.uid])
 				{
 					info.effect(info.referrer);
-					if(player.quest.Progress >= player.quest.Goal)
+					if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
 					{
 						player.quest.Reward();
 						rewardClaimed = true;
-						break;
 					}
 				}
 			}
-			if(!rewardClaimed && temporaryLingeringEffects.ContainsKey(player.quest.uid))
+			if(temporaryLingeringEffects.ContainsKey(player.quest.uid))
 			{
 				foreach(LingeringEffectInfo info in temporaryLingeringEffects[player.quest.uid])
 				{
 					info.effect(info.referrer);
-					if(player.quest.Progress >= player.quest.Goal)
+					if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
 					{
 						player.quest.Reward();
 						rewardClaimed = true;
-						break;
 					}
 				}
 			}
@@ -404,7 +402,6 @@ class DuelCore : Core
 				{
 					foreach(Player player in players)
 					{
-						player.Draw(1);
 						player.ability.Position = 0;
 						player.discardCounts.Add(0);
 						player.dealtDamages.Add(0);
@@ -412,6 +409,8 @@ class DuelCore : Core
 						player.deathCounts.Add(0);
 						player.momentum = momentumBase;
 						player.castCounts.Clear();
+						player.Draw(1);
+						turn++;
 					}
 					foreach(KeyValuePair<int, List<ActivatedEffectInfo>> lists in activatedEffects)
 					{
@@ -507,8 +506,8 @@ class DuelCore : Core
 						}
 						else
 						{
-							RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => card0.BaseLife -= card1.BasePower, referrer: card0));
-							RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => card1.BaseLife -= card0.BasePower, referrer: card1));
+							RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => card0.Life -= card1.Power, referrer: card0));
+							RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => card1.Life -= card0.Power, referrer: card1));
 							EvaluateLingeringEffects();
 							if(card0.Life == 0)
 							{
@@ -573,7 +572,6 @@ class DuelCore : Core
 							}
 						}
 					}
-					turn++;
 					turnPlayer = 1 - turnPlayer;
 					if(GameConstants.MOMENTUM_INCREMENT_TURNS.Contains(turn))
 					{
@@ -601,15 +599,14 @@ class DuelCore : Core
 				{
 					foreach(StateReachedTrigger trigger in stateReachedTriggers[player.quest.uid])
 					{
-						if(!rewardClaimed && trigger.state == state && trigger.condition())
+						if(trigger.state == state && trigger.condition())
 						{
 							trigger.effect();
 							trigger.wasTriggered = true;
-							if(player.quest.Progress >= player.quest.Goal)
+							if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
 							{
 								player.quest.Reward();
 								rewardClaimed = true;
-								break;
 							}
 						}
 					}
@@ -1203,10 +1200,10 @@ class DuelCore : Core
 			{
 				foreach(GenericCastTrigger trigger in genericCastTriggers[p.quest.uid])
 				{
-					if(!rewardClaimed && trigger.condition(castCard: card))
+					if(trigger.condition(castCard: card))
 					{
 						trigger.effect(castCard: card);
-						if(p.quest.Progress >= p.quest.Goal)
+						if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
 						{
 							p.quest.Reward();
 							rewardClaimed = true;
@@ -1573,49 +1570,45 @@ class DuelCore : Core
 				}
 			}
 		}
-		if(youDiscardTriggers.Count > 0)
+		foreach(Player player in players)
 		{
-			foreach(Player player in players)
+			if(youDiscardTriggers.ContainsKey(player.quest.uid))
 			{
-				if(youDiscardTriggers.ContainsKey(player.quest.uid))
+				foreach(DiscardTrigger trigger in youDiscardTriggers[player.quest.uid])
 				{
-					foreach(DiscardTrigger trigger in youDiscardTriggers[player.quest.uid])
+					if(trigger.condition())
 					{
-						if(!rewardClaimed && trigger.condition())
+						trigger.effect();
+						if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
+						{
+							player.quest.Reward();
+							rewardClaimed = true;
+						}
+					}
+				}
+			}
+			foreach(Card c in player.hand.GetAll())
+			{
+				if(youDiscardTriggers.ContainsKey(c.uid))
+				{
+					foreach(DiscardTrigger trigger in youDiscardTriggers[c.uid])
+					{
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
 						{
 							trigger.effect();
-							if(player.quest.Progress >= player.quest.Goal)
-							{
-								player.quest.Reward();
-								rewardClaimed = true;
-								break;
-							}
 						}
 					}
 				}
-				foreach(Card c in player.hand.GetAll())
+			}
+			foreach(Card? c in player.field.GetAll())
+			{
+				if(c != null && youDiscardTriggers.ContainsKey(c.uid))
 				{
-					if(youDiscardTriggers.ContainsKey(c.uid))
+					foreach(DiscardTrigger trigger in youDiscardTriggers[c.uid])
 					{
-						foreach(DiscardTrigger trigger in youDiscardTriggers[c.uid])
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition())
 						{
-							if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
-							{
-								trigger.effect();
-							}
-						}
-					}
-				}
-				foreach(Card? c in player.field.GetAll())
-				{
-					if(c != null && youDiscardTriggers.ContainsKey(c.uid))
-					{
-						foreach(DiscardTrigger trigger in youDiscardTriggers[c.uid])
-						{
-							if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition())
-							{
-								trigger.effect();
-							}
+							trigger.effect();
 						}
 					}
 				}
