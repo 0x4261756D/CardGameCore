@@ -285,7 +285,7 @@ public abstract class Quest : Card
 	public int Progress
 	{
 		get => this.Position;
-		set => this.Position = value;
+		set => this.Position = Math.Min(value, this.Goal);
 	}
 	public int Goal
 	{
