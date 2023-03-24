@@ -2,9 +2,9 @@ using CardGameCore;
 using static CardGameUtils.GameConstants;
 using static CardGameCore.CardUtils;
 
-class TurnToDust : Spell
+class TurntoDust : Spell
 {
-	public TurnToDust() : base(
+	public TurntoDust() : base(
 		Name: "Turn to Dust",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 4,

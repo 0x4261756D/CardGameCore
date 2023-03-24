@@ -2,9 +2,9 @@
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
-class CommandToAttack : Spell
+class CommandtoAttack : Spell
 {
-	public CommandToAttack() : base(
+	public CommandtoAttack() : base(
 		Name: "Command to Attack",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 4,
