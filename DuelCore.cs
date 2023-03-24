@@ -549,12 +549,6 @@ class DuelCore : Core
 				break;
 				case GameConstants.State.TurnEnd:
 				{
-					turn++;
-					turnPlayer = 1 - turnPlayer;
-					if(GameConstants.MOMENTUM_INCREMENT_TURNS.Contains(turn))
-					{
-						momentumBase++;
-					}
 					ProcessStateReachedTriggers();
 					foreach(Player player in players)
 					{
@@ -578,6 +572,12 @@ class DuelCore : Core
 								}
 							}
 						}
+					}
+					turn++;
+					turnPlayer = 1 - turnPlayer;
+					if(GameConstants.MOMENTUM_INCREMENT_TURNS.Contains(turn))
+					{
+						momentumBase++;
 					}
 					state = GameConstants.State.TurnStart;
 				}
