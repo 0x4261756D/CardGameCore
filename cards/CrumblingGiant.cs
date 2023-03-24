@@ -22,7 +22,7 @@ class CrumblingGiant : Creature
 
 	public void DeathEffect()
 	{
-		PlayerChangeLife(player: Controller, amount: 5);
+		DealDamage(player: Controller, amount: 5, source: this);
 	}
 
 }
