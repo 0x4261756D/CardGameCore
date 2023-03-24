@@ -340,7 +340,7 @@ class DuelCore : Core
 			for(int i = cards.Length - 1; i >= 0; i--)
 			{
 				Card card = cards[i];
-				if(card.Life == 0)
+				if(card.Life <= 0)
 				{
 					DestroyImpl(card);
 				}
@@ -1159,6 +1159,9 @@ class DuelCore : Core
 	}
 	private void CastImpl(int player, Card card)
 	{
+		Card?[] shownCards = new Card[2];
+		shownCards[player] = card;
+		SendFieldUpdates(shownCards: shownCards);
 		switch(card.CardType)
 		{
 			case GameConstants.CardType.Creature:
@@ -1227,9 +1230,7 @@ class DuelCore : Core
 			}
 		}
 		EvaluateLingeringEffects();
-		Card?[] shownCards = new Card[2];
-		shownCards[player] = card;
-		SendFieldUpdates(shownCards: shownCards);
+		SendFieldUpdates();
 	}
 
 	public void ResetAbilityImpl(int player)
