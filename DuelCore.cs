@@ -563,7 +563,7 @@ class DuelCore : Core
 								}
 								if(c.Keywords.ContainsKey(Keyword.Decaying))
 								{
-									c.BaseLife -= 1;
+									RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => c.Life -= 1, referrer: c));
 									EvaluateLingeringEffects();
 									if(c.Life == 0)
 									{
