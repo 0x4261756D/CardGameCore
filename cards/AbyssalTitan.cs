@@ -8,7 +8,7 @@ class AbyssalTitan : Creature
 		Name: "Abyssal Titan",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 10,
-		Text: "[Collosal] +1.\nCosts 1 less for each card you discarded this turn.\n{Revelation}: Gain 5 life.",
+		Text: "[Collosal] +1.\nCosts 1 less for each card you discarded this turn.\n{Revelation}: Gain 3 life.",
 		OriginalPower: 8,
 		OriginalLife: 8
 		)
@@ -23,7 +23,7 @@ class AbyssalTitan : Creature
 
 	private void GainEffect()
 	{
-		PlayerChangeLife(player: Controller, amount: 5);
+		PlayerChangeLife(player: Controller, amount: 3);
 	}
 	private void CostReductionEffect(Card _)
 	{

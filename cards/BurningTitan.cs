@@ -8,7 +8,7 @@ class BurningTitan : Creature
 		Name: "Burning Titan",
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 10,
-		Text: "[Collosal] +1.\n Costs 1 less for each damage you dealt with spells last turn.\n{Revelation}: Gain 5 life.",
+		Text: "[Collosal] +1.\n Costs 1 less for each damage you dealt with spells last turn.\n{Revelation}: Gain 3 life.",
 		OriginalPower: 8,
 		OriginalLife: 8
 		)
@@ -23,7 +23,7 @@ class BurningTitan : Creature
 
 	private void GainEffect()
 	{
-		PlayerChangeLife(player: Controller, amount: 5);
+		PlayerChangeLife(player: Controller, amount: 3);
 	}
 	private void CostReductionEffect(Card _)
 	{

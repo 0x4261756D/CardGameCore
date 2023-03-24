@@ -21,8 +21,7 @@ class AcolyteofMadness : Creature
 
 	public void DiscardEffect()
 	{
-		// NOTE: This is different from DealDamage, check if this is the wanted behaviour
-		PlayerChangeLife(player: 1 - Controller, amount: -2);
+		DealDamage(player: Controller, amount: 2, source: this);
 		PlayerChangeLife(player: Controller, amount: 2);
 	}
 }

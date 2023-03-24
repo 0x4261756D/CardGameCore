@@ -8,7 +8,7 @@ class EnormousTitan : Creature
 		Name: "Enormous Titan",
 		CardClass: PlayerClass.All,
 		OriginalCost: 10,
-		Text: "[Collosal] +1\n{Cast}: Costs 1 less for each creature your opponent controls.\n{Revelation}: Gain 3 life.",
+		Text: "[Collosal] +1\n{Cast}: Costs 1 less for each creature your opponent controls.\n{Revelation}: Gain 2 life.",
 		OriginalPower: 8,
 		OriginalLife: 8
 		)
@@ -23,7 +23,7 @@ class EnormousTitan : Creature
 
 	private void GainEffect()
 	{
-		PlayerChangeLife(player: Controller, amount: 3);
+		PlayerChangeLife(player: Controller, amount: 2);
 	}
 
 	private void CostReductionEffect(Card _)
