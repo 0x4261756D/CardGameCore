@@ -16,7 +16,7 @@ public abstract class Card
 		get => _life;
 		set
 		{
-			if(value - _life > damageCap)
+			if(damageCap > 0 && _life - value > damageCap)
 			{
 				_life -= damageCap;
 			}
