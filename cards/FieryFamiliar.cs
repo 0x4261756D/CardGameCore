@@ -22,7 +22,7 @@ class FieryFamiliar : Creature
 
 	private void RevelationEffect()
 	{
-		AddToHand(player: Controller, card: this);
+		MoveToHand(player: Controller, card: this);
 	}
 
 	private void BuffEffect(Card target)

@@ -1,3 +1,4 @@
+// scripted by 0x4261756D
 using CardGameCore;
 using static CardGameUtils.GameConstants;
 
@@ -7,13 +8,19 @@ class Rekindle : Spell
 		Name: "Rekindle",
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 1,
-		Text: "{Cast}: Draw X, where X is the amount of Damage \"Ignite\" would deal \n {Revelation}: Draw 1."
+		Text: "{Cast}: Draw X, where X is the amount of Damage \"Ignite\" would deal.\n{Revelation}: Draw 1."
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
+		RegisterRevelationTrigger(trigger: new RevelationTrigger(() => Draw(player: Controller, amount: 1)), referrer: this);
+	}
+
+	public void CastEffect()
+	{
+		Draw(player: Controller, amount: GetIgniteDamage(Controller));
 	}
 
 }

@@ -24,7 +24,7 @@ class SugomaGodoftheAbyss : Creature
 
 	public void RevelationEffect()
 	{
-		DealDamage(player: Controller, damage: 1);
+		DealDamage(player: Controller, amount: 1, source: this);
 		PlayerChangeMomentum(player: Controller, amount: 1);
 	}
 

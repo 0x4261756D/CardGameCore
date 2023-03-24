@@ -1,6 +1,7 @@
 // Scripted by 0x4261756D
 using CardGameCore;
 using static CardGameUtils.GameConstants;
+using static CardGameCore.CardUtils;
 
 class RebornSoul : Creature
 {
@@ -13,9 +14,19 @@ class RebornSoul : Creature
 		OriginalPower: 3
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterDiscardTrigger(trigger: new DiscardTrigger(effect: () => Cast(player: Controller, card: this), condition: () => HasEmpty(GetField(Controller))), referrer: this);
+		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect, condition: () => GetDiscardable(Controller).Length > 0 && HasEmpty(GetField(Controller))), referrer: this);
+	}
+
+	public void RevelationEffect()
+	{
+		if(AskYesNo(player: Controller, question: "Discard?"))
+		{
+			DiscardAmount(player: Controller, amount: 1);
+			CreateToken(player: Controller, power: 1, life: 1, name: "Weaker Soul");
+		}
 	}
 }

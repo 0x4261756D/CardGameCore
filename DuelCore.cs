@@ -49,6 +49,7 @@ class DuelCore : Core
 	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
 	private Dictionary<int, List<LingeringEffectInfo>> temporaryLingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
 	private Dictionary<int, List<ActivatedEffectInfo>> activatedEffects = new Dictionary<int, List<ActivatedEffectInfo>>();
+	private Dictionary<int, List<Trigger>> dealsDamageTriggers = new Dictionary<int, List<Trigger>>();
 
 	public DuelCore()
 	{
@@ -108,6 +109,7 @@ class DuelCore : Core
 		Card.GetDiscardCountXTurnsAgo = GetDiscardCountXTurnsAgoImpl;
 		Card.GetDamageDealtXTurnsAgo = GetDamageDealtXTurnsAgoImpl;
 		Card.GetBrittleDeathCountXTurnsAgo = GetBrittleDeathCountXTurnsAgoImpl;
+		Card.GetDeathCountXTurnsAgo = GetDeathCountXTurnsAgoImpl;
 		Card.PlayerChangeLife = PlayerChangeLifeImpl;
 		Card.PlayerChangeMomentum = PlayerChangeMomentumImpl;
 		Card.Cast = CastImpl;
@@ -123,7 +125,8 @@ class DuelCore : Core
 		Card.Gather = GatherImpl;
 		Card.Move = MoveImpl;
 		Card.SelectZone = SelectZoneImpl;
-		Card.AddToHand = AddToHandImpl;
+		Card.MoveToHand = MoveToHandImpl;
+		Card.MoveToField = MoveToFieldImpl;
 		Card.GetCastCount = GetCastCountImpl;
 		Card.ReturnCardsToDeck = ReturnCardsToDeckImpl;
 		Card.Reveal = RevealImpl;
@@ -406,6 +409,7 @@ class DuelCore : Core
 						player.discardCounts.Add(0);
 						player.dealtDamages.Add(0);
 						player.brittleDeathCounts.Add(0);
+						player.deathCounts.Add(0);
 						player.momentum = momentumBase;
 						player.castCounts.Clear();
 					}
@@ -484,7 +488,7 @@ class DuelCore : Core
 						if(card1 != null)
 						{
 							// Deal damage to player
-							DealDamageImpl(0, card1.Power);
+							DealDamageImpl(player: 0, amount: card1.Power, source: card1);
 							if(players[0].life <= 0)
 							{
 								return true;
@@ -495,7 +499,7 @@ class DuelCore : Core
 					{
 						if(card1 == null)
 						{
-							DealDamageImpl(1, card0.Power);
+							DealDamageImpl(player: 1, amount: card0.Power, source: card0);
 							if(players[1].life <= 0)
 							{
 								return true;
@@ -667,12 +671,22 @@ class DuelCore : Core
 		}
 	}
 
-	private void DealDamageImpl(int player, int damage)
+	private void DealDamageImpl(int player, int amount, Card source)
 	{
-		players[player].life -= damage;
-		players[1 - player].dealtDamages[turn] += damage;
-		RevealImpl(player, damage);
+		players[player].life -= amount;
+		players[1 - player].dealtDamages[turn] += amount;
+		RevealImpl(player, amount);
 		CheckIfLost(player);
+		if(dealsDamageTriggers.ContainsKey(source.uid))
+		{
+			foreach (Trigger trigger in dealsDamageTriggers[source.uid])
+			{
+				if(trigger.condition())
+				{
+					trigger.effect();
+				}
+			}
+		}
 	}
 	private void RevealImpl(int player, int damage)
 	{
@@ -1134,6 +1148,12 @@ class DuelCore : Core
 		players[player].Draw(amount);
 		SendFieldUpdates();
 	}
+	private void MoveToFieldImpl(int choosingPlayer, int targetPlayer, Card card)
+	{
+		RemoveCardFromItsLocation(card);
+		int zone = SelectZoneImpl(choosingPlayer: choosingPlayer, targetPlayer: targetPlayer);
+		players[targetPlayer].field.Add(card, zone);
+	}
 	private void CastImpl(int player, Card card)
 	{
 		switch(card.CardType)
@@ -1221,6 +1241,14 @@ class DuelCore : Core
 			castTriggers[referrer.uid] = new List<CastTrigger>();
 		}
 		castTriggers[referrer.uid].Add(trigger);
+	}
+	public void RegisterDealsDamageTriggerImpl(Trigger trigger, Card referrer)
+	{
+		if(!dealsDamageTriggers.ContainsKey(referrer.uid))
+		{
+			dealsDamageTriggers[referrer.uid] = new List<Trigger>();
+		}
+		dealsDamageTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterGenericCastTriggerImpl(GenericCastTrigger trigger, Card referrer)
 	{
@@ -1340,14 +1368,7 @@ class DuelCore : Core
 	}
 	public void PlayerChangeLifeImpl(int player, int amount)
 	{
-		if(amount < 0)
-		{
-			DealDamageImpl(player, damage: amount);
-		}
-		else
-		{
-			players[player].life += amount;
-		}
+		players[player].life += amount;
 	}
 	public Card GatherImpl(int player, int amount)
 	{
@@ -1381,7 +1402,7 @@ class DuelCore : Core
 		players[player].momentum += amount;
 		if(players[player].momentum < 0) players[player].momentum = 0;
 	}
-	public void AddToHandImpl(int player, Card card)
+	public void MoveToHandImpl(int player, Card card)
 	{
 		switch(card.Location)
 		{
@@ -1423,6 +1444,7 @@ class DuelCore : Core
 		{
 			players[card.Controller].brittleDeathCounts[turn]++;
 		}
+		players[card.Controller].deathCounts[turn]++;
 		if(deathTriggers.ContainsKey(card.uid))
 		{
 			foreach(Trigger trigger in deathTriggers[card.uid])
@@ -1673,6 +1695,15 @@ class DuelCore : Core
 			return 0;
 		}
 		return players[player].brittleDeathCounts[turn - turns];
+	}
+	public int GetDeathCountXTurnsAgoImpl(int player, int turns)
+	{
+		if(turn < turns || players[player].deathCounts.Count <= turn - turns)
+		{
+			Log($"Attempted to get death count before the game began ({turn - turns}) for player {players[player].name}", severity: LogSeverity.Warning);
+			return 0;
+		}
+		return players[player].deathCounts[turn - turns];
 	}
 
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent

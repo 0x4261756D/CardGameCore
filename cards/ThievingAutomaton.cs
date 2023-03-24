@@ -13,10 +13,10 @@ class ThievingAutomaton : Creature
 		OriginalLife: 2
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterDealsDamageTrigger(trigger: new Trigger(effect: () => Draw(player: Controller, amount: 1)), referrer: this);
 	}
 
 }

@@ -1,5 +1,7 @@
+// scripted by 0x4261756D
 using CardGameCore;
 using static CardGameUtils.GameConstants;
+using static CardGameCore.CardUtils;
 
 class Shatter : Spell
 {
@@ -7,13 +9,21 @@ class Shatter : Spell
 		Name: "Shatter",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 2,
-		Text: "{Cast}: Sacrifice a creature. Deal damage to your opponent equal to its attack."
+		Text: "{Cast}: Destroy target creature you control. Deal damage to your opponent equal to its power."
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: () => HasUsed(GetField(Controller))), referrer: this);
+	}
+
+	public void CastEffect()
+	{
+		Card target = SelectCards(player: Controller, cards: GetFieldUsed(Controller), amount: 1, description: "Select target to destroy")[0];
+		int damage = target.Power;
+		Destroy(target);
+		DealDamage(player: 1 - Controller, amount: damage, source: this);
 	}
 
 }

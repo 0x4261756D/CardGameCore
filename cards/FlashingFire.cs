@@ -31,11 +31,11 @@ class FlashingFire : Spell
 		}
 		else
 		{
-			Card.PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Damage the opponent?") ? 1 - Controller : Controller, amount: -damage);
+			Card.DealDamage(player: Card.AskYesNo(player: Controller, question: "Damage the opponent?") ? 1 - Controller : Controller, amount: damage, source: this);
 		}
 		if(killed)
 		{
-			AddToHand(player: Controller, card: this);
+			MoveToHand(player: Controller, card: this);
 		}
 	}
 }

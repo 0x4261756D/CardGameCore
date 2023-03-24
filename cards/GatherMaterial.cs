@@ -32,7 +32,7 @@ class GatherMaterial : Spell
 
 	private void RevelationEffect()
 	{
-		AddToHand(player: Controller, card: this);
+		MoveToHand(player: Controller, card: this);
 	}
 
 	private void CastEffect()

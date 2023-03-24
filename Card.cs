@@ -102,6 +102,7 @@ public abstract class Card
 	public static RegisterAttackTriggerDelegate RegisterAttackTrigger = (_, _) => { };
 	public static RegisterDeathTriggerDelegate RegisterDeathTrigger = (_, _) => { };
 	public static RegisterGenericDeathTriggerDelegate RegisterGenericDeathTrigger = (_, _) => { };
+	public static RegisterDealsDamageTriggerDelegate RegisterDealsDamageTrigger = (_, _) => { };
 	public static RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
 	public static RegisterTemporaryLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => { };
 	public static RegisterActivatedEffectDelegate RegisterActivatedEffect = (_) => { };
@@ -117,6 +118,7 @@ public abstract class Card
 	public static GetYXTurnsAgoDelegate GetDiscardCountXTurnsAgo = (_, _) => -1;
 	public static GetYXTurnsAgoDelegate GetDamageDealtXTurnsAgo = (_, _) => -1;
 	public static GetYXTurnsAgoDelegate GetBrittleDeathCountXTurnsAgo = (_, _) => -1;
+	public static GetYXTurnsAgoDelegate GetDeathCountXTurnsAgo = (_, _) => -1;
 	public static PlayerChangeLifeDelegate PlayerChangeLife = (_, _) => { };
 	public static PlayerChangeMomentumDelegate PlayerChangeMomentum = (_, _) => { };
 	public static CastDelegate Cast = (_, _) => { };
@@ -132,11 +134,12 @@ public abstract class Card
 	public static GatherDelegate Gather = (_, _) => new ClientCoreDummyCard();
 	public static MoveDelegate Move = (_, _) => { };
 	public static SelectZoneDelegate SelectZone = (_, _) => -1;
-	public static AddToHandDelegate AddToHand = (_, _) => { };
+	public static MoveToHandDelegate MoveToHand = (_, _) => { };
+	public static MoveToFieldDelegate MoveToField = (_, _, _) => { };
 	public static GetCastCountDelegate GetCastCount = (_, _) => -1;
 	public static ReturnCardsToDeckDelegate ReturnCardsToDeck = (_) => { };
 	public static RevealDelegate Reveal = (_, _) => { };
-	public static DealDamageDelegate DealDamage = (_, _) => { };
+	public static DealDamageDelegate DealDamage = (_, _, _) => { };
 	public static GetDiscardableDelegate GetDiscardable = (_) => new Card[0];
 	public static RefreshAbilityDelegate RefreshAbility = (_) => { };
 

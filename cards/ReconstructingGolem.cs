@@ -13,10 +13,15 @@ class ReconstructingGolem : Creature
 		OriginalLife: 1
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterDeathTrigger(trigger: new Trigger(effect: DeathEffect), referrer: this);
+	}
+
+	public void DeathEffect()
+	{
+		MoveToHand(player: Controller, card: this);
 	}
 
 }

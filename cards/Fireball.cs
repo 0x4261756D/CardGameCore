@@ -21,7 +21,7 @@ class Fireball : Spell
 
 	private void RevelationEffect()
 	{
-		AddToHand(player: Controller, card: this);
+		MoveToHand(player: Controller, card: this);
 	}
 
 	private bool RevelationCondition()

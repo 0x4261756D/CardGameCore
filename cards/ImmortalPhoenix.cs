@@ -21,7 +21,7 @@ class ImmortalPhoenix : Creature
 
 	private void DeathEffect()
 	{
-		AddToHand(player: Controller, card: this);
+		MoveToHand(player: Controller, card: this);
 		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: PhoenixEffect, referrer: this, influenceLocation: Location.ALL));
 	}
 

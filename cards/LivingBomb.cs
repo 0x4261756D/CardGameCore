@@ -25,6 +25,6 @@ class LivingBomb : Spell
 	private void CastEffect()
 	{
 		Card target = SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Select target")[0];
-		RegisterDeathTrigger(trigger: new Trigger(effect: () => PlayerChangeLife(player: target.Controller, amount: -target.BaseLife)), referrer: target);
+		RegisterDeathTrigger(trigger: new Trigger(effect: () => DealDamage(player: target.Controller, amount: target.BaseLife, source: target)), referrer: target);
 	}
 }

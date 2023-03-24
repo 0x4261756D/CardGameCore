@@ -159,6 +159,7 @@ public delegate void RegisterVictoriousTriggerDelegate(Trigger trigger, Card ref
 public delegate void RegisterAttackTriggerDelegate(Trigger trigger, Card referrer);
 public delegate void RegisterDeathTriggerDelegate(Trigger trigger, Card referrer);
 public delegate void RegisterGenericDeathTriggerDelegate(GenericDeathTrigger trigger, Card referrer);
+public delegate void RegisterDealsDamageTriggerDelegate(Trigger trigger, Card referrer);
 public delegate void RegisterLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate void RegisterTemporaryLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate void RegisterActivatedEffectDelegate(ActivatedEffectInfo info);
@@ -184,11 +185,12 @@ public delegate void PayLifeDelegate(int player, int amount);
 public delegate Card GatherDelegate(int player, int amount);
 public delegate void MoveDelegate(Card card, int zone);
 public delegate int SelectZoneDelegate(int choosingPlayer, int targetPlayer);
-public delegate void AddToHandDelegate(int player, Card card);
+public delegate void MoveToHandDelegate(int player, Card card);
+public delegate void MoveToFieldDelegate(int choosingPlayer, int targetPlayer, Card card);
 public delegate int GetCastCountDelegate(int player, string name);
 public delegate void ReturnCardsToDeckDelegate(Card[] cards);
 public delegate void RevealDelegate(int player, int damage);
-public delegate void DealDamageDelegate(int player, int damage);
+public delegate void DealDamageDelegate(int player, int amount, Card source);
 public delegate Card[] GetDiscardableDelegate(int player);
 public delegate void RefreshAbilityDelegate(int player);
 

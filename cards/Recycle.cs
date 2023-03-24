@@ -11,10 +11,15 @@ class Recycle : Spell
 		Text: "{End of turn}: Draw 1 for each of your creatures that died this turn."
 		)
 	{ }
-	// TODO: implement functionality
 
 	public override void Init()
 	{
+		RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: StateReachedEffect, state: State.TurnEnd, influenceLocation: Location.ALL), referrer: this);
+	}
+
+	public void StateReachedEffect()
+	{
+		Draw(player: Controller, amount: GetDeathCountXTurnsAgo(player: Controller, turns: 0));
 	}
 
 }
