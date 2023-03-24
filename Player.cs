@@ -73,7 +73,7 @@ class Player
 			}
 			break;
 			default:
-				throw new Exception($"Destroying a card at {card.Location} is not supported");
+				throw new Exception($"Destroying {card.Name} at {card.Location} is not supported");
 		}
 	}
 }
