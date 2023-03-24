@@ -386,8 +386,10 @@ class DuelCore : Core
 					// Mulligan
 					for(int i = 0; i < players.Length; i++)
 					{
+						Log("Mulligan?");
 						if(AskYesNoImpl(player: i, question: "Mulligan?"))
 						{
+							Log("yes");
 							Card[] cards = SelectCardsCustom(i, "Select cards to mulligan", players[i].hand.GetAll(), (x) => true);
 							foreach(Card card in cards)
 							{
@@ -396,6 +398,7 @@ class DuelCore : Core
 							}
 							players[i].deck.Shuffle();
 							players[i].Draw(cards.Length);
+							Log("Done with mulligan, sending updates now");
 							SendFieldUpdates();
 						}
 					}
@@ -1096,6 +1099,7 @@ class DuelCore : Core
 	}
 	public Card[] SelectCardsCustom(int player, string description, Card[] cards, Func<Card[], bool> isValidSelection)
 	{
+		Log("Select cards custom");
 		SendPacketToPlayer(new DuelPackets.CustomSelectCardsRequest
 		{
 			cards = Card.ToStruct(cards),
@@ -1103,28 +1107,35 @@ class DuelCore : Core
 			initialState = isValidSelection(new Card[0])
 		}, player);
 
+		Log("request sent");
 		List<byte> payload = new List<byte>();
 		do
 		{
 			DuelPackets.CustomSelectCardsIntermediateRequest request;
 			payload = ReceiveRawPacket(playerStreams[player])!;
+			Log("request received");
 			if(payload[0] == (byte)NetworkingConstants.PacketType.DuelCustomSelectCardsResponse)
 			{
+				Log("breaking out");
 				break;
 			}
 			request = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateRequest>(payload);
+			Log("deserialized packet");
 			SendPacketToPlayer(new DuelPackets.CustomSelectCardsIntermediateResponse
 			{
 				isValid = isValidSelection(Array.ConvertAll(request.uids, (x => cards.First(y => y.uid == x))))
 			}, player);
+			Log("sent packet");
 		} while(true);
 
 		DuelPackets.CustomSelectCardsResponse response = DeserializePayload<DuelPackets.CustomSelectCardsResponse>(payload);
+		Log("final response");
 		Card[] ret = cards.Where(x => response.uids.Contains(x.uid)).ToArray();
 		if(!isValidSelection(ret))
 		{
 			throw new Exception("Player somethow selected invalid cards");
 		}
+		Log("returning");
 		return ret;
 	}
 	private int SelectMovementZone(int player, int position, int momentum)
