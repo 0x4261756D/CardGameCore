@@ -36,6 +36,7 @@ class OverwhelmingMight : Spell
 		if(GetDiscardable(Controller).Length > 0 && AskYesNo(player: Controller, question: "Discard a card to recast?"))
 		{
 			Cast(player: Controller, card: this);
+			DiscardAmount(player: Controller, amount: 1);
 		}
 	}
 
