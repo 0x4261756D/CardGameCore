@@ -597,21 +597,24 @@ class DuelCore : Core
 		{
 			foreach(Player player in players)
 			{
-				foreach(StateReachedTrigger trigger in stateReachedTriggers[player.quest.uid])
+				if(stateReachedTriggers.ContainsKey(player.quest.uid))
 				{
-					if(!rewardClaimed && trigger.state == state && trigger.condition())
+					foreach(StateReachedTrigger trigger in stateReachedTriggers[player.quest.uid])
 					{
-						trigger.effect();
-						trigger.wasTriggered = true;
-						if(player.quest.Progress >= player.quest.Goal)
+						if(!rewardClaimed && trigger.state == state && trigger.condition())
 						{
-							player.quest.Reward();
-							rewardClaimed = true;
-							break;
+							trigger.effect();
+							trigger.wasTriggered = true;
+							if(player.quest.Progress >= player.quest.Goal)
+							{
+								player.quest.Reward();
+								rewardClaimed = true;
+								break;
+							}
 						}
 					}
+					stateReachedTriggers[player.quest.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
 				}
-				stateReachedTriggers[player.quest.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
 
 				foreach(Card card in player.hand.GetAll())
 				{
