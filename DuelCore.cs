@@ -679,7 +679,7 @@ class DuelCore : Core
 		CheckIfLost(player);
 		if(dealsDamageTriggers.ContainsKey(source.uid))
 		{
-			foreach (Trigger trigger in dealsDamageTriggers[source.uid])
+			foreach(Trigger trigger in dealsDamageTriggers[source.uid])
 			{
 				if(trigger.condition())
 				{
