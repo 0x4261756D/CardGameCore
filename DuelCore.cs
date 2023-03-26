@@ -513,7 +513,6 @@ class DuelCore : Core
 							EvaluateLingeringEffects();
 							if(card0.Life == 0)
 							{
-								DestroyImpl(card0);
 								if(victoriousTriggers.ContainsKey(card1.uid))
 								{
 									foreach(Trigger trigger in victoriousTriggers[card1.uid])
@@ -527,7 +526,6 @@ class DuelCore : Core
 							}
 							if(card1.Life == 0)
 							{
-								DestroyImpl(card1);
 								if(victoriousTriggers.ContainsKey(card0.uid))
 								{
 									foreach(Trigger trigger in victoriousTriggers[card0.uid])
