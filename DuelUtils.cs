@@ -133,13 +133,15 @@ public class GenericDeathTrigger : Trigger
 {
 	public new GenericDeathTriggerCondition condition;
 	public new GenericDeathTriggerEffect effect;
+	public GameConstants.Location influenceLocation;
 
-	public GenericDeathTrigger(GenericDeathTriggerEffect effect, GenericDeathTriggerCondition condition)
+	public GenericDeathTrigger(GenericDeathTriggerEffect effect, GenericDeathTriggerCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
 		this.effect = effect;
 		this.condition = condition;
+		this.influenceLocation = influenceLocation;
 	}
-	public GenericDeathTrigger(GenericDeathTriggerEffect effect) : this(effect, (_) => true) { }
+	public GenericDeathTrigger(GenericDeathTriggerEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field) : this(effect, (_) => true, influenceLocation) { }
 }
 
 public delegate bool TriggerCondition();

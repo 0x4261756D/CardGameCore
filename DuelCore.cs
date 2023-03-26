@@ -1503,7 +1503,33 @@ class DuelCore : Core
 				{
 					foreach(GenericDeathTrigger trigger in genericDeathTriggers[player.quest.uid])
 					{
-						if(trigger.condition(destroyedCard: card))
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(destroyedCard: card))
+						{
+							trigger.effect(destroyedCard: card);
+						}
+					}
+				}
+			}
+			foreach(Card fieldCard in player.grave.GetAll())
+			{
+				if(genericDeathTriggers.ContainsKey(fieldCard.uid))
+				{
+					foreach(GenericDeathTrigger trigger in genericDeathTriggers[player.quest.uid])
+					{
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Grave) && trigger.condition(destroyedCard: card))
+						{
+							trigger.effect(destroyedCard: card);
+						}
+					}
+				}
+			}
+			foreach(Card fieldCard in player.hand.GetAll())
+			{
+				if(genericDeathTriggers.ContainsKey(fieldCard.uid))
+				{
+					foreach(GenericDeathTrigger trigger in genericDeathTriggers[player.quest.uid])
+					{
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition(destroyedCard: card))
 						{
 							trigger.effect(destroyedCard: card);
 						}
