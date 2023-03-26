@@ -1058,7 +1058,9 @@ class DuelCore : Core
 
 	public bool AskYesNoImpl(int player, string question)
 	{
+		Log("Asking yes no");
 		SendPacketToPlayer(new DuelPackets.YesNoRequest { question = question }, player);
+		Log("Receiving");
 		return ReceivePacketFromPlayer<DuelPackets.YesNoResponse>(player).result;
 	}
 	private void SendFieldUpdates(GameConstants.Location mask = GameConstants.Location.ALL, Card?[]? shownCards = null)
