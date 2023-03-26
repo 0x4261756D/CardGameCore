@@ -875,6 +875,16 @@ class DuelCore : Core
 				}
 			}
 			break;
+			case NetworkingConstants.PacketType.DuelViewGraveRequest:
+			{
+				bool opponent = DeserializeJson<DuelPackets.ViewGraveRequest>(packet).opponent;
+				SendPacketToPlayer<DuelPackets.ViewCardsResponse>(new DuelPackets.ViewCardsResponse
+				{
+					cards = Card.ToStruct(players[opponent ? 1 - player : player].grave.GetAll()),
+					message = $"Your {(opponent ? "opponent's" : "")} grave"
+				}, player);
+			}
+			break;
 			default:
 				throw new Exception($"ERROR: Unable to process this packet: ({type}) | {packet}");
 		}
