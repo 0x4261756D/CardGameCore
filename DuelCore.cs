@@ -1129,6 +1129,10 @@ class DuelCore : Core
 				Log("breaking out");
 				break;
 			}
+			if(payload[0] != (byte)NetworkingConstants.PacketType.DuelCustomSelectCardsIntermediateRequest)
+			{
+				continue;
+			}
 			request = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateRequest>(payload);
 			Log("deserialized packet");
 			SendPacketToPlayer(new DuelPackets.CustomSelectCardsIntermediateResponse
