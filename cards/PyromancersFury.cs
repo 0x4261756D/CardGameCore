@@ -4,7 +4,7 @@ using static CardGameUtils.GameConstants;
 
 class PyromancersFury : Spell
 {
-	private bool discardTriggerActive = false;
+	private bool creatureDiedActive = false;
 	public PyromancersFury() : base(
 		Name: "Pyromancer's Fury",
 		CardClass: PlayerClass.Pyromancer,
@@ -16,27 +16,23 @@ class PyromancersFury : Spell
 	public override void Init()
 	{
 		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
-		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: LingeringEffect, referrer: this, influenceLocation: Location.ALL));
+		RegisterGenericDeathTrigger(trigger: new GenericDeathTrigger(effect: RefreshEffect, condition: (_) => creatureDiedActive, influenceLocation: Location.Grave), referrer: this);
 	}
 
-	public void LingeringEffect(Card target)
+	public void RefreshEffect(Card _)
 	{
-		if(!discardTriggerActive)
-		{
-			return;
-		}
 		RefreshAbility(Controller);
 	}
 
 	public void CastEffect()
 	{
 		ChangeIgniteDamage(player: Controller, amount: 1);
-		discardTriggerActive = true;
-		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: ResetEffect, referrer: this, influenceLocation: Location.ALL));
+		creatureDiedActive = true;
+		RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: ResetEffect, state: State.TurnEnd, influenceLocation: Location.ALL, oneshot: true), referrer: this);
 	}
 
-	public void ResetEffect(Card _)
+	public void ResetEffect()
 	{
-		discardTriggerActive = false;
+		creatureDiedActive = false;
 	}
 }
