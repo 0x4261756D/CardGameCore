@@ -89,6 +89,8 @@ public abstract class Card
 		this.IsClassAbility = IsClassAbility;
 		this.Controller = Controller;
 		this.CanBeClassAbility = CanBeClassAbility;
+		this.uid = DuelCore.UIDCount;
+		DuelCore.UIDCount++;
 		ClearModifications();
 	}
 

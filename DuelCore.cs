@@ -24,7 +24,7 @@ class DuelCore : Core
 			_state = value;
 		}
 	}
-	private int count;
+	public static int UIDCount;
 	private SHA384 sha;
 	public Player[] players;
 	public static NetworkStream[] playerStreams = new NetworkStream[0];
@@ -151,8 +151,6 @@ class DuelCore : Core
 	private Card CreateBasicCard(Type type, int controller)
 	{
 		Card c = (Card)Activator.CreateInstance(type)!;
-		c.uid = count;
-		count++;
 		c.Controller = controller;
 		c.Init();
 		return c;
