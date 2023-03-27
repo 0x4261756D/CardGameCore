@@ -76,6 +76,7 @@ class DuelCore : Core
 			Quest quest = (Quest)CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[2].Substring(1))!, i);
 			for(int j = 3; j < Program.config.duel_config.players[i].decklist.Length; j++)
 			{
+				Log($"Creating {Program.config.duel_config.players[i].decklist[j]}");
 				deck.Add(CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[j])!, i));
 			}
 			players[i] = new Player(Program.config.duel_config.players[i], i, deck, playerClass, ability, quest);
@@ -384,10 +385,8 @@ class DuelCore : Core
 					// Mulligan
 					for(int i = 0; i < players.Length; i++)
 					{
-						Log("Mulligan?");
 						if(AskYesNoImpl(player: i, question: "Mulligan?"))
 						{
-							Log("yes");
 							Card[] cards = SelectCardsCustom(i, "Select cards to mulligan", players[i].hand.GetAll(), (x) => true);
 							foreach(Card card in cards)
 							{
