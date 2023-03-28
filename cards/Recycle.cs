@@ -14,6 +14,11 @@ class Recycle : Spell
 
 	public override void Init()
 	{
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
+	}
+
+	private void CastEffect()
+	{
 		RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: StateReachedEffect, state: State.TurnEnd, influenceLocation: Location.ALL), referrer: this);
 	}
 
