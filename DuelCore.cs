@@ -1465,8 +1465,11 @@ class DuelCore : Core
 	}
 	public void DestroyImpl(Card card)
 	{
-		temporaryLingeringEffects.Remove(card.uid);
 		players[card.Controller].Destroy(card);
+		if(temporaryLingeringEffects.Remove(card.uid))
+		{
+			EvaluateLingeringEffects();
+		}
 		if(card.Keywords.ContainsKey(Keyword.Brittle))
 		{
 			players[card.Controller].brittleDeathCounts[turn]++;
