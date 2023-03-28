@@ -574,11 +574,11 @@ class DuelCore : Core
 						player.deathCounts.Add(0);
 					}
 					turnPlayer = 1 - turnPlayer;
+					turn++;
 					if(GameConstants.MOMENTUM_INCREMENT_TURNS.Contains(turn))
 					{
 						momentumBase++;
 					}
-					turn++;
 					state = GameConstants.State.TurnStart;
 				}
 				break;
