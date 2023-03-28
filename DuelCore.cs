@@ -914,9 +914,9 @@ class DuelCore : Core
 				Card card = players[player].hand.GetByUID(uid);
 				if(option == "Cast")
 				{
-					players[player].hand.Remove(card);
 					players[player].momentum -= card.Cost;
 					CastImpl(player, card);
+					players[player].hand.Remove(card);
 				}
 				else
 				{
