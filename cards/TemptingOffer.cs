@@ -8,7 +8,7 @@ class TemptingOffer : Spell
 		Name: "Tempting Offer",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 0,
-		Text: "{Cast}: Discard 2. Gain 2 Momentum."
+		Text: "{Cast}: Discard 2. Gain 2 Momentum. Draw 2."
 		)
 	{ }
 
@@ -21,6 +21,7 @@ class TemptingOffer : Spell
 	{
 		DiscardAmount(player: Controller, amount: 2);
 		PlayerChangeMomentum(player: Controller, amount: 2);
+		Draw(player: Controller, amount: 2);
 	}
 
 	public bool CastCondition()

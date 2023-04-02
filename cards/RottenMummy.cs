@@ -9,8 +9,8 @@ class RottenMummy : Creature
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 2,
 		Text: "[Decaying]\n{Death}: Discard 1.",
-		OriginalLife: 4,
-		OriginalPower: 3
+		OriginalLife: 7,
+		OriginalPower: 5
 		)
 	{ }
 

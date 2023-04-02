@@ -7,10 +7,10 @@ class EnormousTitan : Creature
 	public EnormousTitan() : base(
 		Name: "Enormous Titan",
 		CardClass: PlayerClass.All,
-		OriginalCost: 10,
+		OriginalCost: 6,
 		Text: "[Collosal] +1\n{Cast}: Costs 1 less for each creature your opponent controls.\n{Revelation}: Gain 2 life.",
-		OriginalPower: 8,
-		OriginalLife: 8
+		OriginalPower: 7,
+		OriginalLife: 7
 		)
 	{ }
 

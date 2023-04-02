@@ -10,8 +10,8 @@ class DeceivingTactician : Creature
 		CardClass: PlayerClass.All,
 		OriginalCost: 2,
 		Text: "{Activate}: Move target creature your opponent controls.",
-		OriginalPower: 2,
-		OriginalLife: 2
+		OriginalPower: 3,
+		OriginalLife: 3
 		)
 	{ }
 

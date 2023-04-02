@@ -8,7 +8,7 @@ class Scorch : Spell
 	public Scorch() : base(
 		Name: "Scorch",
 		CardClass: PlayerClass.Pyromancer,
-		OriginalCost: 3,
+		OriginalCost: 2,
 		Text: "{Cast}: Target creatures attacks becomes 0. It gains [Decaying]."
 		)
 	{ }

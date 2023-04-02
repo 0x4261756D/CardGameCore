@@ -9,7 +9,7 @@ class OverwhelmingMight : Spell
 		Name: "Overwhelming Might",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 1,
-		Text: "{Cast}: Deal 2 damage to target creature. You may discard 1: Recast this.\n{Discard}: Deal 1 damage to any target."
+		Text: "{Cast}: Deal 2 damage to target creature. You may discard 1: Recast this.\n{Discard}: Deal 2 damage to any target."
 		)
 	{ }
 
@@ -21,7 +21,7 @@ class OverwhelmingMight : Spell
 
 	private void RevelationEffect()
 	{
-		ChangeLifeOfAnyTarget(player: Controller, amount: -1, "Damage");
+		ChangeLifeOfAnyTarget(player: Controller, amount: -2, "Damage");
 	}
 
 	private bool CastCondition()

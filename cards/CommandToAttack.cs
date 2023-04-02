@@ -7,8 +7,8 @@ class CommandtoAttack : Spell
 	public CommandtoAttack() : base(
 		Name: "Command to Attack",
 		CardClass: PlayerClass.Artificer,
-		OriginalCost: 4,
-		Text: "{Cast}: For each of your opponents creatures create a 2/1 Construct token with [Brittle] and [Decaying]."
+		OriginalCost: 3,
+		Text: "{Cast}: For each of your opponents creatures create a 1/1 Construct token with [Brittle] and [Decaying]."
 		)
 	{ }
 
@@ -22,7 +22,7 @@ class CommandtoAttack : Spell
 		Card[] enemyCards = GetFieldUsed(1 - Controller);
 		foreach(Card card in enemyCards)
 		{
-			Card token = CreateToken(player: Controller, power: 2, life: 1, name: "Construct");
+			Card token = CreateToken(player: Controller, power: 1, life: 1, name: "Construct");
 			token.RegisterKeyword(Keyword.Decaying);
 			token.RegisterKeyword(Keyword.Brittle);
 		}

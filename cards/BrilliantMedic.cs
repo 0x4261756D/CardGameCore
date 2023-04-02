@@ -11,7 +11,7 @@ class BrilliantMedic : Creature
 		OriginalCost: 2,
 		Text: "{Cast}: Heal target any target by 4.",
 		OriginalPower: 2,
-		OriginalLife: 3
+		OriginalLife: 2
 		)
 	{ }
 

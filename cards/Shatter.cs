@@ -8,7 +8,7 @@ class Shatter : Spell
 	public Shatter() : base(
 		Name: "Shatter",
 		CardClass: PlayerClass.Artificer,
-		OriginalCost: 2,
+		OriginalCost: 1,
 		Text: "{Cast}: Destroy target creature you control. Deal damage to your opponent equal to its power."
 		)
 	{ }

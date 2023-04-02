@@ -9,7 +9,7 @@ class Fireball : Spell
 		Name: "Fireball",
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 2,
-		Text: "{Cast}: Deal 4 damage to any target.\n{Revelation}: If your opponent controls a damaged creature, add this to your hand."
+		Text: "{Cast}: Deal 6 damage to any target.\n{Revelation}: If your opponent controls a damaged creature, add this to your hand."
 		)
 	{ }
 
@@ -36,6 +36,6 @@ class Fireball : Spell
 
 	private void CastEffect()
 	{
-		ChangeLifeOfAnyTarget(player: Controller, amount: -4, description: "Fireball");
+		ChangeLifeOfAnyTarget(player: Controller, amount: -6, description: "Fireball");
 	}
 }
