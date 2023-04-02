@@ -327,9 +327,9 @@ public class Token : Creature
 		)
 	{
 		this.Controller = Controller;
+		RegisterKeyword(Keyword.Token);
 	}
 	public override void Init()
 	{
-		RegisterKeyword(Keyword.Token);
 	}
 }

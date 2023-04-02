@@ -21,7 +21,7 @@ class GearUp : Spell
 
 	public void CastEffect()
 	{
-		Card target = SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Target creature to reinforce")[0];
+		Card target = SelectCards(player: Controller, cards: GetFieldUsed(Controller), amount: 1, description: "Target creature to reinforce")[0];
 		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: BuffEffect, referrer: target));
 	}
 

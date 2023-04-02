@@ -8,7 +8,7 @@ class EverlastingProgress : Quest
 		Name: "Everlasting Progress",
 		CardClass: PlayerClass.Artificer,
 		ProgressGoal: 10,
-		Text: "{A creature with brittle dies}: Gain 1 progress.\n{Reward}: All creatures you control lose brittle."
+		Text: "{Your creature with brittle dies}: Gain 1 progress.\n{Reward}: All creatures you control lose brittle."
 		)
 	{ }
 
@@ -19,7 +19,7 @@ class EverlastingProgress : Quest
 
 	private bool ProgressCondition(Card destroyedCard)
 	{
-		return destroyedCard.Keywords.ContainsKey(Keyword.Brittle);
+		return destroyedCard.Controller == Controller && destroyedCard.Keywords.ContainsKey(Keyword.Brittle);
 	}
 
 	private void ProgressEffect(Card destroyedCard)

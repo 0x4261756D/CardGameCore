@@ -508,7 +508,7 @@ class DuelCore : Core
 							RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => card0.Life -= card1.Power, referrer: card0));
 							RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => card1.Life -= card0.Power, referrer: card1));
 							EvaluateLingeringEffects();
-							if(card0.Life == 0)
+							if(card0.Life == 0 && card1.Life != 0)
 							{
 								if(victoriousTriggers.ContainsKey(card1.uid))
 								{
@@ -521,7 +521,7 @@ class DuelCore : Core
 									}
 								}
 							}
-							if(card1.Life == 0)
+							if(card1.Life == 0 && card0.Life != 0)
 							{
 								if(victoriousTriggers.ContainsKey(card0.uid))
 								{
@@ -574,11 +574,11 @@ class DuelCore : Core
 						player.deathCounts.Add(0);
 					}
 					turnPlayer = 1 - turnPlayer;
+					turn++;
 					if(GameConstants.MOMENTUM_INCREMENT_TURNS.Contains(turn))
 					{
 						momentumBase++;
 					}
-					turn++;
 					state = GameConstants.State.TurnStart;
 				}
 				break;
@@ -914,9 +914,9 @@ class DuelCore : Core
 				Card card = players[player].hand.GetByUID(uid);
 				if(option == "Cast")
 				{
-					players[player].hand.Remove(card);
 					players[player].momentum -= card.Cost;
 					CastImpl(player, card);
+					players[player].hand.Remove(card);
 				}
 				else
 				{
@@ -1465,8 +1465,11 @@ class DuelCore : Core
 	}
 	public void DestroyImpl(Card card)
 	{
-		temporaryLingeringEffects.Remove(card.uid);
 		players[card.Controller].Destroy(card);
+		if(temporaryLingeringEffects.Remove(card.uid))
+		{
+			EvaluateLingeringEffects();
+		}
 		if(card.Keywords.ContainsKey(Keyword.Brittle))
 		{
 			players[card.Controller].brittleDeathCounts[turn]++;
