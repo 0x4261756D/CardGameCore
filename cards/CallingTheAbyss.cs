@@ -8,7 +8,7 @@ class CallingtheAbyss : Spell
 		Name: "Calling the Abyss",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 6,
-		Text: "{Cast}: Pay 6 life. Discard 6. At the beginning of the next turn: Gain 6 Momentum. Draw 6. [Gather] 6."
+		Text: "{Cast}: Pay 6 life. At the beginning of the next turn: Gain 6 Momentum. Draw 6. [Gather] 6. Discard 6."
 		)
 	{ }
 

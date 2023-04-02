@@ -7,10 +7,10 @@ class MechanicalTitan : Creature
 	public MechanicalTitan() : base(
 		Name: "Mechanical Titan",
 		CardClass: PlayerClass.Artificer,
-		OriginalCost: 10,
+		OriginalCost: 6,
 		Text: "[Collosal] +1\nCosts 1 less to cast for each creature with [Brittle] that died last turn.\n{Revelation}: Gain 3 life.",
-		OriginalPower: 8,
-		OriginalLife: 8
+		OriginalPower: 7,
+		OriginalLife: 7
 		)
 	{ }
 

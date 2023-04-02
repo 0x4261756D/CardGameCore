@@ -8,7 +8,7 @@ class Unbury : Spell
 	public Unbury() : base(
 		Name: "Unbury",
 		CardClass: PlayerClass.Cultist,
-		OriginalCost: 2,
+		OriginalCost: 1,
 		Text: "{Cast}: Return all creatures from the graves to the decks."
 		)
 	{ }

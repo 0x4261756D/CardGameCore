@@ -9,7 +9,7 @@ class PointlessInvention : Creature
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 2,
 		Text: "This creature only takes damage in increments of 1.",
-		OriginalPower: 4,
+		OriginalPower: 5,
 		OriginalLife: 1
 		)
 	{ }

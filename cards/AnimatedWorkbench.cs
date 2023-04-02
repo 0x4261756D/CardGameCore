@@ -10,7 +10,7 @@ class AnimatedWorkbench : Creature
 		OriginalCost: 2,
 		Text: "{Turn start}: Gain 1 Momentum.",
 		OriginalPower: 1,
-		OriginalLife: 4
+		OriginalLife: 3
 		)
 	{ }
 

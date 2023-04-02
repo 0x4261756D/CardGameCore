@@ -7,7 +7,7 @@ class TurntoDust : Spell
 	public TurntoDust() : base(
 		Name: "Turn to Dust",
 		CardClass: PlayerClass.Artificer,
-		OriginalCost: 4,
+		OriginalCost: 3,
 		Text: "{Cast}: Target creature gains [Brittle]. {Revelation}: If a creature with [Brittle] died this turn: Draw 1."
 		)
 	{ }

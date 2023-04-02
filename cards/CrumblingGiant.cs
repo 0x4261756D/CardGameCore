@@ -9,8 +9,8 @@ class CrumblingGiant : Creature
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 1,
 		Text: "[Brittle]\n{Death}: Deal 5 damage to this creature's owner.",
-		OriginalPower: 5,
-		OriginalLife: 4
+		OriginalPower: 6,
+		OriginalLife: 2
 		)
 	{ }
 

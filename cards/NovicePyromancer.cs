@@ -10,7 +10,7 @@ class NovicePyromancer : Creature
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 3,
 		Text: "{A creature dies}: Deal 1 damage any target.",
-		OriginalLife: 1,
+		OriginalLife: 4,
 		OriginalPower: 2
 		)
 	{ }

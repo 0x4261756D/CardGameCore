@@ -8,7 +8,7 @@ class Equalizer : Spell
 	public Equalizer() : base(
 		Name: "Equalizer",
 		CardClass: PlayerClass.Artificer,
-		OriginalCost: 2,
+		OriginalCost: 1,
 		Text: "{Cast}: Target creatures attack and life become the greater of the two values."
 		)
 	{ }

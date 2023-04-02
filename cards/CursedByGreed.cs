@@ -8,7 +8,7 @@ class CursedbyGreed : Spell
 		Name: "Cursed by Greed",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 2,
-		Text: "{Cast}: Pay 3 life. Draw 1.\n{Discard}: Draw 2."
+		Text: "{Cast}: Pay 3 life. Draw 2.\n{Discard}: Draw 3."
 		)
 	{ }
 
@@ -20,13 +20,13 @@ class CursedbyGreed : Spell
 
 	public void DiscardEffect()
 	{
-		Draw(player: Controller, amount: 2);
+		Draw(player: Controller, amount: 3);
 	}
 
 	public void CastEffect()
 	{
 		PayLife(player: Controller, amount: 3);
-		Draw(player: Controller, amount: 1);
+		Draw(player: Controller, amount: 2);
 	}
 
 }

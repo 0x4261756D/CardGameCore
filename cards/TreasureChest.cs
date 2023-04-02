@@ -7,7 +7,7 @@ class TreasureChest : Creature
 	public TreasureChest() : base(
 		Name: "Treasure Chest",
 		CardClass: PlayerClass.All,
-		OriginalCost: 4,
+		OriginalCost: 2,
 		Text: "{Death}: Draw 2.\n{Revelation}: Reveal 2.",
 		OriginalPower: 0,
 		OriginalLife: 4

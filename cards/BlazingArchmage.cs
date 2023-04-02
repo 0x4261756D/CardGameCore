@@ -9,8 +9,8 @@ class BlazingArchmage : Creature
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 6,
 		Text: "{Cast a spell other than \"Ignite\"}: Cast Ignite.",
-		OriginalPower: 6,
-		OriginalLife: 6
+		OriginalPower: 3,
+		OriginalLife: 9
 		)
 	{ }
 

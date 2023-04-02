@@ -10,7 +10,7 @@ class ThievingAutomaton : Creature
 		OriginalCost: 1,
 		Text: "{Deals damage to your opponent}: Draw 1.",
 		OriginalPower: 1,
-		OriginalLife: 2
+		OriginalLife: 3
 		)
 	{ }
 

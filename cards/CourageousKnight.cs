@@ -9,8 +9,8 @@ class CourageousKnight : Creature
 		CardClass: PlayerClass.All,
 		OriginalCost: 3,
 		Text: "{A creature is cast}: Gain +1/+0.",
-		OriginalPower: 3,
-		OriginalLife: 1
+		OriginalPower: 0,
+		OriginalLife: 4
 		)
 	{ }
 
