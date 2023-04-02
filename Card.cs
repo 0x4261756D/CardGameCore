@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.RegularExpressions;
 using CardGameUtils;
 using CardGameUtils.Structs;
 
@@ -171,12 +172,16 @@ public abstract class Card
 					}
 					text.Append($"{keyword.Value}");
 				}
-				text.AppendLine();
+				text.Append('\n');
 			}
+			text.Append(Regex.Replace(Text, @"(?m:^\[.+\]( \+?\d+)?$)\n?", "", RegexOptions.Multiline));
 		}
-		text.Append(Text);
+		else
+		{
+			text.Append(Text);
+		}
 		return new CardStruct(name: Name,
-			text: Text,
+			text: text.ToString(),
 			card_type: CardType,
 			card_class: CardClass,
 			uid: uid, life: Life, power: Power, cost: Cost,
