@@ -934,8 +934,9 @@ class DuelCore : Core
 			break;
 			case GameConstants.Location.Ability:
 			{
-				if(players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
+				if(players[player].ability.Position == 0 && GetDiscardableImpl(player).Length > 0 && castTriggers.ContainsKey(players[player].ability.uid))
 				{
+					DiscardAmountImpl(player, 1);
 					foreach(CastTrigger trigger in castTriggers[players[player].ability.uid])
 					{
 						if(trigger.condition())
@@ -1029,7 +1030,7 @@ class DuelCore : Core
 			break;
 			case GameConstants.Location.Ability:
 			{
-				if(players[player].ability.Position == 0 && castTriggers.ContainsKey(players[player].ability.uid))
+				if(players[player].ability.Position == 0 && GetDiscardableImpl(player).Length > 0 && castTriggers.ContainsKey(players[player].ability.uid))
 				{
 					options.Add("Use");
 				}
