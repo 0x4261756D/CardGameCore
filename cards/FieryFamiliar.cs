@@ -5,7 +5,7 @@ using static CardGameUtils.GameConstants;
 class FieryFamiliar : Creature
 {
 	public FieryFamiliar() : base(
-		Name: "Firery Familiar",
+		Name: "Fiery Familiar",
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 1,
 		Text: "Your \"Ignite\" deals +1 damage \n{Revelation}: Add this to your hand.",
