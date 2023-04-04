@@ -1,6 +1,6 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using CardGameUtils;
 using CardGameUtils.Structs;
 using static CardGameUtils.Functions;
@@ -33,9 +33,9 @@ class Program
 						}
 						break;
 					case "--additional_cards_path":
-						//GenerateAdditionalCards(path);
+						GenerateAdditionalCards(path);
 						Log("Done generating new additional cards");
-						break;
+						return;
 				}
 			}
 		}
@@ -142,6 +142,25 @@ class Program
 		core.Init();
 		Log("EXITING");
 	}
+
+	public static void GenerateAdditionalCards(string path)
+	{
+		if(!File.Exists(path) || File.GetLastWriteTime(path) < Directory.GetLastWriteTime(baseDir))
+		{
+			Log($"Creating a new additional cards file ({File.GetLastWriteTime(path)} is before {Directory.GetLastWriteTime(baseDir)})");
+			List<CardStruct> cards = new List<CardStruct>();
+			foreach(Type card in Assembly.GetExecutingAssembly().GetTypes().Where(Program.IsCardSubclass))
+			{
+				Card c = (Card)Activator.CreateInstance(card)!;
+				cards.Add(c.ToStruct());
+			}
+			File.WriteAllText(path, JsonSerializer.Serialize(new NetworkingStructs.ServerPackets.AdditionalCardsResponse
+			{
+				cards = cards.ToArray()
+			}, NetworkingConstants.jsonIncludeOption));
+		}
+	}
+
 	public static readonly Func<Type, bool> IsCardSubclass = (x) =>
 	{
 		return x != typeof(Token) && (x.BaseType == typeof(Spell) || x.BaseType == typeof(Creature) || x.BaseType == typeof(Quest));
