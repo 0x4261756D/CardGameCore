@@ -68,8 +68,8 @@ class Player
 		{
 			case GameConstants.Location.Field:
 			{
-				field.Remove(card);
 				grave.Add(card);
+				field.Remove(card);
 			}
 			break;
 			default:

@@ -29,7 +29,7 @@ class Hand
 
 	internal void Remove(Card c)
 	{
-		c.Location = GameConstants.Location.UNKNOWN;
+		c.Location &= ~GameConstants.Location.Hand;
 		cards.Remove(c);
 	}
 

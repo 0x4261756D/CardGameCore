@@ -52,6 +52,7 @@ class Deck
 		{
 			throw new Exception($"Tried to remove nonexistent card {card} from the deck");
 		}
+		card.Location &= ~GameConstants.Location.Deck;
 	}
 
 	internal void Shuffle()
