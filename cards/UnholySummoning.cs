@@ -9,7 +9,7 @@ class UnholySummoning : Spell
 		Name: "Unholy Summoning",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 2,
-		Text: "{Cast}: Discard 1. Create an X/X Horror token with [Decaying] where X is the discarded Card's Momentum cost.\n{Discard}: Create a 3/3 Horror Token."
+		Text: "{Cast}: Discard 1. Create an X/X Horror token with where X is the discarded Card's Momentum cost.\n{Discard}: Create a 3/3 Horror Token."
 		)
 	{ }
 
@@ -38,6 +38,6 @@ class UnholySummoning : Spell
 	{
 		Card target = SelectCards(cards: GetDiscardable(Controller), amount: 1, player: Controller, description: "Select card to discard")[0];
 		Discard(target);
-		CreateToken(player: Controller, power: target.Cost, life: target.Cost, name: "Horror").RegisterKeyword(Keyword.Decaying);
+		CreateToken(player: Controller, power: target.Cost, life: target.Cost, name: "Horror");
 	}
 }
