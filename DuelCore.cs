@@ -1132,7 +1132,7 @@ class DuelCore : Core
 			{
 				continue;
 			}
-			Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: new List<byte>(payload), clientToServer: false));
+			Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: new List<byte>(payload), clientToServer: true));
 			request = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateRequest>(payload);
 			Log("deserialized packet");
 			SendPacketToPlayer(new DuelPackets.CustomSelectCardsIntermediateResponse
