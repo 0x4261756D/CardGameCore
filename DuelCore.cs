@@ -1764,7 +1764,7 @@ class DuelCore : Core
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent
 	{
 		List<byte> payload = ReceivePacket<T>(playerStreams[player])!;
-		Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: true));		
+		Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: true));
 		return DeserializePayload<T>(payload);
 	}
 	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
