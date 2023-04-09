@@ -769,6 +769,7 @@ class DuelCore : Core
 				}
 				else
 				{
+					Program.replay?.actions.Add(new Replay.GameAction(packet: bytes, player: i, clientToServer: true));
 					byte type = bytes[0];
 					bytes.RemoveAt(0);
 					string packet = Encoding.UTF8.GetString(bytes.ToArray());
@@ -1131,6 +1132,7 @@ class DuelCore : Core
 			{
 				continue;
 			}
+			Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: false));
 			request = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateRequest>(payload);
 			Log("deserialized packet");
 			SendPacketToPlayer(new DuelPackets.CustomSelectCardsIntermediateResponse
@@ -1761,12 +1763,14 @@ class DuelCore : Core
 
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent
 	{
-		T ret = ReceivePacket<T>(playerStreams[player])!;
-		return ret;
+		List<byte> payload = ReceivePacket<T>(playerStreams[player])!;
+		Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: true));		
+		return DeserializePayload<T>(payload);
 	}
 	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
 	{
 		List<byte> payload = Functions.GeneratePayload<T>(packet);
+		Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: false));
 		playerStreams[player].Write(payload.ToArray(), 0, payload.Count);
 	}
 }

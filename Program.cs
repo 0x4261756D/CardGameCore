@@ -10,6 +10,7 @@ class Program
 {
 	public static string baseDir = AppDomain.CurrentDomain.BaseDirectory;
 	public static CoreConfig config = new CoreConfig(-1, CoreConfig.CoreMode.Client);
+	public static Replay? replay;
 	public static void Main(string[] args)
 	{
 		string? configPath = null;
@@ -119,6 +120,10 @@ class Program
 						break;
 					case "config":
 						break;
+					case "replay":
+						Log("Recording replay");
+						replay = new Replay(args);
+						break;
 					default:
 						Log("Unknown argument " + s, severity: LogSeverity.Error);
 						return;
@@ -141,6 +146,14 @@ class Program
 		}
 		core.Init();
 		Log("EXITING");
+		if(replay != null)
+		{
+			string replayPath = Path.Combine(baseDir, "replays");
+			Directory.CreateDirectory(replayPath);
+			string filePath = Path.Combine(replayPath, $"{DateTime.UtcNow.ToString("yyyyMMdd_HHmmss")}_{config.duel_config?.players[0].name}_vs_{config.duel_config?.players[1].name}.replay");
+			File.WriteAllText(filePath, JsonSerializer.Serialize<Replay>(replay, NetworkingConstants.jsonIncludeOption));
+			Log("Wrote replay to " + filePath);
+		}
 	}
 
 	public static void GenerateAdditionalCards(string path)

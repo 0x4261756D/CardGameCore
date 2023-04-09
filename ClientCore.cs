@@ -86,7 +86,8 @@ class ClientCore : Core
 				{
 					List<byte> payload = GeneratePayload<ServerPackets.AdditionalCardsRequest>(new ServerPackets.AdditionalCardsRequest());
 					stream.Write(payload.ToArray(), 0, payload.Count);
-					CardGameUtils.Structs.CardStruct[]? list = ReceivePacket<ServerPackets.AdditionalCardsResponse>(stream, 3000)?.cards;
+					List<byte>? packet = ReceivePacket<ServerPackets.AdditionalCardsResponse>(stream, 3000);
+					CardGameUtils.Structs.CardStruct[]? list = packet == null ? null : DeserializePayload<ServerPackets.AdditionalCardsResponse>(packet).cards;
 					if(list == null)
 					{
 						return;
