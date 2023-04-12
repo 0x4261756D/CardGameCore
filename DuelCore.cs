@@ -1296,7 +1296,7 @@ class DuelCore : Core
 				{
 					foreach(GenericCastTrigger trigger in genericCastTriggers[possiblyTriggeringCard.uid])
 					{
-						if(trigger.condition(castCard: card))
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(castCard: card))
 						{
 							trigger.effect(castCard: card);
 						}
