@@ -7,6 +7,7 @@ namespace CardGameCore;
 
 public abstract class Card
 {
+	public bool isInitialized = false;
 	public string Name, Text;
 	public GameConstants.CardType CardType;
 	public GameConstants.PlayerClass CardClass;

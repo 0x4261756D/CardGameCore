@@ -154,6 +154,7 @@ class DuelCore : Core
 		Card c = (Card)Activator.CreateInstance(type)!;
 		c.Controller = controller;
 		c.Init();
+		c.isInitialized = true;
 		return c;
 	}
 
@@ -1185,6 +1186,11 @@ class DuelCore : Core
 	}
 	private void CastImpl(int player, Card card)
 	{
+		if(!card.isInitialized)
+		{
+			card.Init();
+			card.isInitialized = true;
+		}
 		Card?[] shownCards = new Card[2];
 		shownCards[player] = card;
 		SendFieldUpdates(shownCards: shownCards);
