@@ -31,7 +31,7 @@ class ImmortalPhoenix : Creature
 		{
 			if(card.Name == this.Name)
 			{
-				RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: BuffEffect, referrer: card));
+				BuffEffect(card);
 			}
 		}
 	}
