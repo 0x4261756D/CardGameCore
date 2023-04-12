@@ -9,7 +9,7 @@ class Scorch : Spell
 		Name: "Scorch",
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 2,
-		Text: "{Cast}: Target creatures attacks becomes 0. It gains [Decaying]."
+		Text: "{Cast}: Target creature's attack becomes 0. It gains [Decaying]."
 		)
 	{ }
 

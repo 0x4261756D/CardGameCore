@@ -23,7 +23,7 @@ class FlashingFire : Spell
 		Card[] fields = GetForBoth(GetFieldUsed);
 		int damage = GetCastCount(player: Controller, name: this.Name);
 		bool killed = false;
-		if(fields.Length > 0 && AskYesNo(player: Controller, question: "Damage"))
+		if(fields.Length > 0 && AskYesNo(player: Controller, question: "Damage creature?"))
 		{
 			Card target = Card.SelectCards(player: Controller, cards: fields, amount: 1, description: "Select target to damage")[0];
 			killed = target.Life <= damage;

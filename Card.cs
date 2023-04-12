@@ -174,7 +174,7 @@ public abstract class Card
 				}
 				text.Append('\n');
 			}
-			text.Append(Regex.Replace(Text, @"(?m:^\[.+\]( \+?\d+)?$)\n?", "", RegexOptions.Multiline));
+			text.Append(Regex.Replace(Text, @"(?m:^\[.+\]( \+?\d+)?$)\n?", ""));
 		}
 		else
 		{

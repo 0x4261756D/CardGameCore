@@ -9,7 +9,7 @@ class SugomaGodoftheAbyss : Creature
 		Name: "Sugoma God of the Abyss",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 12,
-		Text: "[Collosal] +5.\nCannot be Discarded.\n{Activate}: Discard 1. Destroy target creature.\n{Revelation}: Take 1 damage then gain 1 Momentum.",
+		Text: "[Collossal] +5\nCannot be Discarded.\n{Activate}: Discard 1. Destroy target creature.\n{Revelation}: Take 1 damage then gain 1 Momentum.",
 		OriginalPower: 15,
 		OriginalLife: 15
 		)

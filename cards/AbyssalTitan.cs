@@ -8,7 +8,7 @@ class AbyssalTitan : Creature
 		Name: "Abyssal Titan",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 6,
-		Text: "[Collosal] +1.\nCosts 1 less for each card you discarded this turn.\n{Revelation}: Gain 3 life.",
+		Text: "[Collossal] +1\nCosts 1 less for each card you discarded this turn.\n{Revelation}: Gain 3 life.",
 		OriginalPower: 7,
 		OriginalLife: 7
 		)
