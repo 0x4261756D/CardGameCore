@@ -780,10 +780,9 @@ class DuelCore : Core
 				}
 				else
 				{
-					Program.replay?.actions.Add(new Replay.GameAction(packet: new List<byte>(bytes), player: i, clientToServer: true));
+					Program.replay?.actions.Add(new Replay.GameAction(packet: bytes, player: i, clientToServer: true));
 					byte type = bytes[0];
-					bytes.RemoveAt(0);
-					string packet = Encoding.UTF8.GetString(bytes.ToArray());
+					string packet = Encoding.UTF8.GetString(bytes.GetRange(1, bytes.Count - 1).ToArray());
 					if(HandlePacket(type, packet, i))
 					{
 						Log($"{players[i].name} is giving up, closing.");
@@ -1176,7 +1175,7 @@ class DuelCore : Core
 			{
 				continue;
 			}
-			Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: new List<byte>(payload), clientToServer: true));
+			Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: true));
 			request = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateRequest>(payload);
 			Log("deserialized packet");
 			SendPacketToPlayer(new DuelPackets.CustomSelectCardsIntermediateResponse
@@ -1829,13 +1828,13 @@ class DuelCore : Core
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent
 	{
 		List<byte> payload = ReceivePacket<T>(playerStreams[player])!;
-		Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: new List<byte>(payload), clientToServer: true));
+		Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: true));
 		return DeserializePayload<T>(payload);
 	}
 	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
 	{
 		List<byte> payload = Functions.GeneratePayload<T>(packet);
-		Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: new List<byte>(payload), clientToServer: false));
+		Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: false));
 		playerStreams[player].Write(payload.ToArray(), 0, payload.Count);
 	}
 }

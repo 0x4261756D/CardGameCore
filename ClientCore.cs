@@ -147,8 +147,7 @@ class ClientCore : Core
 			throw new Exception($"ERROR: Unknown packet type encountered: ({bytes[0]})");
 		}
 		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)bytes[0];
-		bytes.RemoveAt(0);
-		string packet = Encoding.UTF8.GetString(bytes.ToArray());
+		string packet = Encoding.UTF8.GetString(bytes.GetRange(1, bytes.Count - 1).ToArray());
 		List<byte> payload = new List<byte>();
 		switch(type)
 		{
