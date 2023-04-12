@@ -109,6 +109,7 @@ class DuelCore : Core
 		Card.CreateTokenCopy = CreateTokenCopyImpl;
 		Card.GetDiscardCountXTurnsAgo = GetDiscardCountXTurnsAgoImpl;
 		Card.GetDamageDealtXTurnsAgo = GetDamageDealtXTurnsAgoImpl;
+		Card.GetSpellDamageDealtXTurnsAgo = GetSpellDamageDealtXTurnsAgoImpl;
 		Card.GetBrittleDeathCountXTurnsAgo = GetBrittleDeathCountXTurnsAgoImpl;
 		Card.GetDeathCountXTurnsAgo = GetDeathCountXTurnsAgoImpl;
 		Card.PlayerChangeLife = PlayerChangeLifeImpl;
@@ -378,6 +379,7 @@ class DuelCore : Core
 						player.life = GameConstants.START_LIFE;
 						player.discardCounts.Add(0);
 						player.dealtDamages.Add(0);
+						player.dealtSpellDamages.Add(0);
 						player.brittleDeathCounts.Add(0);
 						player.deathCounts.Add(0);
 					}
@@ -680,6 +682,11 @@ class DuelCore : Core
 	{
 		players[player].life -= amount;
 		players[1 - player].dealtDamages[turn] += amount;
+		if(source.CardType == GameConstants.CardType.Spell)
+		{
+			players[1 - player].dealtSpellDamages[turn] += amount;
+
+		}
 		RevealImpl(player, amount);
 		CheckIfLost(player);
 		if(dealsDamageTriggers.ContainsKey(source.uid))
@@ -1753,6 +1760,15 @@ class DuelCore : Core
 		if(turn < turns || players[player].dealtDamages.Count <= turn - turns)
 		{
 			Log($"Attempted to get damage dealt before the game began ({turn - turns}) for player {players[player].name}", severity: LogSeverity.Warning);
+			return 0;
+		}
+		return players[player].dealtDamages[turn - turns];
+	}
+	public int GetSpellDamageDealtXTurnsAgoImpl(int player, int turns)
+	{
+		if(turn < turns || players[player].dealtSpellDamages.Count <= turn - turns)
+		{
+			Log($"Attempted to get spell damage dealt before the game began ({turn - turns}) for player {players[player].name}", severity: LogSeverity.Warning);
 			return 0;
 		}
 		return players[player].dealtDamages[turn - turns];

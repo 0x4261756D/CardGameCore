@@ -121,6 +121,7 @@ public abstract class Card
 	public static CreateTokenCopyDelegate CreateTokenCopy = (_, _) => new ClientCoreDummyCard();
 	public static GetYXTurnsAgoDelegate GetDiscardCountXTurnsAgo = (_, _) => -1;
 	public static GetYXTurnsAgoDelegate GetDamageDealtXTurnsAgo = (_, _) => -1;
+	public static GetYXTurnsAgoDelegate GetSpellDamageDealtXTurnsAgo = (_, _) => -1;
 	public static GetYXTurnsAgoDelegate GetBrittleDeathCountXTurnsAgo = (_, _) => -1;
 	public static GetYXTurnsAgoDelegate GetDeathCountXTurnsAgo = (_, _) => -1;
 	public static PlayerChangeLifeDelegate PlayerChangeLife = (_, _, _) => { };
