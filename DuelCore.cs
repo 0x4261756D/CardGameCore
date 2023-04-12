@@ -955,7 +955,40 @@ class DuelCore : Core
 							trigger.effect();
 						}
 					}
-					players[player].ability.Position = 1;
+					// TODO: Tidy this up and deduplicate with CastImpl
+					foreach(Player p in players)
+					{
+						if(genericCastTriggers.ContainsKey(p.quest.uid))
+						{
+							foreach(GenericCastTrigger trigger in genericCastTriggers[p.quest.uid])
+							{
+								if(trigger.condition(castCard: players[player].ability))
+								{
+									trigger.effect(castCard: players[player].ability);
+									if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
+									{
+										p.quest.Reward();
+										rewardClaimed = true;
+										break;
+									}
+								}
+							}
+						}
+						foreach(Card possiblyTriggeringCard in p.field.GetUsed())
+						{
+							if(genericCastTriggers.ContainsKey(possiblyTriggeringCard.uid))
+							{
+								foreach(GenericCastTrigger trigger in genericCastTriggers[possiblyTriggeringCard.uid])
+								{
+									if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(castCard: players[player].ability))
+									{
+										trigger.effect(castCard: players[player].ability);
+									}
+								}
+							}
+						}
+						players[player].ability.Position = 1;
+					}
 				}
 			}
 			break;
