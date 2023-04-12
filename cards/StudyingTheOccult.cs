@@ -25,6 +25,6 @@ class StudyingtheOccult : Quest
 	public override void Reward()
 	{
 		// NOTE: This does not match the behaviour of the old text, it registers the damage to itself instead of the discarded card.
-		RegisterYouDiscardTrigger(trigger: new DiscardTrigger(effect: () => DealDamage(player: 1 - Controller, amount: 2, source: this), influenceLocation: Location.Quest), referrer: this);
+		RegisterYouDiscardTrigger(trigger: new DiscardTrigger(effect: () => PlayerChangeLife(player: 1 - Controller, amount: -2, source: this), influenceLocation: Location.Quest), referrer: this);
 	}
 }

@@ -175,7 +175,7 @@ public delegate void DiscardAmountDelegate(int player, int amount);
 public delegate Card CreateTokenDelegate(int player, int power, int life, string name);
 public delegate Card CreateTokenCopyDelegate(int player, Card card);
 public delegate int GetYXTurnsAgoDelegate(int player, int turns);
-public delegate void PlayerChangeLifeDelegate(int player, int amount);
+public delegate void PlayerChangeLifeDelegate(int player, int amount, Card source);
 public delegate void PlayerChangeMomentumDelegate(int player, int amount);
 public delegate void DestroyDelegate(Card card);
 public delegate bool AskYesNoDelegate(int player, string question);
@@ -192,7 +192,6 @@ public delegate void MoveToFieldDelegate(int choosingPlayer, int targetPlayer, C
 public delegate int GetCastCountDelegate(int player, string name);
 public delegate void ReturnCardsToDeckDelegate(Card[] cards);
 public delegate void RevealDelegate(int player, int damage);
-public delegate void DealDamageDelegate(int player, int amount, Card source);
 public delegate Card[] GetDiscardableDelegate(int player);
 public delegate void RefreshAbilityDelegate(int player);
 

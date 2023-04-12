@@ -21,7 +21,7 @@ class OverwhelmingMight : Spell
 
 	private void RevelationEffect()
 	{
-		ChangeLifeOfAnyTarget(player: Controller, amount: -2, "Damage");
+		ChangeLifeOfAnyTarget(player: Controller, amount: -2, description: "Damage", source: this);
 	}
 
 	private bool CastCondition()

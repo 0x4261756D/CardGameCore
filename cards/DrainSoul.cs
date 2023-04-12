@@ -22,19 +22,19 @@ class DrainSoul : Spell
 
 	private void RevelationEffect()
 	{
-		PlayerChangeLife(player: Controller, amount: 1);
+		PlayerChangeLife(player: Controller, amount: 1, source: this);
 	}
 
 	private void DiscardEffect()
 	{
-		PlayerChangeLife(player: Controller, amount: 3);
+		PlayerChangeLife(player: Controller, amount: 3, source: this);
 	}
 
 	private void CastEffect()
 	{
 		Card target = SelectCards(player: Controller, cards: GetFieldUsed(Controller), amount: 1, description: "Select creature to drain")[0];
 		Destroy(target);
-		PlayerChangeLife(player: Controller, amount: target.Power);
+		PlayerChangeLife(player: Controller, amount: target.Power, source: this);
 	}
 
 	private bool CastCondition()

@@ -36,6 +36,6 @@ class Fireball : Spell
 
 	private void CastEffect()
 	{
-		ChangeLifeOfAnyTarget(player: Controller, amount: -6, description: "Fireball");
+		ChangeLifeOfAnyTarget(player: Controller, amount: -6, description: "Fireball", source: this);
 	}
 }

@@ -22,6 +22,6 @@ class NovicePyromancer : Creature
 
 	private void DamageEffect(Card destroyedCard)
 	{
-		ChangeLifeOfAnyTarget(player: Controller, amount: -1, "Damage");
+		ChangeLifeOfAnyTarget(player: Controller, amount: -1, description: "Damage", source: this);
 	}
 }

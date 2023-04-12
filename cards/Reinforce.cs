@@ -26,7 +26,7 @@ class Reinforce : Spell
 
 	private void GainEffect()
 	{
-		PlayerChangeLife(player: Controller, amount: 2);
+		PlayerChangeLife(player: Controller, amount: 2, source: this);
 	}
 
 

@@ -23,7 +23,7 @@ class MechanicalTitan : Creature
 
 	private void GainLifeEffect()
 	{
-		PlayerChangeLife(player: Controller, amount: 3);
+		PlayerChangeLife(player: Controller, amount: 3, source: this);
 	}
 
 	private void CostReductionEffect(Card target)

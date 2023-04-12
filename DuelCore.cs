@@ -131,7 +131,6 @@ class DuelCore : Core
 		Card.GetCastCount = GetCastCountImpl;
 		Card.ReturnCardsToDeck = ReturnCardsToDeckImpl;
 		Card.Reveal = RevealImpl;
-		Card.DealDamage = DealDamageImpl;
 		Card.GetDiscardable = GetDiscardableImpl;
 		Card.RefreshAbility = ResetAbilityImpl;
 	}
@@ -490,7 +489,7 @@ class DuelCore : Core
 						if(card1 != null)
 						{
 							// Deal damage to player
-							DealDamageImpl(player: 0, amount: card1.Power, source: card1);
+							DealDamage(player: 0, amount: card1.Power, source: card1);
 							if(players[0].life <= 0)
 							{
 								return true;
@@ -501,7 +500,7 @@ class DuelCore : Core
 					{
 						if(card1 == null)
 						{
-							DealDamageImpl(player: 1, amount: card0.Power, source: card0);
+							DealDamage(player: 1, amount: card0.Power, source: card0);
 							if(players[1].life <= 0)
 							{
 								return true;
@@ -677,7 +676,7 @@ class DuelCore : Core
 		}
 	}
 
-	private void DealDamageImpl(int player, int amount, Card source)
+	private void DealDamage(int player, int amount, Card source)
 	{
 		players[player].life -= amount;
 		players[1 - player].dealtDamages[turn] += amount;
@@ -1405,9 +1404,16 @@ class DuelCore : Core
 	{
 		return players[player].hand.GetAll();
 	}
-	public void PlayerChangeLifeImpl(int player, int amount)
+	public void PlayerChangeLifeImpl(int player, int amount, Card source)
 	{
-		players[player].life += amount;
+		if(amount > 0)
+		{
+			players[player].life += amount;
+		}
+		else
+		{
+			DealDamage(player: player, amount: -amount, source: source);
+		}
 	}
 	public Card GatherImpl(int player, int amount)
 	{

@@ -31,7 +31,7 @@ class Ignite : Spell
 	{
 		if(forcedTarget == null)
 		{
-			ChangeLifeOfAnyTarget(player: Controller, amount: -GetIgniteDamage(Controller), description: "Damage");
+			ChangeLifeOfAnyTarget(player: Controller, amount: -GetIgniteDamage(Controller), description: "Damage", source: this);
 		}
 		else
 		{

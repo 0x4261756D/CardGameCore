@@ -31,7 +31,7 @@ class FlashingFire : Spell
 		}
 		else
 		{
-			Card.DealDamage(player: Card.AskYesNo(player: Controller, question: "Damage the opponent?") ? 1 - Controller : Controller, amount: damage, source: this);
+			Card.PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Damage the opponent?") ? 1 - Controller : Controller, amount: -damage, source: this);
 		}
 		if(killed)
 		{

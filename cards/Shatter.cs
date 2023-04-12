@@ -23,7 +23,7 @@ class Shatter : Spell
 		Card target = SelectCards(player: Controller, cards: GetFieldUsed(Controller), amount: 1, description: "Select target to destroy")[0];
 		int damage = target.Power;
 		Destroy(target);
-		DealDamage(player: 1 - Controller, amount: damage, source: this);
+		PlayerChangeLife(player: 1 - Controller, amount: -damage, source: this);
 	}
 
 }

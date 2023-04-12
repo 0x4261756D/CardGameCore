@@ -23,7 +23,7 @@ class EnormousTitan : Creature
 
 	private void GainEffect()
 	{
-		PlayerChangeLife(player: Controller, amount: 2);
+		PlayerChangeLife(player: Controller, amount: 2, source: this);
 	}
 
 	private void CostReductionEffect(Card _)

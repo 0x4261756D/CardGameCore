@@ -123,7 +123,7 @@ public abstract class Card
 	public static GetYXTurnsAgoDelegate GetDamageDealtXTurnsAgo = (_, _) => -1;
 	public static GetYXTurnsAgoDelegate GetBrittleDeathCountXTurnsAgo = (_, _) => -1;
 	public static GetYXTurnsAgoDelegate GetDeathCountXTurnsAgo = (_, _) => -1;
-	public static PlayerChangeLifeDelegate PlayerChangeLife = (_, _) => { };
+	public static PlayerChangeLifeDelegate PlayerChangeLife = (_, _, _) => { };
 	public static PlayerChangeMomentumDelegate PlayerChangeMomentum = (_, _) => { };
 	public static CastDelegate Cast = (_, _) => { };
 	public static DrawDelegate Draw = (_, _) => { };
@@ -143,7 +143,6 @@ public abstract class Card
 	public static GetCastCountDelegate GetCastCount = (_, _) => -1;
 	public static ReturnCardsToDeckDelegate ReturnCardsToDeck = (_) => { };
 	public static RevealDelegate Reveal = (_, _) => { };
-	public static DealDamageDelegate DealDamage = (_, _, _) => { };
 	public static GetDiscardableDelegate GetDiscardable = (_) => new Card[0];
 	public static RefreshAbilityDelegate RefreshAbility = (_) => { };
 

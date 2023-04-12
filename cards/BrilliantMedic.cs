@@ -1,7 +1,7 @@
 // Scripted by 0x4261756D
 using CardGameCore;
-using static CardGameUtils.GameConstants;
 using static CardGameCore.CardUtils;
+using static CardGameUtils.GameConstants;
 
 class BrilliantMedic : Creature
 {
@@ -22,6 +22,15 @@ class BrilliantMedic : Creature
 
 	public void HealEffect()
 	{
-		ChangeLifeOfAnyTarget(player: Controller, amount: 4, description: "Heal");
+		Card[] fields = FilterValid(cards: GetForBoth(Card.GetFieldUsed), isValid: (card) => card.Life < card.BaseLife);
+		if(fields.Length > 0 && Card.AskYesNo(player: Controller, question: "Heal a creature?"))
+		{
+			Card target = Card.SelectCards(player: Controller, cards: fields, amount: 1, description: "Select target to heal")[0];
+			Card.RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => target.Life += Math.Min(4, target.BaseLife - target.Life), referrer: target));
+		}
+		else
+		{
+			Card.PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Heal the opponent?") ? 1 - Controller : Controller, amount: 4, source: this);
+		}
 	}
 }

@@ -26,6 +26,6 @@ class DarkBolt : Spell
 
 	private void CastEffect()
 	{
-		ChangeLifeOfAnyTarget(player: Controller, amount: -3, description: "Bolt");
+		ChangeLifeOfAnyTarget(player: Controller, amount: -3, description: "Bolt", source: this);
 	}
 }

@@ -31,7 +31,7 @@ public class CardUtils
 		return cards.Where(x => isValid(x)).ToArray();
 	}
 
-	public static void ChangeLifeOfAnyTarget(int player, int amount, string description = "Change life of")
+	public static void ChangeLifeOfAnyTarget(int player, int amount, Card source, string description = "Change life of")
 	{
 		Card[] fields = GetForBoth(Card.GetFieldUsed);
 		if(fields.Length > 0 && Card.AskYesNo(player: player, question: description + " a creature?"))
@@ -41,7 +41,7 @@ public class CardUtils
 		}
 		else
 		{
-			Card.PlayerChangeLife(player: Card.AskYesNo(player: player, question: description + " the opponent?") ? 1 - player : player, amount: amount);
+			Card.PlayerChangeLife(player: Card.AskYesNo(player: player, question: description + " the opponent?") ? 1 - player : player, amount: amount, source: source);
 		}
 	}
 }
