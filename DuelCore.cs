@@ -261,18 +261,6 @@ class DuelCore : Core
 		}
 		foreach(Player player in players)
 		{
-			if(lingeringEffects.ContainsKey(player.quest.uid))
-			{
-				foreach(LingeringEffectInfo info in lingeringEffects[player.quest.uid])
-				{
-					info.effect(info.referrer);
-					if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
-					{
-						player.quest.Reward();
-						rewardClaimed = true;
-					}
-				}
-			}
 			if(temporaryLingeringEffects.ContainsKey(player.quest.uid))
 			{
 				foreach(LingeringEffectInfo info in temporaryLingeringEffects[player.quest.uid])
@@ -328,6 +316,21 @@ class DuelCore : Core
 						{
 							info.effect(info.referrer);
 						}
+					}
+				}
+			}
+		}
+		foreach(Player player in players)
+		{
+			if(lingeringEffects.ContainsKey(player.quest.uid))
+			{
+				foreach(LingeringEffectInfo info in lingeringEffects[player.quest.uid])
+				{
+					info.effect(info.referrer);
+					if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
+					{
+						player.quest.Reward();
+						rewardClaimed = true;
 					}
 				}
 			}
