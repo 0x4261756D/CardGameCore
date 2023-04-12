@@ -575,6 +575,7 @@ class DuelCore : Core
 						}
 						player.discardCounts.Add(0);
 						player.dealtDamages.Add(0);
+						player.dealtSpellDamages.Add(0);
 						player.brittleDeathCounts.Add(0);
 						player.deathCounts.Add(0);
 					}
