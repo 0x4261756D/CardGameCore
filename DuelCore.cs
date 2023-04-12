@@ -1560,7 +1560,7 @@ class DuelCore : Core
 			{
 				if(genericDeathTriggers.ContainsKey(fieldCard.uid))
 				{
-					foreach(GenericDeathTrigger trigger in genericDeathTriggers[player.quest.uid])
+					foreach(GenericDeathTrigger trigger in genericDeathTriggers[fieldCard.uid])
 					{
 						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(destroyedCard: card))
 						{
@@ -1569,11 +1569,11 @@ class DuelCore : Core
 					}
 				}
 			}
-			foreach(Card fieldCard in player.grave.GetAll())
+			foreach(Card graveCard in player.grave.GetAll())
 			{
-				if(genericDeathTriggers.ContainsKey(fieldCard.uid))
+				if(genericDeathTriggers.ContainsKey(graveCard.uid))
 				{
-					foreach(GenericDeathTrigger trigger in genericDeathTriggers[player.quest.uid])
+					foreach(GenericDeathTrigger trigger in genericDeathTriggers[graveCard.uid])
 					{
 						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Grave) && trigger.condition(destroyedCard: card))
 						{
@@ -1582,11 +1582,11 @@ class DuelCore : Core
 					}
 				}
 			}
-			foreach(Card fieldCard in player.hand.GetAll())
+			foreach(Card handCard in player.hand.GetAll())
 			{
-				if(genericDeathTriggers.ContainsKey(fieldCard.uid))
+				if(genericDeathTriggers.ContainsKey(handCard.uid))
 				{
-					foreach(GenericDeathTrigger trigger in genericDeathTriggers[player.quest.uid])
+					foreach(GenericDeathTrigger trigger in genericDeathTriggers[handCard.uid])
 					{
 						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition(destroyedCard: card))
 						{
