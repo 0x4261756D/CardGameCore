@@ -19,9 +19,12 @@ class CourageousKnight : Creature
 		RegisterGenericCastTrigger(trigger: new GenericCastTrigger(effect: BuffEffect), referrer: this);
 	}
 
-	public void BuffEffect(Card _)
+	public void BuffEffect(Card castCard)
 	{
-		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => Power++, referrer: this));
+		if(castCard.CardType == CardType.Creature)
+		{
+			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => Power++, referrer: this));
+		}
 	}
 
 }
