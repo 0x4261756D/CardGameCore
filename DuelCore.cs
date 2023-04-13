@@ -1769,7 +1769,7 @@ class DuelCore : Core
 		}
 		int zone = SelectZoneImpl(choosingPlayer: player, targetPlayer: player);
 		Card token;
-		if(card.Keywords.ContainsKey(Keyword.Token))
+		if(card.GetType() == typeof(Token))
 		{
 			token = CreateTokenImpl(player: player, power: card.Power, life: card.Life, name: card.Name);
 			foreach(Keyword keyword in card.Keywords.Keys)
