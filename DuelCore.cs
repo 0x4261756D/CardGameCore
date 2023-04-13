@@ -647,7 +647,7 @@ class DuelCore : Core
 					{
 						foreach(StateReachedTrigger trigger in stateReachedTriggers[card.uid])
 						{
-							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
+							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition())
 							{
 								trigger.effect();
 								trigger.wasTriggered = true;
