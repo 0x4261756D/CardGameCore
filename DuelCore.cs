@@ -1621,6 +1621,9 @@ class DuelCore : Core
 			case GameConstants.Location.Grave:
 				players[card.Controller].grave.Remove(card);
 				break;
+			case GameConstants.Location.Deck:
+				players[card.Controller].deck.Remove(card);
+			break;
 			default:
 				return false;
 		}
