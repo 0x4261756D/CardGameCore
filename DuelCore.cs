@@ -1771,7 +1771,7 @@ class DuelCore : Core
 		if(card.Keywords.ContainsKey(Keyword.Token))
 		{
 			token = CreateTokenImpl(player: player, power: card.Power, life: card.Life, name: card.Name);
-			foreach (Keyword keyword in card.Keywords.Keys)
+			foreach(Keyword keyword in card.Keywords.Keys)
 			{
 				token.RegisterKeyword(keyword, card.Keywords[keyword]);
 			}
