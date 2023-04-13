@@ -30,7 +30,7 @@ class BrilliantMedic : Creature
 		}
 		else
 		{
-			Card.PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Heal the opponent?") ? 1 - Controller : Controller, amount: 4, source: this);
+			Card.PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Heal yourself?") ? Controller : 1 - Controller, amount: 4, source: this);
 		}
 	}
 }
