@@ -72,6 +72,11 @@ class Player
 				field.Remove(card);
 			}
 			break;
+			case GameConstants.Location.UNKNOWN:
+			{
+				Functions.Log($"Destroying {card.Name} at UNKNOWN", severity: Functions.LogSeverity.Warning);
+			}
+			break;
 			default:
 				throw new Exception($"Destroying {card.Name} at {card.Location} is not supported");
 		}
