@@ -28,7 +28,7 @@ class DuelCore : Core
 	private SHA384 sha;
 	public Player[] players;
 	public static NetworkStream[] playerStreams = new NetworkStream[0];
-	public static Random rnd = new Random();
+	public static Random rnd = new Random(Program.seed);
 	public const int HASH_LEN = 96;
 	public int playersConnected = 0;
 	public int turn, turnPlayer, initPlayer;

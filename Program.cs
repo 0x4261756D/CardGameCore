@@ -11,8 +11,10 @@ class Program
 	public static string baseDir = AppDomain.CurrentDomain.BaseDirectory;
 	public static CoreConfig config = new CoreConfig(-1, CoreConfig.CoreMode.Client);
 	public static Replay? replay;
+	public static int seed;
 	public static void Main(string[] args)
 	{
+		seed = new Random().Next();
 		string? configPath = null;
 		for(int i = 0; i < args.Length; i++)
 		{
@@ -122,7 +124,7 @@ class Program
 						break;
 					case "replay":
 						Log("Recording replay");
-						replay = new Replay(args);
+						replay = new Replay(args, seed);
 						break;
 					default:
 						Log("Unknown argument " + s, severity: LogSeverity.Error);
