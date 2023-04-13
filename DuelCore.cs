@@ -1687,7 +1687,7 @@ class DuelCore : Core
 		{
 			if(youDiscardTriggers.ContainsKey(player.quest.uid))
 			{
-				foreach(DiscardTrigger trigger in youDiscardTriggers[player.quest.uid])
+				foreach(DiscardTrigger trigger in new List<Trigger>(youDiscardTriggers[player.quest.uid]))
 				{
 					if(trigger.condition())
 					{
