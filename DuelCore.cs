@@ -338,11 +338,10 @@ class DuelCore : Core
 		}
 		foreach(Player player in players)
 		{
-			Card[] cards = player.field.GetUsed();
-			for(int i = cards.Length - 1; i >= 0; i--)
+			for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 			{
-				Card card = cards[i];
-				if(card.Life <= 0)
+				Card? card = player.field.GetByPosition(i);
+				if(card != null && card.Life <= 0)
 				{
 					DestroyImpl(card);
 				}
