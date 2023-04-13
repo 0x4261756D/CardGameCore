@@ -1517,9 +1517,9 @@ class DuelCore : Core
 		}
 		players[player].hand.Add(card);
 	}
-	public Card[] GetDiscardableImpl(int player)
+	public Card[] GetDiscardableImpl(int player, Card? ignore)
 	{
-		return players[player].hand.GetDiscardable();
+		return players[player].hand.GetDiscardable(ignore);
 	}
 	public void DestroyImpl(Card card)
 	{
@@ -1659,7 +1659,7 @@ class DuelCore : Core
 	}
 	public void DiscardAmountImpl(int player, int amount)
 	{
-		Card[] targets = SelectCardsImpl(player: player, amount: amount, cards: players[player].hand.GetDiscardable(), description: "Select cards to discard");
+		Card[] targets = SelectCardsImpl(player: player, amount: amount, cards: players[player].hand.GetDiscardable(null), description: "Select cards to discard");
 		foreach(Card target in targets)
 		{
 			DiscardImpl(target);

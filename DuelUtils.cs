@@ -192,7 +192,7 @@ public delegate void MoveToFieldDelegate(int choosingPlayer, int targetPlayer, C
 public delegate int GetCastCountDelegate(int player, string name);
 public delegate void ReturnCardsToDeckDelegate(Card[] cards);
 public delegate void RevealDelegate(int player, int damage);
-public delegate Card[] GetDiscardableDelegate(int player);
+public delegate Card[] GetDiscardableDelegate(int player, Card? ignore);
 public delegate void RefreshAbilityDelegate(int player);
 
 public class LingeringEffectInfo

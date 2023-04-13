@@ -144,7 +144,7 @@ public abstract class Card
 	public static GetCastCountDelegate GetCastCount = (_, _) => -1;
 	public static ReturnCardsToDeckDelegate ReturnCardsToDeck = (_) => { };
 	public static RevealDelegate Reveal = (_, _) => { };
-	public static GetDiscardableDelegate GetDiscardable = (_) => new Card[0];
+	public static GetDiscardableDelegate GetDiscardable = (_, _) => new Card[0];
 	public static RefreshAbilityDelegate RefreshAbility = (_) => { };
 
 	public void ClearModifications()

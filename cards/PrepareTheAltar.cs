@@ -32,13 +32,13 @@ class PreparetheAltar : Spell
 
 	public void CastEffect()
 	{
-		Card target = SelectCards(cards: GetDiscardable(Controller), amount: 1, player: Controller, description: "Select card to discard")[0];
+		Card target = SelectCards(cards: GetDiscardable(Controller, ignore: this), amount: 1, player: Controller, description: "Select card to discard")[0];
 		PlayerChangeMomentum(player: Controller, amount: target.Cost);
 	}
 
 	public bool CastCondition()
 	{
-		return GetDiscardable(Controller).Length > 0;
+		return GetDiscardable(Controller, ignore: this).Length > 0;
 	}
 
 

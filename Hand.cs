@@ -37,9 +37,9 @@ class Hand
 		cards.Remove(c);
 	}
 
-	internal Card[] GetDiscardable()
+	internal Card[] GetDiscardable(Card? ignore)
 	{
-		return cards.Where(card => card.CanBeDiscarded()).ToArray();
+		return cards.Where(card => card.uid != ignore?.uid && card.CanBeDiscarded()).ToArray();
 	}
 
 	internal CardStruct[] ToHiddenStruct()

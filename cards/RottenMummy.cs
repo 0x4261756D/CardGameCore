@@ -27,6 +27,6 @@ class RottenMummy : Creature
 
 	public bool DeathCondition()
 	{
-		return GetDiscardable(Controller).Length > 0;
+		return GetDiscardable(Controller, ignore: null).Length > 0;
 	}
 }

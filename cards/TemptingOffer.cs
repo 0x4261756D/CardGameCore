@@ -26,7 +26,7 @@ class TemptingOffer : Spell
 
 	public bool CastCondition()
 	{
-		return GetDiscardable(Controller).Length > 1;
+		return GetDiscardable(Controller, ignore: this).Length > 1;
 	}
 
 }
