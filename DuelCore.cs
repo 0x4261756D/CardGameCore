@@ -1767,8 +1767,20 @@ class DuelCore : Core
 			throw new Exception($"Tried to create a token but the field is full");
 		}
 		int zone = SelectZoneImpl(choosingPlayer: player, targetPlayer: player);
-		Card token = CreateBasicCard(card.GetType(), player);
-		token.RegisterKeyword(Keyword.Token);
+		Card token;
+		if(card.Keywords.ContainsKey(Keyword.Token))
+		{
+			token = CreateTokenImpl(player: player, power: card.Power, life: card.Life, name: card.Name);
+			foreach (Keyword keyword in card.Keywords.Keys)
+			{
+				token.RegisterKeyword(keyword, card.Keywords[keyword]);
+			}
+		}
+		else
+		{
+			token = CreateBasicCard(card.GetType(), player);
+			token.RegisterKeyword(Keyword.Token);
+		}
 		players[player].field.Add(token, zone);
 		return token;
 	}
