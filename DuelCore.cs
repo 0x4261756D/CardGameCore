@@ -1695,46 +1695,44 @@ class DuelCore : Core
 				}
 			}
 		}
-		foreach(Player player in players)
+		Player player = players[card.Controller];
+		if(youDiscardTriggers.ContainsKey(player.quest.uid))
 		{
-			if(youDiscardTriggers.ContainsKey(player.quest.uid))
+			foreach(DiscardTrigger trigger in new List<Trigger>(youDiscardTriggers[player.quest.uid]))
 			{
-				foreach(DiscardTrigger trigger in new List<Trigger>(youDiscardTriggers[player.quest.uid]))
+				if(trigger.condition())
 				{
-					if(trigger.condition())
+					trigger.effect();
+					if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
+					{
+						player.quest.Reward();
+						rewardClaimed = true;
+					}
+				}
+			}
+		}
+		foreach(Card c in player.hand.GetAll())
+		{
+			if(youDiscardTriggers.ContainsKey(c.uid))
+			{
+				foreach(DiscardTrigger trigger in youDiscardTriggers[c.uid])
+				{
+					if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
 					{
 						trigger.effect();
-						if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
-						{
-							player.quest.Reward();
-							rewardClaimed = true;
-						}
 					}
 				}
 			}
-			foreach(Card c in player.hand.GetAll())
+		}
+		foreach(Card? c in player.field.GetAll())
+		{
+			if(c != null && youDiscardTriggers.ContainsKey(c.uid))
 			{
-				if(youDiscardTriggers.ContainsKey(c.uid))
+				foreach(DiscardTrigger trigger in youDiscardTriggers[c.uid])
 				{
-					foreach(DiscardTrigger trigger in youDiscardTriggers[c.uid])
+					if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition())
 					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
-						{
-							trigger.effect();
-						}
-					}
-				}
-			}
-			foreach(Card? c in player.field.GetAll())
-			{
-				if(c != null && youDiscardTriggers.ContainsKey(c.uid))
-				{
-					foreach(DiscardTrigger trigger in youDiscardTriggers[c.uid])
-					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition())
-						{
-							trigger.effect();
-						}
+						trigger.effect();
 					}
 				}
 			}
