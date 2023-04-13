@@ -22,7 +22,7 @@ class Inferno : Spell
 	{
 		foreach(Card card in GetForBoth(GetFieldUsed))
 		{
-			Cast(player: Controller, card: new Ignite(forcedTarget: card));
+			Cast(player: Controller, card: new Ignite(forcedTarget: card) { Controller = Controller });
 		}
 	}
 }

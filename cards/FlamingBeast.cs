@@ -21,6 +21,6 @@ class FlamingBeast : Creature
 
 	private void AttackEffect()
 	{
-		Cast(player: Controller, card: new Ignite());
+		Cast(player: Controller, card: new Ignite() { Controller = Controller });
 	}
 }

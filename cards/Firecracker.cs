@@ -21,7 +21,7 @@ class Firecracker : Creature
 
 	public void CastEffect()
 	{
-		Cast(Controller, new Ignite());
+		Cast(Controller, new Ignite() { Controller = Controller });
 	}
 
 }
