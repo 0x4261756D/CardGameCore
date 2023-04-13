@@ -927,7 +927,6 @@ class DuelCore : Core
 				{
 					players[player].momentum -= card.Cost;
 					CastImpl(player, card);
-					players[player].hand.Remove(card);
 				}
 				else
 				{
@@ -1233,6 +1232,7 @@ class DuelCore : Core
 			card.Init();
 			card.isInitialized = true;
 		}
+		RemoveCardFromItsLocation(card);
 		Card?[] shownCards = new Card[2];
 		shownCards[player] = card;
 		SendFieldUpdates(shownCards: shownCards);
