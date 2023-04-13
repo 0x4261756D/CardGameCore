@@ -134,6 +134,7 @@ class DuelCore : Core
 		Card.Reveal = RevealImpl;
 		Card.GetDiscardable = GetDiscardableImpl;
 		Card.RefreshAbility = ResetAbilityImpl;
+		Card.RegisterDealsDamageTrigger = RegisterDealsDamageTriggerImpl;
 	}
 
 	public override void Init()
