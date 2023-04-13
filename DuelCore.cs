@@ -1118,6 +1118,7 @@ class DuelCore : Core
 		{
 			turn = turn + 1,
 			hasInitiative = state != GameConstants.State.UNINITIALIZED && initPlayer == player,
+			battleDirectionLeftToRight = player == turnPlayer,
 			markedZone = player == 0 ? markedZone : (GameConstants.FIELD_SIZE - 1 - markedZone),
 			ownField = new DuelPackets.FieldUpdateRequest.Field
 			{
