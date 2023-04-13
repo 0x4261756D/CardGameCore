@@ -1546,16 +1546,6 @@ class DuelCore : Core
 		}
 		foreach(Player player in players)
 		{
-			if(genericDeathTriggers.ContainsKey(player.quest.uid))
-			{
-				foreach(GenericDeathTrigger trigger in genericDeathTriggers[player.quest.uid])
-				{
-					if(trigger.condition(destroyedCard: card))
-					{
-						trigger.effect(destroyedCard: card);
-					}
-				}
-			}
 			foreach(Card fieldCard in player.field.GetUsed())
 			{
 				if(genericDeathTriggers.ContainsKey(fieldCard.uid))
@@ -1596,6 +1586,26 @@ class DuelCore : Core
 				}
 			}
 		}
+		foreach(Player player in players)
+		{
+			if(genericDeathTriggers.ContainsKey(player.quest.uid))
+			{
+				foreach(GenericDeathTrigger trigger in genericDeathTriggers[player.quest.uid])
+				{
+					if(trigger.condition(destroyedCard: card))
+					{
+						trigger.effect(destroyedCard: card);
+						if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
+						{
+							player.quest.Reward();
+							rewardClaimed = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		EvaluateLingeringEffects();
 	}
 	public bool RemoveCardFromItsLocation(Card card)
 	{
