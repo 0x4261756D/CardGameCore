@@ -566,7 +566,7 @@ class DuelCore : Core
 								{
 									RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => c.Life -= 1, referrer: c));
 									EvaluateLingeringEffects();
-									if(c.Life == 0)
+									if(c.Life == 0 && c.Location.HasFlag(GameConstants.Location.Field))
 									{
 										DestroyImpl(c);
 									}
