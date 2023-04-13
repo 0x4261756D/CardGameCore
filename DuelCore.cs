@@ -1622,7 +1622,7 @@ class DuelCore : Core
 				break;
 			case GameConstants.Location.Deck:
 				players[card.Controller].deck.Remove(card);
-			break;
+				break;
 			default:
 				return false;
 		}
