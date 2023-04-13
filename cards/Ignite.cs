@@ -35,13 +35,9 @@ class Ignite : Spell
 		}
 		else
 		{
-			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: DamageEffect, referrer: forcedTarget));
+			int damage = GetIgniteDamage(Controller);
+			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (target) => { target.Life -= damage; }, referrer: forcedTarget));
 		}
-	}
-
-	private void DamageEffect(Card target)
-	{
-		target.Life -= GetIgniteDamage(Controller);
 	}
 
 	public void RevelationEffect()
