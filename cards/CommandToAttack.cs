@@ -30,7 +30,7 @@ class CommandtoAttack : Spell
 
 	private bool CastCondition()
 	{
-		return GetFieldUsed(1 - Controller).Length <= GetFieldUsed(Controller).Length;
+		return GetFieldUsed(1 - Controller).Length <= FIELD_SIZE - GetFieldUsed(Controller).Length;
 	}
 
 }
