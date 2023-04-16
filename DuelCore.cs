@@ -260,11 +260,11 @@ class DuelCore : Core
 		{
 			player.ClearCardModifications();
 		}
-		foreach (Player player in players)
+		foreach(Player player in players)
 		{
-			foreach (List<LingeringEffectInfo> infoList in lingeringEffects.Values)
+			foreach(List<LingeringEffectInfo> infoList in lingeringEffects.Values)
 			{
-				foreach (LingeringEffectInfo info in infoList)
+				foreach(LingeringEffectInfo info in infoList)
 				{
 					if(info.influenceLocation == GameConstants.Location.ALL)
 					{
