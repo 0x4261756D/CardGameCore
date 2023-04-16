@@ -21,7 +21,7 @@ class BurningImp : Creature
 
 	public bool BuffCondition(Card castCard)
 	{
-		return castCard.Name == "Ignite";
+		return castCard.Controller == Controller && castCard.Name == "Ignite";
 	}
 
 	public void BuffEffect(Card castCard)

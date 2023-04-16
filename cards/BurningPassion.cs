@@ -24,7 +24,7 @@ class BurningPassion : Quest
 
 	public bool Condition(Card castCard)
 	{
-		return castCard.Name == "Ignite";
+		return castCard.Controller == Controller && castCard.Name == "Ignite";
 	}
 
 	public override void Reward()
