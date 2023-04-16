@@ -260,6 +260,19 @@ class DuelCore : Core
 		{
 			player.ClearCardModifications();
 		}
+		foreach (Player player in players)
+		{
+			foreach (List<LingeringEffectInfo> infoList in lingeringEffects.Values)
+			{
+				foreach (LingeringEffectInfo info in infoList)
+				{
+					if(info.influenceLocation == GameConstants.Location.ALL)
+					{
+						info.effect(info.referrer);
+					}
+				}
+			}
+		}
 		foreach(Player player in players)
 		{
 			if(temporaryLingeringEffects.ContainsKey(player.quest.uid))
@@ -1371,10 +1384,6 @@ class DuelCore : Core
 	}
 	public void RegisterLingeringEffectImpl(LingeringEffectInfo info)
 	{
-		if(info.influenceLocation == GameConstants.Location.ALL)
-		{
-			info.referrer = players[info.referrer.Controller].quest;
-		}
 		if(!lingeringEffects.ContainsKey(info.referrer.uid))
 		{
 			lingeringEffects[info.referrer.uid] = new List<LingeringEffectInfo>();
