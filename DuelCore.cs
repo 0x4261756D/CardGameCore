@@ -281,6 +281,10 @@ class DuelCore : Core
 			{
 				foreach(LingeringEffectInfo info in temporaryLingeringEffects[player.quest.uid])
 				{
+					if(info.influenceLocation == GameConstants.Location.ALL)
+					{
+						continue;
+					}
 					info.effect(info.referrer);
 					if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
 					{
@@ -295,6 +299,10 @@ class DuelCore : Core
 				{
 					foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
 					{
+						if(info.influenceLocation == GameConstants.Location.ALL)
+						{
+							continue;
+						}
 						if(info.influenceLocation.HasFlag(card.Location))
 						{
 							info.effect(info.referrer);
@@ -318,6 +326,10 @@ class DuelCore : Core
 				{
 					foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
 					{
+						if(info.influenceLocation == GameConstants.Location.ALL)
+						{
+							continue;
+						}
 						if(info.influenceLocation.HasFlag(card.Location))
 						{
 							info.effect(info.referrer);
