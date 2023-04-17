@@ -206,10 +206,12 @@ class DuelCore : Core
 			{
 				if(HandleGameLogic())
 				{
+					Log("Game ends by game logic");
 					break;
 				}
 				if(HandlePlayerActions())
 				{
+					Log("Game ends by player action");
 					break;
 				}
 			}
@@ -369,9 +371,10 @@ class DuelCore : Core
 			if(state != GameConstants.State.UNINITIALIZED)
 			{
 				EvaluateLingeringEffects();
-				foreach(Player player in players)
+				for(int i = 0; i < players.Length; i++)
 				{
-					if(player.life <= 0)
+					CheckIfLost(i);
+					if(players[i].life <= 0)
 					{
 						return true;
 					}
