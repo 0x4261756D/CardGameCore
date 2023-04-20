@@ -197,6 +197,8 @@ public delegate void RefreshAbilityDelegate(int player);
 
 public class LingeringEffectInfo
 {
+	public static int timestampCounter;
+	public int timestamp;
 	public TargetingEffect effect;
 	public Card referrer;
 	public GameConstants.Location influenceLocation;
