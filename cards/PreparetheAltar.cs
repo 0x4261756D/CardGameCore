@@ -33,6 +33,7 @@ class PreparetheAltar : Spell
 	public void CastEffect()
 	{
 		Card target = SelectCards(cards: GetDiscardable(Controller, ignore: this), amount: 1, player: Controller, description: "Select card to discard")[0];
+		Discard(target);
 		PlayerChangeMomentum(player: Controller, amount: target.Cost);
 	}
 

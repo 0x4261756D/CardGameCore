@@ -206,10 +206,12 @@ class DuelCore : Core
 			{
 				if(HandleGameLogic())
 				{
+					Log("Game ends by game logic");
 					break;
 				}
 				if(HandlePlayerActions())
 				{
+					Log("Game ends by player action");
 					break;
 				}
 			}
@@ -260,42 +262,49 @@ class DuelCore : Core
 		{
 			player.ClearCardModifications();
 		}
-		foreach (Player player in players)
+		SortedList<int, LingeringEffectInfo> infos = new SortedList<int, LingeringEffectInfo>();
+		foreach(Player player in players)
 		{
-			foreach (List<LingeringEffectInfo> infoList in lingeringEffects.Values)
+			foreach(List<LingeringEffectInfo> infoList in lingeringEffects.Values)
 			{
-				foreach (LingeringEffectInfo info in infoList)
+				foreach(LingeringEffectInfo info in infoList)
 				{
 					if(info.influenceLocation == GameConstants.Location.ALL)
 					{
-						info.effect(info.referrer);
+						if(info.timestamp == 0)
+						{
+							info.timestamp = LingeringEffectInfo.timestampCounter;
+							LingeringEffectInfo.timestampCounter++;
+						}
+						infos.Add(info.timestamp, info);
 					}
 				}
 			}
 		}
 		foreach(Player player in players)
 		{
-			if(temporaryLingeringEffects.ContainsKey(player.quest.uid))
-			{
-				foreach(LingeringEffectInfo info in temporaryLingeringEffects[player.quest.uid])
-				{
-					info.effect(info.referrer);
-					if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
-					{
-						player.quest.Reward();
-						rewardClaimed = true;
-					}
-				}
-			}
 			foreach(Card card in player.hand.GetAll())
 			{
 				if(lingeringEffects.ContainsKey(card.uid))
 				{
 					foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
 					{
+						if(info.influenceLocation == GameConstants.Location.ALL)
+						{
+							continue;
+						}
 						if(info.influenceLocation.HasFlag(card.Location))
 						{
-							info.effect(info.referrer);
+							if(info.timestamp == 0)
+							{
+								info.timestamp = LingeringEffectInfo.timestampCounter;
+								LingeringEffectInfo.timestampCounter++;
+							}
+							infos.Add(info.timestamp, info);
+						}
+						else
+						{
+							info.timestamp = 0;
 						}
 					}
 				}
@@ -305,7 +314,16 @@ class DuelCore : Core
 					{
 						if(info.influenceLocation.HasFlag(card.Location))
 						{
-							info.effect(info.referrer);
+							if(info.timestamp == 0)
+							{
+								info.timestamp = LingeringEffectInfo.timestampCounter;
+								LingeringEffectInfo.timestampCounter++;
+							}
+							infos.Add(info.timestamp, info);
+						}
+						else
+						{
+							info.timestamp = 0;
 						}
 					}
 				}
@@ -316,9 +334,22 @@ class DuelCore : Core
 				{
 					foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
 					{
+						if(info.influenceLocation == GameConstants.Location.ALL)
+						{
+							continue;
+						}
 						if(info.influenceLocation.HasFlag(card.Location))
 						{
-							info.effect(info.referrer);
+							if(info.timestamp == 0)
+							{
+								info.timestamp = LingeringEffectInfo.timestampCounter;
+								LingeringEffectInfo.timestampCounter++;
+							}
+							infos.Add(info.timestamp, info);
+						}
+						else
+						{
+							info.timestamp = 0;
 						}
 					}
 				}
@@ -328,7 +359,16 @@ class DuelCore : Core
 					{
 						if(info.influenceLocation.HasFlag(card.Location))
 						{
-							info.effect(info.referrer);
+							if(info.timestamp == 0)
+							{
+								info.timestamp = LingeringEffectInfo.timestampCounter;
+								LingeringEffectInfo.timestampCounter++;
+							}
+							infos.Add(info.timestamp, info);
+						}
+						else
+						{
+							info.timestamp = 0;
 						}
 					}
 				}
@@ -340,12 +380,44 @@ class DuelCore : Core
 			{
 				foreach(LingeringEffectInfo info in lingeringEffects[player.quest.uid])
 				{
-					info.effect(info.referrer);
-					if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
+					if(info.influenceLocation == GameConstants.Location.ALL)
 					{
-						player.quest.Reward();
-						rewardClaimed = true;
+						continue;
 					}
+					if(info.timestamp == 0)
+					{
+						info.timestamp = LingeringEffectInfo.timestampCounter;
+						LingeringEffectInfo.timestampCounter++;
+					}
+					infos.Add(info.timestamp, info);
+				}
+			}
+			if(temporaryLingeringEffects.ContainsKey(player.quest.uid))
+			{
+				foreach(LingeringEffectInfo info in temporaryLingeringEffects[player.quest.uid])
+				{
+					if(info.influenceLocation == GameConstants.Location.ALL)
+					{
+						continue;
+					}
+					if(info.timestamp == 0)
+					{
+						info.timestamp = LingeringEffectInfo.timestampCounter;
+						LingeringEffectInfo.timestampCounter++;
+					}
+					infos.Add(info.timestamp, info);
+				}
+			}
+		}
+		foreach(KeyValuePair<int, LingeringEffectInfo> info in infos)
+		{
+			info.Value.effect(info.Value.referrer);
+			foreach(Player player in players)
+			{
+				if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
+				{
+					player.quest.Reward();
+					rewardClaimed = true;
 				}
 			}
 		}
@@ -369,9 +441,10 @@ class DuelCore : Core
 			if(state != GameConstants.State.UNINITIALIZED)
 			{
 				EvaluateLingeringEffects();
-				foreach(Player player in players)
+				for(int i = 0; i < players.Length; i++)
 				{
-					if(player.life <= 0)
+					CheckIfLost(i);
+					if(players[i].life <= 0)
 					{
 						return true;
 					}
@@ -1837,7 +1910,7 @@ class DuelCore : Core
 			Log($"Attempted to get spell damage dealt before the game began ({turn - turns}) for player {players[player].name}", severity: LogSeverity.Warning);
 			return 0;
 		}
-		return players[player].dealtDamages[turn - turns];
+		return players[player].dealtSpellDamages[turn - turns];
 	}
 	public int GetBrittleDeathCountXTurnsAgoImpl(int player, int turns)
 	{

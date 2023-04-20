@@ -8,7 +8,7 @@ class EverlastingProgress : Quest
 		Name: "Everlasting Progress",
 		CardClass: PlayerClass.Artificer,
 		ProgressGoal: 10,
-		Text: "{Your creature with brittle dies}: Gain 1 progress.\n{Reward}: All creatures you control lose brittle."
+		Text: "{Your creature with [Brittle] dies}: Gain 1 progress.\n{Reward}: All creatures with [Brittle] you control lose [Brittle] and gain +1/+1."
 		)
 	{ }
 
@@ -36,7 +36,16 @@ class EverlastingProgress : Quest
 	{
 		foreach(Card card in GetFieldUsed(Controller))
 		{
-			card.Keywords.Remove(Keyword.Brittle);
+			if(card.Keywords.Remove(Keyword.Brittle))
+			{
+				RegisterTemporaryLingeringEffect(new LingeringEffectInfo(effect: BuffEffect, referrer: card));
+			}
 		}
+	}
+
+	private void BuffEffect(Card target)
+	{
+		target.Life++;
+		target.Power++;
 	}
 }
