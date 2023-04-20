@@ -26,6 +26,6 @@ class BlazingArchmage : Creature
 
 	public bool CastIgniteCondition(Card target)
 	{
-		return target.Controller == Controller && target.Name != "Ignite";
+		return target.Controller == Controller && target.CardType == CardType.Spell && target.Name != "Ignite";
 	}
 }
