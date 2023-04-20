@@ -36,7 +36,16 @@ class EverlastingProgress : Quest
 	{
 		foreach(Card card in GetFieldUsed(Controller))
 		{
-			card.Keywords.Remove(Keyword.Brittle);
+			if(card.Keywords.Remove(Keyword.Brittle))
+			{
+				RegisterTemporaryLingeringEffect(new LingeringEffectInfo(effect: BuffEffect, referrer: card));
+			}
 		}
+	}
+
+	private void BuffEffect(Card target)
+	{
+		target.Life++;
+		target.Power++;
 	}
 }
