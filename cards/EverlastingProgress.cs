@@ -8,7 +8,7 @@ class EverlastingProgress : Quest
 		Name: "Everlasting Progress",
 		CardClass: PlayerClass.Artificer,
 		ProgressGoal: 10,
-		Text: "{Your creature with brittle dies}: Gain 1 progress.\n{Reward}: All creatures you control lose brittle."
+		Text: "{Your creature with [Brittle] dies}: Gain 1 progress.\n{Reward}: All creatures with [Brittle] you control lose [Brittle] and gain +1/+1."
 		)
 	{ }
 
