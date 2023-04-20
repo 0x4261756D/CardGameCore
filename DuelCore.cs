@@ -1910,7 +1910,7 @@ class DuelCore : Core
 			Log($"Attempted to get spell damage dealt before the game began ({turn - turns}) for player {players[player].name}", severity: LogSeverity.Warning);
 			return 0;
 		}
-		return players[player].dealtDamages[turn - turns];
+		return players[player].dealtSpellDamages[turn - turns];
 	}
 	public int GetBrittleDeathCountXTurnsAgoImpl(int player, int turns)
 	{
