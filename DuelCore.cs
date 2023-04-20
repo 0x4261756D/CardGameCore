@@ -412,8 +412,8 @@ class DuelCore : Core
 		foreach(KeyValuePair<int, LingeringEffectInfo> info in infos)
 		{
 			info.Value.effect(info.Value.referrer);
-			foreach (Player player in players)
-			{				
+			foreach(Player player in players)
+			{
 				if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
 				{
 					player.quest.Reward();
