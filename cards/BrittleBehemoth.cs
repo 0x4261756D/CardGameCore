@@ -24,8 +24,10 @@ class BrittleBehemoth : Creature
 
 	public void VictoriousEffect()
 	{
-		Keywords.Remove(Keyword.Brittle);
-		RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: ResetBrittleEffect, state: State.TurnEnd, influenceLocation: Location.ALL, oneshot: true), referrer: this);
+		if(Keywords.Remove(Keyword.Brittle))
+		{
+			RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: ResetBrittleEffect, state: State.TurnEnd, influenceLocation: Location.ALL, oneshot: true), referrer: this);
+		}
 	}
 
 	public void ResetBrittleEffect()
