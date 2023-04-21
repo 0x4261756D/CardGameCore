@@ -636,7 +636,6 @@ class DuelCore : Core
 				break;
 				case GameConstants.State.TurnEnd:
 				{
-					ProcessStateReachedTriggers();
 					foreach(Player player in players)
 					{
 						for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
@@ -671,6 +670,7 @@ class DuelCore : Core
 					{
 						momentumBase++;
 					}
+					ProcessStateReachedTriggers();
 					state = GameConstants.State.TurnStart;
 				}
 				break;
