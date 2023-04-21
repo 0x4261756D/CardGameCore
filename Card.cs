@@ -175,12 +175,8 @@ public abstract class Card
 				}
 				text.Append('\n');
 			}
-			text.Append(Regex.Replace(Text, @"(?m:^\[.+\]( \+?\d+)?$)\n?", ""));
 		}
-		else
-		{
-			text.Append(Text);
-		}
+		text.Append(Regex.Replace(Text, @"(?m:^\[.+\]( \+?\d+)?$)\n?", ""));
 		return new CardStruct(name: Name,
 			text: text.ToString(),
 			card_type: CardType,
