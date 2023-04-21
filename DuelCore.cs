@@ -1312,6 +1312,7 @@ class DuelCore : Core
 	{
 		RemoveCardFromItsLocation(card);
 		int zone = SelectZoneImpl(choosingPlayer: choosingPlayer, targetPlayer: targetPlayer);
+		card.Controller = targetPlayer;
 		players[targetPlayer].field.Add(card, zone);
 	}
 	private void CastImpl(int player, Card card)
