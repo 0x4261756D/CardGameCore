@@ -700,6 +700,7 @@ class DuelCore : Core
 							if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
 							{
 								player.quest.Reward();
+								player.quest.Text += "\nREWARD CLAIMED";
 								rewardClaimed = true;
 							}
 						}
@@ -1053,6 +1054,7 @@ class DuelCore : Core
 									if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
 									{
 										p.quest.Reward();
+										p.quest.Text += "\nREWARD CLAIMED";
 										rewardClaimed = true;
 										break;
 									}
@@ -1370,6 +1372,7 @@ class DuelCore : Core
 						if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
 						{
 							p.quest.Reward();
+							p.quest.Text += "\nREWARD CLAIMED";
 							rewardClaimed = true;
 							break;
 						}
@@ -1680,6 +1683,7 @@ class DuelCore : Core
 						if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
 						{
 							player.quest.Reward();
+							player.quest.Text += "\nREWARD CLAIMED";
 							rewardClaimed = true;
 							break;
 						}
@@ -1790,6 +1794,7 @@ class DuelCore : Core
 					if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
 					{
 						player.quest.Reward();
+						player.quest.Text += "\nREWARD CLAIMED";
 						rewardClaimed = true;
 					}
 				}
