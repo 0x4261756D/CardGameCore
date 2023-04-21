@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using CardGameUtils;
 using CardGameUtils.Structs;
 using static CardGameUtils.Functions;
@@ -181,6 +182,7 @@ class ClientCore : Core
 			case NetworkingConstants.PacketType.DeckListUpdateRequest:
 			{
 				DeckPackets.Deck deck = DeserializeJson<DeckPackets.ListUpdateRequest>(packet).deck;
+				deck.name = Regex.Replace(deck.name, @"[\./\\]", "");
 				int index = decks.FindIndex(x => x.name == deck.name);
 				if(deck.cards != null)
 				{
@@ -228,6 +230,7 @@ class ClientCore : Core
 
 	private DeckPackets.Deck FindDeckByName(string name)
 	{
+		name = Regex.Replace(name, @"[\./\\]", "");
 		return decks[decks.FindIndex(x => x.name == name)];
 	}
 }
