@@ -28,7 +28,7 @@ class ClientCore : Core
 		foreach(Type card in Assembly.GetExecutingAssembly().GetTypes().Where(Program.IsCardSubclass))
 		{
 			Card c = (Card)Activator.CreateInstance(card)!;
-			cards.Add(c.ToStruct());
+			cards.Add(c.ToStruct(client: true));
 		}
 
 		if(Program.config.deck_config.should_fetch_additional_cards)
