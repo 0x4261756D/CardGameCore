@@ -157,26 +157,33 @@ public abstract class Card
 
 	public virtual bool CanBeDiscarded() => true;
 
-	public virtual CardStruct ToStruct()
+	public virtual CardStruct ToStruct(bool client = false)
 	{
 		StringBuilder text = new StringBuilder();
-		if(Keywords.Count > 0)
+		if(client)
 		{
-			foreach(var keyword in Keywords)
+			if(Keywords.Count > 0)
 			{
-				text.Append($"[{keyword.Key}] ");
-				if(keyword.Value != 0)
+				foreach(var keyword in Keywords)
 				{
-					if(keyword.Key == Keyword.Colossal)
+					text.Append($"[{keyword.Key}] ");
+					if(keyword.Value != 0)
 					{
-						text.Append('+');
+						if(keyword.Key == Keyword.Colossal)
+						{
+							text.Append('+');
+						}
+						text.Append($"{keyword.Value}");
 					}
-					text.Append($"{keyword.Value}");
+					text.Append('\n');
 				}
-				text.Append('\n');
 			}
+			text.Append(Regex.Replace(Text, @"(?m:^\[.+\]( \+?\d+)?$)\n?", ""));
 		}
-		text.Append(Regex.Replace(Text, @"(?m:^\[.+\]( \+?\d+)?$)\n?", ""));
+		else
+		{
+			text.Append(Text);
+		}
 		return new CardStruct(name: Name,
 			text: text.ToString(),
 			card_type: CardType,

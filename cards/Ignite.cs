@@ -46,10 +46,13 @@ class Ignite : Spell
 		Cast(card: this, player: Controller);
 	}
 
-	public override CardStruct ToStruct()
+	public override CardStruct ToStruct(bool client = false)
 	{
-		this.Text = $"{{Cast}}: Deal {GetIgniteDamage(Controller)} damage to any target.\n{{Revelation}}: Cast this.";
-		return base.ToStruct();
+		if(!client)
+		{
+			this.Text = $"{{Cast}}: Deal {GetIgniteDamage(Controller)} damage to any target.\n{{Revelation}}: Cast this.";
+		}
+		return base.ToStruct(client);
 	}
 
 }
