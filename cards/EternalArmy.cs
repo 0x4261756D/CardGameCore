@@ -9,18 +9,27 @@ class EternalArmy : Spell
 		Name: "Eternal Army",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 6,
-		Text: "{Cast}: Create any number of 5/1 Construct tokens with \"{Death}: Create a 1/1 Construct.\"."
+		Text: "{Cast}: Create any number of 5/1 Construct tokens with \"{Death}: Create a 1/1 Construct token.\"."
 		)
 	{ }
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
+	}
+
+	private bool CastCondition()
+	{
+		return HasEmpty(GetField(Controller));
 	}
 
 	public void CastEffect()
 	{
-		for(int emptyZones = FIELD_SIZE - GetFieldUsed(Controller).Length; emptyZones >= 0; emptyZones--)
+		{
+			Card token = CreateToken(player: Controller, power: 5, life: 1, name: "Construct");
+			RegisterDeathTrigger(trigger: new Trigger(effect: DeathEffect, condition: DeathCondition), referrer: token);
+		}
+		while(HasEmpty(GetField(Controller)))
 		{
 			if(AskYesNo(player: Controller, question: "Create another Construct?"))
 			{
