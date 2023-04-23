@@ -162,6 +162,10 @@ public abstract class Card
 		StringBuilder text = new StringBuilder();
 		if(client)
 		{
+			text.Append(Text);
+		}
+		else
+		{
 			if(Keywords.Count > 0)
 			{
 				foreach(var keyword in Keywords)
@@ -179,10 +183,6 @@ public abstract class Card
 				}
 			}
 			text.Append(Regex.Replace(Text, @"(?m:^\[.+\]( \+?\d+)?$)\n?", ""));
-		}
-		else
-		{
-			text.Append(Text);
 		}
 		return new CardStruct(name: Name,
 			text: text.ToString(),
