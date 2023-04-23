@@ -964,7 +964,8 @@ class DuelCore : Core
 					}
 					break;
 					default:
-						throw new Exception($"Unable to pass in state {state}");
+						Log($"Unable to pass in state {state}", severity: LogSeverity.Warning);
+						break;
 				}
 			}
 			break;
@@ -1620,6 +1621,7 @@ class DuelCore : Core
 			players[card.Controller].brittleDeathCounts[turn]++;
 		}
 		players[card.Controller].deathCounts[turn]++;
+		SendFieldUpdates();
 		if(deathTriggers.ContainsKey(card.uid))
 		{
 			foreach(Trigger trigger in deathTriggers[card.uid])
