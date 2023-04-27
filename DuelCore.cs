@@ -48,6 +48,7 @@ class DuelCore : Core
 	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new Dictionary<int, List<StateReachedTrigger>>();
 	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
 	private Dictionary<int, List<LingeringEffectInfo>> temporaryLingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
+	private List<LingeringEffectInfo> alwaysActiveLingeringEffects = new List<LingeringEffectInfo>();
 	private Dictionary<int, List<ActivatedEffectInfo>> activatedEffects = new Dictionary<int, List<ActivatedEffectInfo>>();
 	private Dictionary<int, List<Trigger>> dealsDamageTriggers = new Dictionary<int, List<Trigger>>();
 
@@ -263,22 +264,16 @@ class DuelCore : Core
 			player.ClearCardModifications();
 		}
 		SortedList<int, LingeringEffectInfo> infos = new SortedList<int, LingeringEffectInfo>();
-		foreach(Player player in players)
+		foreach(LingeringEffectInfo info in alwaysActiveLingeringEffects)
 		{
-			foreach(List<LingeringEffectInfo> infoList in lingeringEffects.Values)
+			if(info.influenceLocation == GameConstants.Location.ALL)
 			{
-				foreach(LingeringEffectInfo info in infoList)
+				if(info.timestamp == 0)
 				{
-					if(info.influenceLocation == GameConstants.Location.ALL)
-					{
-						if(info.timestamp == 0)
-						{
-							info.timestamp = LingeringEffectInfo.timestampCounter;
-							LingeringEffectInfo.timestampCounter++;
-						}
-						infos.Add(info.timestamp, info);
-					}
+					info.timestamp = LingeringEffectInfo.timestampCounter;
+					LingeringEffectInfo.timestampCounter++;
 				}
+				infos.Add(info.timestamp, info);
 			}
 		}
 		foreach(Player player in players)
@@ -289,10 +284,6 @@ class DuelCore : Core
 				{
 					foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
 					{
-						if(info.influenceLocation == GameConstants.Location.ALL)
-						{
-							continue;
-						}
 						if(info.influenceLocation.HasFlag(card.Location))
 						{
 							if(info.timestamp == 0)
@@ -334,10 +325,6 @@ class DuelCore : Core
 				{
 					foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
 					{
-						if(info.influenceLocation == GameConstants.Location.ALL)
-						{
-							continue;
-						}
 						if(info.influenceLocation.HasFlag(card.Location))
 						{
 							if(info.timestamp == 0)
@@ -380,10 +367,6 @@ class DuelCore : Core
 			{
 				foreach(LingeringEffectInfo info in lingeringEffects[player.quest.uid])
 				{
-					if(info.influenceLocation == GameConstants.Location.ALL)
-					{
-						continue;
-					}
 					if(info.timestamp == 0)
 					{
 						info.timestamp = LingeringEffectInfo.timestampCounter;
@@ -396,10 +379,6 @@ class DuelCore : Core
 			{
 				foreach(LingeringEffectInfo info in temporaryLingeringEffects[player.quest.uid])
 				{
-					if(info.influenceLocation == GameConstants.Location.ALL)
-					{
-						continue;
-					}
 					if(info.timestamp == 0)
 					{
 						info.timestamp = LingeringEffectInfo.timestampCounter;
@@ -1457,11 +1436,18 @@ class DuelCore : Core
 	}
 	public void RegisterLingeringEffectImpl(LingeringEffectInfo info)
 	{
-		if(!lingeringEffects.ContainsKey(info.referrer.uid))
+		if(info.influenceLocation == GameConstants.Location.ALL)
 		{
-			lingeringEffects[info.referrer.uid] = new List<LingeringEffectInfo>();
+			alwaysActiveLingeringEffects.Add(info);
 		}
-		lingeringEffects[info.referrer.uid].Add(info);
+		else
+		{			
+			if(!lingeringEffects.ContainsKey(info.referrer.uid))
+			{
+				lingeringEffects[info.referrer.uid] = new List<LingeringEffectInfo>();
+			}
+			lingeringEffects[info.referrer.uid].Add(info);
+		}
 	}
 	public void RegisterTemporaryLingeringEffectImpl(LingeringEffectInfo info)
 	{
