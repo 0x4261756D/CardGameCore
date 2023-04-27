@@ -599,7 +599,6 @@ class DuelCore : Core
 				break;
 				case GameConstants.State.TurnEnd:
 				{
-					ProcessStateReachedTriggers();
 					foreach(Player player in players)
 					{
 						for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
@@ -634,6 +633,7 @@ class DuelCore : Core
 					{
 						momentumBase++;
 					}
+					ProcessStateReachedTriggers();
 					state = GameConstants.State.TurnStart;
 				}
 				break;
@@ -663,6 +663,7 @@ class DuelCore : Core
 							if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
 							{
 								player.quest.Reward();
+								player.quest.Text += "\nREWARD CLAIMED";
 								rewardClaimed = true;
 							}
 						}
@@ -917,7 +918,8 @@ class DuelCore : Core
 					}
 					break;
 					default:
-						throw new Exception($"Unable to pass in state {state}");
+						Log($"Unable to pass in state {state}", severity: LogSeverity.Warning);
+						break;
 				}
 			}
 			break;
@@ -1007,6 +1009,7 @@ class DuelCore : Core
 									if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
 									{
 										p.quest.Reward();
+										p.quest.Text += "\nREWARD CLAIMED";
 										rewardClaimed = true;
 										break;
 									}
@@ -1264,6 +1267,7 @@ class DuelCore : Core
 	{
 		RemoveCardFromItsLocation(card);
 		int zone = SelectZoneImpl(choosingPlayer: choosingPlayer, targetPlayer: targetPlayer);
+		card.Controller = targetPlayer;
 		players[targetPlayer].field.Add(card, zone);
 	}
 	private void CastImpl(int player, Card card)
@@ -1310,6 +1314,7 @@ class DuelCore : Core
 						if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
 						{
 							p.quest.Reward();
+							p.quest.Text += "\nREWARD CLAIMED";
 							rewardClaimed = true;
 							break;
 						}
@@ -1564,6 +1569,7 @@ class DuelCore : Core
 		}
 		players[card.Controller].deathCounts[turn]++;
 		ProcessTriggers(deathTriggers, card.uid);
+		SendFieldUpdates();
 		foreach(Player player in players)
 		{
 			foreach(Card fieldCard in player.field.GetUsed())
@@ -1618,6 +1624,7 @@ class DuelCore : Core
 						if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
 						{
 							player.quest.Reward();
+							player.quest.Text += "\nREWARD CLAIMED";
 							rewardClaimed = true;
 							break;
 						}
@@ -1728,6 +1735,7 @@ class DuelCore : Core
 					if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
 					{
 						player.quest.Reward();
+						player.quest.Text += "\nREWARD CLAIMED";
 						rewardClaimed = true;
 					}
 				}
