@@ -413,6 +413,20 @@ class DuelCore : Core
 		}
 	}
 
+	public void ProcessTriggers<T>(Dictionary<int, List<T>> triggers, int uid) where T : Trigger
+	{
+		if(triggers.ContainsKey(uid))
+		{
+			foreach(T trigger in triggers[uid])
+			{
+				if(trigger.condition())
+				{
+					trigger.effect();
+				}
+			}
+		}
+	}
+
 	private bool HandleGameLogic()
 	{
 		while(!state.HasFlag(GameConstants.State.InitGained))
@@ -531,25 +545,13 @@ class DuelCore : Core
 					}
 					Card? card0 = players[0].field.GetByPosition(GetMarkedZoneForPlayer(0));
 					Card? card1 = players[1].field.GetByPosition(GetMarkedZoneForPlayer(1));
-					if(card0 != null && attackTriggers.ContainsKey(card0.uid))
+					if(card0 != null)
 					{
-						foreach(Trigger trigger in attackTriggers[card0.uid])
-						{
-							if(trigger.condition())
-							{
-								trigger.effect();
-							}
-						}
+						ProcessTriggers(attackTriggers, card0.uid);
 					}
-					if(card1 != null && attackTriggers.ContainsKey(card1.uid))
+					if(card1 != null)
 					{
-						foreach(Trigger trigger in attackTriggers[card1.uid])
-						{
-							if(trigger.condition())
-							{
-								trigger.effect();
-							}
-						}
+						ProcessTriggers(attackTriggers, card1.uid);
 					}
 					if(card0 == null)
 					{
@@ -580,29 +582,11 @@ class DuelCore : Core
 							EvaluateLingeringEffects();
 							if(card0.Life == 0 && card1.Life != 0)
 							{
-								if(victoriousTriggers.ContainsKey(card1.uid))
-								{
-									foreach(Trigger trigger in victoriousTriggers[card1.uid])
-									{
-										if(trigger.condition())
-										{
-											trigger.effect();
-										}
-									}
-								}
+								ProcessTriggers(victoriousTriggers, card1.uid);
 							}
 							if(card1.Life == 0 && card0.Life != 0)
 							{
-								if(victoriousTriggers.ContainsKey(card0.uid))
-								{
-									foreach(Trigger trigger in victoriousTriggers[card0.uid])
-									{
-										if(trigger.condition())
-										{
-											trigger.effect();
-										}
-									}
-								}
+								ProcessTriggers(victoriousTriggers, card0.uid);
 							}
 						}
 					}
@@ -755,16 +739,7 @@ class DuelCore : Core
 		}
 		RevealImpl(player, amount);
 		CheckIfLost(player);
-		if(dealsDamageTriggers.ContainsKey(source.uid))
-		{
-			foreach(Trigger trigger in dealsDamageTriggers[source.uid])
-			{
-				if(trigger.condition())
-				{
-					trigger.effect();
-				}
-			}
-		}
+		ProcessTriggers(dealsDamageTriggers, source.uid);
 	}
 	private void RevealImpl(int player, int damage)
 	{
@@ -1322,21 +1297,7 @@ class DuelCore : Core
 			players[player].castCounts[card.Name] = 0;
 		}
 		players[player].castCounts[card.Name]++;
-		if(castTriggers.ContainsKey(card.uid))
-		{
-			EffectChain chain = new EffectChain(players.Length);
-			foreach(Trigger trigger in castTriggers[card.uid])
-			{
-				Log($"trigger condition met: {trigger.condition()}");
-				if(trigger.condition())
-				{
-					chain.Push(card, trigger.effect);
-				}
-			}
-			Log($"trigger chain length: {chain.Count()}");
-			// TODO: Add handling of opponent's responses here
-			while(chain.Pop()) { }
-		}
+		ProcessTriggers(castTriggers, card.uid);
 		foreach(Player p in players)
 		{
 			if(genericCastTriggers.ContainsKey(p.quest.uid))
@@ -1441,7 +1402,7 @@ class DuelCore : Core
 			alwaysActiveLingeringEffects.Add(info);
 		}
 		else
-		{			
+		{
 			if(!lingeringEffects.ContainsKey(info.referrer.uid))
 			{
 				lingeringEffects[info.referrer.uid] = new List<LingeringEffectInfo>();
@@ -1602,16 +1563,7 @@ class DuelCore : Core
 			players[card.Controller].brittleDeathCounts[turn]++;
 		}
 		players[card.Controller].deathCounts[turn]++;
-		if(deathTriggers.ContainsKey(card.uid))
-		{
-			foreach(Trigger trigger in deathTriggers[card.uid])
-			{
-				if(trigger.condition())
-				{
-					trigger.effect();
-				}
-			}
-		}
+		ProcessTriggers(deathTriggers, card.uid);
 		foreach(Player player in players)
 		{
 			foreach(Card fieldCard in player.field.GetUsed())

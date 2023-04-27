@@ -144,6 +144,48 @@ public class GenericDeathTrigger : Trigger
 	public GenericDeathTrigger(GenericDeathTriggerEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field) : this(effect, (_) => true, influenceLocation) { }
 }
 
+public class LingeringEffectInfo
+{
+	public static int timestampCounter;
+	public int timestamp;
+	public TargetingEffect effect;
+	public Card referrer;
+	public GameConstants.Location influenceLocation;
+
+	public LingeringEffectInfo(TargetingEffect effect, Card referrer, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	{
+		this.effect = effect;
+		this.referrer = referrer;
+		this.influenceLocation = influenceLocation;
+	}
+}
+
+public delegate bool ActivatedEffectCondition();
+public class ActivatedEffectInfo
+{
+	public ActivatedEffectCondition condition;
+	public Effect effect;
+	public string name;
+	public GameConstants.Location influenceLocation;
+	public Card referrer;
+	public int uses = 0, maxUses;
+
+	public ActivatedEffectInfo(string name, Effect effect, ActivatedEffectCondition condition, Card referrer, int maxUses = 1, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	{
+		this.condition = condition;
+		this.effect = effect;
+		this.name = name;
+		this.influenceLocation = influenceLocation;
+		this.referrer = referrer;
+		this.maxUses = maxUses;
+	}
+
+	public ActivatedEffectInfo(string name, Effect effect, Card referrer, int maxUses = 1, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+		: this(name, effect, () => true, referrer, maxUses, influenceLocation)
+	{
+	}
+}
+
 public delegate bool TriggerCondition();
 public delegate void Effect();
 public delegate bool GenericCastTriggerCondition(Card castCard);
@@ -194,92 +236,3 @@ public delegate void ReturnCardsToDeckDelegate(Card[] cards);
 public delegate void RevealDelegate(int player, int damage);
 public delegate Card[] GetDiscardableDelegate(int player, Card? ignore);
 public delegate void RefreshAbilityDelegate(int player);
-
-public class LingeringEffectInfo
-{
-	public static int timestampCounter;
-	public int timestamp;
-	public TargetingEffect effect;
-	public Card referrer;
-	public GameConstants.Location influenceLocation;
-
-	public LingeringEffectInfo(TargetingEffect effect, Card referrer, GameConstants.Location influenceLocation = GameConstants.Location.Field)
-	{
-		this.effect = effect;
-		this.referrer = referrer;
-		this.influenceLocation = influenceLocation;
-	}
-}
-
-
-public delegate bool ActivatedEffectCondition();
-public class ActivatedEffectInfo
-{
-	public ActivatedEffectCondition condition;
-	public Effect effect;
-	public string name;
-	public GameConstants.Location influenceLocation;
-	public Card referrer;
-	public int uses = 0, maxUses;
-
-	public ActivatedEffectInfo(string name, Effect effect, ActivatedEffectCondition condition, Card referrer, int maxUses = 1, GameConstants.Location influenceLocation = GameConstants.Location.Field)
-	{
-		this.condition = condition;
-		this.effect = effect;
-		this.name = name;
-		this.influenceLocation = influenceLocation;
-		this.referrer = referrer;
-		this.maxUses = maxUses;
-	}
-
-	public ActivatedEffectInfo(string name, Effect effect, Card referrer, int maxUses = 1, GameConstants.Location influenceLocation = GameConstants.Location.Field)
-		: this(name, effect, () => true, referrer, maxUses, influenceLocation)
-	{
-	}
-}
-
-public class EffectChain
-{
-	private class ChainLink
-	{
-		public Effect effect;
-		public int uid;
-
-		public ChainLink(Effect effect, int uid)
-		{
-			this.effect = effect;
-			this.uid = uid;
-		}
-	}
-	private Stack<ChainLink> links;
-	public Card?[] playersLastCard;
-
-	public EffectChain(int playerCount)
-	{
-		links = new Stack<ChainLink>();
-		playersLastCard = new Card?[playerCount];
-	}
-
-	public void Push(Card initiator, Effect effect)
-	{
-		links.Push(new ChainLink(effect, initiator.uid));
-		playersLastCard[initiator.Controller] = initiator;
-	}
-
-	public bool Pop()
-	{
-		ChainLink? link;
-		bool isEmpty = links.TryPop(out link);
-		if(!isEmpty)
-		{
-			return false;
-		}
-		link!.effect();
-		return true;
-	}
-
-	public int Count()
-	{
-		return links.Count;
-	}
-}
