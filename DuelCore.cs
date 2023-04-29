@@ -8,7 +8,6 @@ using static CardGameUtils.Functions;
 using static CardGameUtils.Structs.NetworkingStructs;
 
 namespace CardGameCore;
-// TODO: Everywhere where triggers are used, process opponent's responses instead of just executing the effect
 
 class DuelCore : Core
 {
@@ -47,6 +46,7 @@ class DuelCore : Core
 	private Dictionary<int, List<DiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<DiscardTrigger>>();
 	private Dictionary<int, List<DiscardTrigger>> discardTriggers = new Dictionary<int, List<DiscardTrigger>>();
 	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new Dictionary<int, List<StateReachedTrigger>>();
+	private List<StateReachedTrigger> alwaysActiveStateReachedTriggers = new List<StateReachedTrigger>();
 	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
 	private Dictionary<int, List<LingeringEffectInfo>> temporaryLingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
 	private List<LingeringEffectInfo> alwaysActiveLingeringEffects = new List<LingeringEffectInfo>();
@@ -628,13 +628,13 @@ class DuelCore : Core
 						player.brittleDeathCounts.Add(0);
 						player.deathCounts.Add(0);
 					}
+					ProcessStateReachedTriggers();
 					turnPlayer = 1 - turnPlayer;
 					turn++;
 					if(GameConstants.MOMENTUM_INCREMENT_TURNS.Contains(turn))
 					{
 						momentumBase++;
 					}
-					ProcessStateReachedTriggers();
 					state = GameConstants.State.TurnStart;
 				}
 				break;
@@ -649,6 +649,15 @@ class DuelCore : Core
 	private void ProcessStateReachedTriggers()
 	{
 		// TODO: If this is slow, index by state?
+		foreach(StateReachedTrigger trigger in alwaysActiveStateReachedTriggers)
+		{
+			if(trigger.state == state && trigger.condition())
+			{
+				trigger.effect();
+				trigger.wasTriggered = true;
+			}
+		}
+		alwaysActiveStateReachedTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
 		if(stateReachedTriggers.Count > 0)
 		{
 			foreach(Player player in players)
@@ -1395,11 +1404,18 @@ class DuelCore : Core
 	}
 	public void RegisterStateReachedTriggerImpl(StateReachedTrigger trigger, Card referrer)
 	{
-		if(!stateReachedTriggers.ContainsKey(referrer.uid))
+		if(trigger.influenceLocation == GameConstants.Location.ALL)
 		{
-			stateReachedTriggers[referrer.uid] = new List<StateReachedTrigger>();
+			alwaysActiveStateReachedTriggers.Add(trigger);
 		}
-		stateReachedTriggers[referrer.uid].Add(trigger);
+		else
+		{
+			if(!stateReachedTriggers.ContainsKey(referrer.uid))
+			{
+				stateReachedTriggers[referrer.uid] = new List<StateReachedTrigger>();
+			}
+			stateReachedTriggers[referrer.uid].Add(trigger);
+		}
 	}
 	public void RegisterLingeringEffectImpl(LingeringEffectInfo info)
 	{
