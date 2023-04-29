@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
@@ -1883,10 +1884,22 @@ class DuelCore : Core
 		Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: true));
 		return DeserializePayload<T>(payload);
 	}
+	private static Stopwatch watch = new Stopwatch();
 	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
 	{
 		List<byte> payload = Functions.GeneratePayload<T>(packet);
 		Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload.GetRange(0, payload.Count - NetworkingStructs.Packet.ENDING.Length), clientToServer: false));
+#if(DEBUG)
+		if(watch.IsRunning)
+		{
+			Log($"Elapsed since last packet: {watch.Elapsed}");
+			watch.Restart();
+		}
+		else
+		{
+			watch.Restart();
+		}
+#endif
 		playerStreams[player].Write(payload.ToArray(), 0, payload.Count);
 	}
 }
