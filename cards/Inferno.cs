@@ -8,7 +8,7 @@ class Inferno : Spell
 	public Inferno() : base(
 		Name: "Inferno",
 		CardClass: PlayerClass.Pyromancer,
-		OriginalCost: 3,
+		OriginalCost: 4,
 		Text: "{Cast}: Cast \"Ignite\" on every creature on the field."
 		)
 	{ }

@@ -9,7 +9,7 @@ class DragonsBreath : Spell
 		Name: "Dragon's Breath",
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 3,
-		Text: "{Cast}: All creatures gain -3/-0 and [Decaying]."
+		Text: "{Cast}: All creatures gain -2/-0 and [Decaying]."
 		)
 	{ }
 
@@ -29,7 +29,7 @@ class DragonsBreath : Spell
 
 	public void DebuffEffect(Card target)
 	{
-		target.Power -= 3;
+		target.Power -= 2;
 	}
 
 	private bool CastCondition()
