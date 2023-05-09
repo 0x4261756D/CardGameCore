@@ -9,8 +9,8 @@ class GearUp : Spell
 		Name: "Gear Up",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 0,
-		Text: "{Cast}: Target creature you control gets +2/+2 and [Brittle].",
-		CanBeClassAbility: true
+		Text: "{Cast}: Target creature you control gets +2/+2."//,
+		//CanBeClassAbility: true
 		)
 	{ }
 
@@ -30,7 +30,7 @@ class GearUp : Spell
 	{
 		target.Life += 2;
 		target.Power += 2;
-		target.RegisterKeyword(Keyword.Brittle);
+		//target.RegisterKeyword(Keyword.Brittle);
 	}
 
 	public bool CastCondition()

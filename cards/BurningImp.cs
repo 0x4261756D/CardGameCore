@@ -7,10 +7,10 @@ class BurningImp : Creature
 	public BurningImp() : base(
 		Name: "Burning Imp",
 		CardClass: PlayerClass.Pyromancer,
-		OriginalCost: 2,
+		OriginalCost: 3,
 		Text: "Whenever you cast \"Ignite\" gain +2/+2.",
-		OriginalPower: 2,
-		OriginalLife: 2
+		OriginalPower: 1,
+		OriginalLife: 1
 		)
 	{ }
 

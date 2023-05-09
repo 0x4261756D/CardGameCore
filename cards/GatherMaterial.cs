@@ -9,7 +9,7 @@ class GatherMaterial : Spell
 		Name: "Gather Material",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 1,
-		Text: "{Cast}: [Gather] 3. If the gathered card is a creature with [Brittle] gain 1 Momentum.\n{Revelation}: If you control a creature with [Brittle], add this to your hand.",
+		Text: "{Cast}: [Gather] 6. If the gathered card is a creature with [Brittle] gain 1 Momentum.\n{Revelation}: If you control a creature with [Brittle], add this to your hand.",
 		CanBeClassAbility: true
 		)
 	{ }
@@ -37,7 +37,7 @@ class GatherMaterial : Spell
 
 	private void CastEffect()
 	{
-		Card target = Gather(player: Controller, amount: 3);
+		Card target = Gather(player: Controller, amount: 6);
 		if(target.Keywords.ContainsKey(Keyword.Brittle))
 		{
 			PlayerChangeMomentum(player: Controller, amount: 1);

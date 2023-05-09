@@ -9,7 +9,7 @@ class ReconstructingGolem : Creature
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 2,
 		Text: "{Death}: Return this to your hand.",
-		OriginalPower: 2,
+		OriginalPower: 3,
 		OriginalLife: 2
 		)
 	{ }
