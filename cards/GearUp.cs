@@ -9,7 +9,7 @@ class GearUp : Spell
 		Name: "Gear Up",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 0,
-		Text: "{Cast}: Target creature you control gets +2/+2.",
+		Text: "{Cast}: Target creature you control gets +2/+2."//,
 		//CanBeClassAbility: true
 		)
 	{ }
