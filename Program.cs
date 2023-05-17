@@ -126,8 +126,14 @@ class Program
 						Log("Recording replay");
 						replay = new Replay(args, seed);
 						break;
+					case "additional_cards_url":
+						if(config.deck_config != null)
+						{
+							config.deck_config.additional_cards_url = new URL(parameter, 7043);
+						}
+						break;
 					default:
-						Log("Unknown argument " + s, severity: LogSeverity.Error);
+						Log($"Unknown argument {s} ({arg}, {parameter})", severity: LogSeverity.Error);
 						return;
 				}
 			}
