@@ -132,6 +132,9 @@ class Program
 							config.deck_config.additional_cards_url = new URL(parameter, 7043);
 						}
 						break;
+					case "seed":
+						seed = Convert.ToInt32(parameter);
+						break;
 					default:
 						Log($"Unknown argument {s} ({arg}, {parameter})", severity: LogSeverity.Error);
 						return;
