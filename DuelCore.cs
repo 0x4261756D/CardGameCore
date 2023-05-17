@@ -169,40 +169,7 @@ class DuelCore : Core
 			// Connect the players if they aren't yet
 			if(playersConnected < players.Length && listener.Pending())
 			{
-				NetworkStream stream = listener.AcceptTcpClient().GetStream();
-				byte[] buf = new byte[256];
-				int len = stream.Read(buf, 0, HASH_LEN);
-				if(len != HASH_LEN)
-				{
-					Log($"len was {len} but expected {HASH_LEN}\n-------------------\n{Encoding.UTF8.GetString(buf)}", severity: LogSeverity.Error);
-					//FIXME: Be more nice than simply killing the connection
-					stream.Close();
-					continue;
-				}
-				string id = Encoding.UTF8.GetString(buf, 0, len);
-				bool foundPlayer = false;
-				for(int i = 0; i < players.Length; i++)
-				{
-					if(playerStreams[i] == null)
-					{
-						Log($"Player id: {players[i].id} ({players[i].id.Length}), found {id} ({id.Length}) | {players[i].id == id}");
-						if(players[i].id == id)
-						{
-							playersConnected++;
-							foundPlayer = true;
-							playerStreams[i] = stream;
-							stream.WriteByte((byte)i);
-						}
-					}
-				}
-				if(!foundPlayer)
-				{
-					Log("Found no player", severity: LogSeverity.Error);
-					//FIXME: Be more nice, see above
-					stream.Close();
-				}
-				DateTime t = DateTime.Now;
-				Log($"{t.ToLongTimeString()}:{t.Millisecond} New Player {playersConnected}/{players.Length}");
+				ConnectNewPlayer();
 			}
 			if(playersConnected == players.Length)
 			{
@@ -1900,7 +1867,9 @@ class DuelCore : Core
 		Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: true));
 		return DeserializePayload<T>(payload);
 	}
+#if(DEBUG)
 	private static Stopwatch watch = new Stopwatch();
+#endif
 	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
 	{
 		List<byte> payload = Functions.GeneratePayload<T>(packet);
