@@ -9,7 +9,7 @@ class ThievingAutomaton : Creature
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 1,
 		Text: "{Deals damage to your opponent}: Draw 1.",
-		OriginalPower: 1,
+		OriginalPower: 2,
 		OriginalLife: 3
 		)
 	{ }

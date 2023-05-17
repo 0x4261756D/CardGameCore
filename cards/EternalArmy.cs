@@ -9,7 +9,7 @@ class EternalArmy : Spell
 		Name: "Eternal Army",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 6,
-		Text: "{Cast}: Create any number of 5/1 Construct tokens with \"{Death}: Create a 1/1 Construct token.\"."
+		Text: "{Cast}: Create any number of 5/1 Construct tokens with \"{Death}: Create a 5/1 Construct token.\"."
 		)
 	{ }
 
@@ -50,6 +50,6 @@ class EternalArmy : Spell
 
 	private void DeathEffect()
 	{
-		CreateToken(player: Controller, power: 1, life: 1, name: "Construct");
+		CreateToken(player: Controller, power: 5, life: 1, name: "Construct");
 	}
 }

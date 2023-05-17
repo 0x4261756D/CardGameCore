@@ -8,7 +8,7 @@ class Tinker : Spell
 		Name: "Tinker",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 1,
-		Text: "{Cast}: Summon two 1/1 Construct tokens with [Brittle]."
+		Text: "{Cast}: Summon two 2/1 Construct tokens with [Brittle]."
 		)
 	{ }
 
@@ -26,7 +26,7 @@ class Tinker : Spell
 	{
 		for(int i = 0; i < 2; i++)
 		{
-			CreateToken(player: Controller, power: 1, life: 1, name: "Construct").RegisterKeyword(Keyword.Brittle);
+			CreateToken(player: Controller, power: 2, life: 1, name: "Construct").RegisterKeyword(Keyword.Brittle);
 		}
 	}
 }

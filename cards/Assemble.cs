@@ -9,7 +9,7 @@ class Assemble : Spell
 		Name: "Assemble",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 0,
-		Text: "{Cast}: Create a 1/1 Construct token with [Brittle].\n{Revelation}: Cast this.",
+		Text: "{Cast}: Create a 2/1 Construct token with [Brittle].\n{Revelation}: Cast this.",
 		CanBeClassAbility: true
 		)
 	{ }
@@ -27,7 +27,7 @@ class Assemble : Spell
 
 	public void CastEffect()
 	{
-		CreateToken(player: Controller, power: 1, life: 1, name: "Construct").RegisterKeyword(Keyword.Brittle);
+		CreateToken(player: Controller, power: 2, life: 1, name: "Construct").RegisterKeyword(Keyword.Brittle);
 	}
 
 	public bool CastCondition()

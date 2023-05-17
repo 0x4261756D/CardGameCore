@@ -9,7 +9,7 @@ class SugomaGodoftheAbyss : Creature
 		Name: "Sugoma God of the Abyss",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 12,
-		Text: "[Collossal] +5\nCannot be Discarded.\n{Activate}: Discard 1. Destroy target creature.\n{Revelation}: Take 1 damage then gain 1 Momentum.",
+		Text: "[Collossal] +5\nCannot be Discarded.\n{Activate}: Discard 1. Destroy target creature.\n{Revelation}: Take 1 damage then draw 1.",
 		OriginalPower: 15,
 		OriginalLife: 15
 		)
@@ -25,7 +25,7 @@ class SugomaGodoftheAbyss : Creature
 	public void RevelationEffect()
 	{
 		PlayerChangeLife(player: Controller, amount: -1, source: this);
-		PlayerChangeMomentum(player: Controller, amount: 1);
+		Draw(player: Controller, amount: 1);
 	}
 
 	public void ActivatedEffect()

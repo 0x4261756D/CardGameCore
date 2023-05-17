@@ -10,7 +10,7 @@ class FieryFamiliar : Creature
 		OriginalCost: 1,
 		Text: "Your \"Ignite\" deals +1 damage \n{Revelation}: Add this to your hand.",
 		OriginalPower: 1,
-		OriginalLife: 3
+		OriginalLife: 2
 		)
 	{ }
 

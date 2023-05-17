@@ -8,7 +8,7 @@ class DrainSoul : Spell
 	public DrainSoul() : base(
 		Name: "Drain Soul",
 		CardClass: PlayerClass.Cultist,
-		OriginalCost: 1,
+		OriginalCost: 0,
 		Text: "{Cast}: Destroy target creature you control. Gain life equal to its power.\n{Discard}: Gain 3 life.\n{Revelation}: Gain 1 life."
 		)
 	{ }
