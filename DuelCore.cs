@@ -1186,6 +1186,7 @@ class DuelCore : Core
 			DuelPackets.CustomSelectCardsIntermediateRequest request;
 			payload = ReceiveRawPacket(playerStreams[player])!;
 			Log("request received");
+			Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: true));
 			if(payload[0] == (byte)NetworkingConstants.PacketType.DuelCustomSelectCardsResponse)
 			{
 				Log("breaking out");
@@ -1195,7 +1196,6 @@ class DuelCore : Core
 			{
 				continue;
 			}
-			Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: true));
 			request = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateRequest>(payload);
 			Log("deserialized packet");
 			SendPacketToPlayer(new DuelPackets.CustomSelectCardsIntermediateResponse
