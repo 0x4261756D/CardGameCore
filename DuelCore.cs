@@ -810,7 +810,7 @@ class DuelCore : Core
 			}
 			else
 			{
-				Thread.Sleep(100);
+				Thread.Sleep(10);
 			}
 		}
 		return false;
