@@ -113,27 +113,28 @@ class ClientCore : Core
 		while(true)
 		{
 			Log("Waiting for a connection");
-			TcpClient client = listener.AcceptTcpClient();
-			Log("Connected");
-			using(NetworkStream stream = client.GetStream())
+			using(TcpClient client = listener.AcceptTcpClient())
 			{
-				bytes = ReceiveRawPacket(stream)!;
-				Log("Received a request");
-				if(bytes.Count == 0)
+				using(NetworkStream stream = client.GetStream())
 				{
-					Log("The request was empty, ignoring it", severity: LogSeverity.Warning);
-				}
-				else
-				{
-					if(HandlePacket(bytes, stream))
+					bytes = ReceiveRawPacket(stream)!;
+					Log("Received a request");
+					if(bytes.Count == 0)
 					{
-						Log("Received a package that says the server should close");
-						break;
+						Log("The request was empty, ignoring it", severity: LogSeverity.Warning);
 					}
-					Log("Sent a response");
+					else
+					{
+						if(HandlePacket(bytes, stream))
+						{
+							Log("Received a package that says the server should close");
+							break;
+						}
+						Log("Sent a response");
+					}
+					stream.Close();
+					client.Close();
 				}
-				stream.Close();
-				client.Close();
 			}
 		}
 		listener.Stop();
