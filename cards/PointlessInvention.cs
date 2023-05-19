@@ -16,7 +16,7 @@ class PointlessInvention : Creature
 
 	public override void Init()
 	{
-		this.damageCap = 1;
+		this.baseDamageCap = 1;
 	}
 
 }
