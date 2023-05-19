@@ -730,7 +730,9 @@ class DuelCore : Core
 			players[player].deck.MoveToBottom(0);
 			Card?[] shownCards = new Card[2];
 			shownCards[player] = c;
-			SendFieldUpdates(shownCards: shownCards);
+			string?[]? shownReasons = new string?[2];
+			shownReasons[player] = "Revealed";
+			SendFieldUpdates(shownCards: shownCards, shownReasons: shownReasons);
 			if(revelationTriggers.ContainsKey(c.uid))
 			{
 				foreach(RevelationTrigger trigger in revelationTriggers[c.uid])
@@ -1127,14 +1129,14 @@ class DuelCore : Core
 		Log("Receiving");
 		return ReceivePacketFromPlayer<DuelPackets.YesNoResponse>(player).result;
 	}
-	private void SendFieldUpdates(GameConstants.Location mask = GameConstants.Location.ALL, Card?[]? shownCards = null)
+	private void SendFieldUpdates(GameConstants.Location mask = GameConstants.Location.ALL, Card?[]? shownCards = null, string?[]? shownReasons = null)
 	{
 		for(int i = 0; i < players.Length; i++)
 		{
-			SendFieldUpdate(i, mask, ownShownCard: shownCards?[i], oppShownCard: shownCards?[1 - i]);
+			SendFieldUpdate(i, mask, ownShownCard: shownCards?[i], oppShownCard: shownCards?[1 - i], shownReasons?[i], shownReasons?[1 - i]);
 		}
 	}
-	private void SendFieldUpdate(int player, GameConstants.Location mask, Card? ownShownCard, Card? oppShownCard)
+	private void SendFieldUpdate(int player, GameConstants.Location mask, Card? ownShownCard, Card? oppShownCard, string? ownShownReason, string? oppShownReason)
 	{
 		// TODO: actually handle mask if this is too slow
 		DuelPackets.FieldUpdateRequest request = new DuelPackets.FieldUpdateRequest()
@@ -1155,6 +1157,7 @@ class DuelCore : Core
 				field = players[player].field.ToStruct(),
 				hand = players[player].hand.ToStruct(),
 				shownCard = ownShownCard?.ToStruct(),
+				shownReason = ownShownReason,
 			},
 			oppField = new DuelPackets.FieldUpdateRequest.Field
 			{
@@ -1168,6 +1171,7 @@ class DuelCore : Core
 				field = players[1 - player].field.ToStruct(),
 				hand = players[1 - player].hand.ToHiddenStruct(),
 				shownCard = oppShownCard?.ToStruct(),
+				shownReason = oppShownReason,
 			},
 		};
 		SendPacketToPlayer<DuelPackets.FieldUpdateRequest>(request, player);
@@ -1258,9 +1262,11 @@ class DuelCore : Core
 			card.isInitialized = true;
 		}
 		RemoveCardFromItsLocation(card);
-		Card?[] shownCards = new Card[2];
+		Card?[] shownCards = new Card?[2];
 		shownCards[player] = card;
-		SendFieldUpdates(shownCards: shownCards);
+		string?[] shownReasons = new string?[2];
+		shownReasons[player] = "Cast";
+		SendFieldUpdates(shownCards: shownCards, shownReasons: shownReasons);
 		switch(card.CardType)
 		{
 			case GameConstants.CardType.Creature:
