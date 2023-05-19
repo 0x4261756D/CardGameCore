@@ -8,7 +8,7 @@ class DelveintoMadness : Spell
 		Name: "Delve into Madness",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 0,
-		Text: "{Cast}: Draw 2. Discard 1.\n{Revelation}: Cast this.",
+		Text: "{Cast}: Draw 1. Discard 1.\n{Revelation}: Cast this.",
 		CanBeClassAbility: true
 		)
 	{ }
@@ -26,7 +26,7 @@ class DelveintoMadness : Spell
 
 	public void CastEffect()
 	{
-		Draw(Controller, 2);
+		Draw(Controller, 1);
 		DiscardAmount(player: Controller, amount: 1);
 	}
 
