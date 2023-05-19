@@ -41,6 +41,10 @@ class ClientCore : Core
 		foreach(string deckfile in deckfiles)
 		{
 			List<string> decklist = File.ReadAllLines(deckfile).ToList();
+			if(decklist.Count == 0)
+			{
+				continue;
+			}
 			DeckPackets.Deck deck = new CardGameUtils.Structs.NetworkingStructs.DeckPackets.Deck
 			{
 				player_class = Enum.Parse<GameConstants.PlayerClass>(decklist[0]),
