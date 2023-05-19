@@ -23,14 +23,14 @@ class BrilliantMedic : Creature
 	public void HealEffect()
 	{
 		Card[] fields = FilterValid(cards: GetForBoth(Card.GetFieldUsed), isValid: (card) => card.Life < card.BaseLife);
-		if(fields.Length > 0 && Card.AskYesNo(player: Controller, question: "Heal a creature?"))
+		if(fields.Length == 0 || Card.AskYesNo(player: Controller, question: "Heal a player?"))
 		{
-			Card target = Card.SelectCards(player: Controller, cards: fields, amount: 1, description: "Select target to heal")[0];
-			Card.RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => target.Life += Math.Min(4, target.BaseLife - target.Life), referrer: target));
+			Card.PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Heal yourself?") ? Controller : 1 - Controller, amount: 4, source: this);
 		}
 		else
 		{
-			Card.PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Heal yourself?") ? Controller : 1 - Controller, amount: 4, source: this);
+			Card target = Card.SelectCards(player: Controller, cards: fields, amount: 1, description: "Select target to heal")[0];
+			Card.RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => target.Life += Math.Min(4, target.BaseLife - target.Life), referrer: target));
 		}
 	}
 }
