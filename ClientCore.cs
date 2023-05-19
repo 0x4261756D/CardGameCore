@@ -1,3 +1,4 @@
+using System.IO.Pipes;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
@@ -61,7 +62,7 @@ class ClientCore : Core
 		}
 	}
 
-	public override void Init()
+	public override void Init(PipeStream? pipeStream)
 	{
 		HandleNetworking();
 		listener.Stop();

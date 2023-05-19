@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO.Pipes;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
@@ -139,8 +140,12 @@ class DuelCore : Core
 		Card.RegisterDealsDamageTrigger = RegisterDealsDamageTriggerImpl;
 	}
 
-	public override void Init()
+	public override void Init(PipeStream? pipeStream)
 	{
+		listener.Start();
+		pipeStream?.WriteByte(42);
+		pipeStream?.Close();
+		Log("Listening", severity: LogSeverity.Warning);
 		HandleNetworking();
 		foreach(NetworkStream stream in playerStreams)
 		{
@@ -163,7 +168,6 @@ class DuelCore : Core
 
 	public override void HandleNetworking()
 	{
-		listener.Start();
 		while(true)
 		{
 			// Connect the players if they aren't yet
@@ -197,7 +201,6 @@ class DuelCore : Core
 		if(len != HASH_LEN)
 		{
 			Log($"len was {len} but expected {HASH_LEN}\n-------------------\n{Encoding.UTF8.GetString(buf)}", severity: LogSeverity.Error);
-			//FIXME: Be more nice than simply killing the connection
 			stream.Close();
 			return;
 		}

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.IO.Pipes;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using CardGameUtils;
@@ -67,6 +68,7 @@ class Program
 			config = platformConfig.windows!;
 		}
 		bool modeSet = false;
+		PipeStream? pipeStream = null;
 		foreach(string s in args)
 		{
 			if(s.StartsWith("--"))
@@ -135,6 +137,11 @@ class Program
 					case "seed":
 						seed = Convert.ToInt32(parameter);
 						break;
+					case "pipe":
+					{
+						pipeStream = new AnonymousPipeClientStream(PipeDirection.Out, parameter);
+					}
+					break;
 					default:
 						Log($"Unknown argument {s} ({arg}, {parameter})", severity: LogSeverity.Error);
 						return;
@@ -155,7 +162,7 @@ class Program
 		{
 			core = new DuelCore();
 		}
-		core.Init();
+		core.Init(pipeStream);
 		Log("EXITING");
 		if(replay != null)
 		{
