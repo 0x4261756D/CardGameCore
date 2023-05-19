@@ -53,7 +53,7 @@ class Program
 			Log($"Missing a config at {configPath}.", severity: LogSeverity.Error);
 			return;
 		}
-		PlatformCoreConfig? platformConfig = JsonSerializer.Deserialize<PlatformCoreConfig>(File.ReadAllText(configPath), NetworkingConstants.jsonIncludeOption);
+		PlatformCoreConfig? platformConfig = JsonSerializer.Deserialize<PlatformCoreConfig>(File.ReadAllText(Path.GetFullPath(configPath)), NetworkingConstants.jsonIncludeOption);
 		if(platformConfig == null)
 		{
 			Log("Could not parse a platform config", LogSeverity.Error);
