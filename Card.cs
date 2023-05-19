@@ -149,9 +149,9 @@ public abstract class Card
 
 	public void ClearModifications()
 	{
-		Life = BaseLife;
-		Power = BasePower;
-		Cost = BaseCost;
+		_life = BaseLife;
+		_power = BasePower;
+		_cost = BaseCost;
 		damageCap = baseDamageCap;
 	}
 
