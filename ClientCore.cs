@@ -93,12 +93,12 @@ class ClientCore : Core
 					List<byte> payload = GeneratePayload<ServerPackets.AdditionalCardsRequest>(new ServerPackets.AdditionalCardsRequest());
 					stream.Write(payload.ToArray(), 0, payload.Count);
 
-					(byte, byte[]?)? response = TryReceivePacket<ServerPackets.AdditionalCardsResponse>(stream, 1000);
+					byte[]? response = TryReceivePacket<ServerPackets.AdditionalCardsResponse>(stream, 1000);
 					if(response == null)
 					{
 						return;
 					}
-					CardGameUtils.Structs.CardStruct[] list = DeserializePayload<ServerPackets.AdditionalCardsResponse>(response.Value).cards;
+					CardGameUtils.Structs.CardStruct[] list = DeserializeJson<ServerPackets.AdditionalCardsResponse>(Encoding.UTF8.GetString(response)).cards;
 					foreach(CardGameUtils.Structs.CardStruct card in list)
 					{
 						cards.Remove(card);

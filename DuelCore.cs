@@ -1872,9 +1872,9 @@ class DuelCore : Core
 
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent
 	{
-		(byte type, byte[]? payload) = ReceivePacket<T>(playerStreams[player]);
-		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: type, packet: payload, clientToServer: true));
-		return DeserializePayload<T>(type, payload);
+		byte[]? payload = ReceivePacket<T>(playerStreams[player]);
+		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: NetworkingConstants.PacketDict[typeof(T)], packet: payload, clientToServer: true));
+		return (payload == null) ? (T)new PacketContent() : DeserializeJson<T>(Encoding.UTF8.GetString(payload));
 	}
 	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
 	{
