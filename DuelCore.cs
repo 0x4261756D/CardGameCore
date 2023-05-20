@@ -796,17 +796,16 @@ class DuelCore : Core
 		{
 			if(playerStreams[i].DataAvailable)
 			{
-				List<byte> bytes = ReceiveRawPacket(playerStreams[i])!;
-				if(bytes.Count == 0)
+				(byte typeByte, byte[]? bytes) = ReceiveRawPacket(playerStreams[i]);
+				if(bytes == null || bytes.Length == 0)
 				{
 					Log("Request was empty, ignoring it", severity: LogSeverity.Warning);
 				}
 				else
 				{
-					Program.replay?.actions.Add(new Replay.GameAction(packet: bytes, player: i, clientToServer: true));
-					byte type = bytes[0];
-					string packet = Encoding.UTF8.GetString(bytes.GetRange(1, bytes.Count - 1).ToArray());
-					if(HandlePacket(type, packet, i))
+					Program.replay?.actions.Add(new Replay.GameAction(packet: bytes, packetType: typeByte, player: i, clientToServer: true));
+					string packet = Encoding.UTF8.GetString(bytes);
+					if(HandlePacket(typeByte, packet, i))
 					{
 						Log($"{players[i].name} is giving up, closing.");
 						return true;
@@ -1187,23 +1186,24 @@ class DuelCore : Core
 		}, player);
 
 		Log("request sent");
-		List<byte> payload = new List<byte>();
+		byte type;
+		byte[]? payload = null;
 		do
 		{
 			DuelPackets.CustomSelectCardsIntermediateRequest request;
-			payload = ReceiveRawPacket(playerStreams[player])!;
+			(type, payload) = ReceiveRawPacket(playerStreams[player]);
 			Log("request received");
-			Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: true));
-			if(payload[0] == (byte)NetworkingConstants.PacketType.DuelCustomSelectCardsResponse)
+			Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: type, packet: payload, clientToServer: true));
+			if(type == (byte)NetworkingConstants.PacketType.DuelCustomSelectCardsResponse)
 			{
 				Log("breaking out");
 				break;
 			}
-			if(payload[0] != (byte)NetworkingConstants.PacketType.DuelCustomSelectCardsIntermediateRequest)
+			if(type != (byte)NetworkingConstants.PacketType.DuelCustomSelectCardsIntermediateRequest)
 			{
 				continue;
 			}
-			request = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateRequest>(payload);
+			request = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateRequest>(type, payload);
 			Log("deserialized packet");
 			SendPacketToPlayer(new DuelPackets.CustomSelectCardsIntermediateResponse
 			{
@@ -1212,7 +1212,7 @@ class DuelCore : Core
 			Log("sent packet");
 		} while(true);
 
-		DuelPackets.CustomSelectCardsResponse response = DeserializePayload<DuelPackets.CustomSelectCardsResponse>(payload);
+		DuelPackets.CustomSelectCardsResponse response = DeserializePayload<DuelPackets.CustomSelectCardsResponse>(type, payload);
 		Log("final response");
 		Card[] ret = cards.Where(x => response.uids.Contains(x.uid)).ToArray();
 		if(!isValidSelection(ret))
@@ -1872,28 +1872,14 @@ class DuelCore : Core
 
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent
 	{
-		List<byte> payload = ReceivePacket<T>(playerStreams[player])!;
-		Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload, clientToServer: true));
-		return DeserializePayload<T>(payload);
+		(byte type, byte[]? payload) = ReceivePacket<T>(playerStreams[player]);
+		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: type, packet: payload, clientToServer: true));
+		return DeserializePayload<T>(type, payload);
 	}
-#if(DEBUG)
-	private static Stopwatch watch = new Stopwatch();
-#endif
 	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
 	{
 		List<byte> payload = Functions.GeneratePayload<T>(packet);
-		Program.replay?.actions.Add(new Replay.GameAction(player: player, packet: payload.GetRange(0, payload.Count - NetworkingStructs.Packet.ENDING.Length), clientToServer: false));
-#if(DEBUG)
-		if(watch.IsRunning)
-		{
-			Log($"Elapsed since last packet: {watch.Elapsed}");
-			watch.Restart();
-		}
-		else
-		{
-			watch.Restart();
-		}
-#endif
+		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: payload[0], packet: payload.GetRange(1, payload.Count - 1).ToArray(), clientToServer: false));
 		playerStreams[player].Write(payload.ToArray(), 0, payload.Count);
 	}
 }

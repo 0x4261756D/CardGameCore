@@ -92,12 +92,13 @@ class ClientCore : Core
 				{
 					List<byte> payload = GeneratePayload<ServerPackets.AdditionalCardsRequest>(new ServerPackets.AdditionalCardsRequest());
 					stream.Write(payload.ToArray(), 0, payload.Count);
-					List<byte>? packet = ReceivePacket<ServerPackets.AdditionalCardsResponse>(stream, 3000);
-					CardGameUtils.Structs.CardStruct[]? list = packet == null ? null : DeserializePayload<ServerPackets.AdditionalCardsResponse>(packet).cards;
-					if(list == null)
+
+					(byte, byte[]?)? response = TryReceivePacket<ServerPackets.AdditionalCardsResponse>(stream, 1000);
+					if(response == null)
 					{
 						return;
 					}
+					CardGameUtils.Structs.CardStruct[] list = DeserializePayload<ServerPackets.AdditionalCardsResponse>(response.Value).cards;
 					foreach(CardGameUtils.Structs.CardStruct card in list)
 					{
 						cards.Remove(card);
@@ -114,7 +115,6 @@ class ClientCore : Core
 	public override void HandleNetworking()
 	{
 		listener.Start();
-		List<byte> bytes = new List<byte>();
 		while(true)
 		{
 			Log("Waiting for a connection");
@@ -122,15 +122,15 @@ class ClientCore : Core
 			{
 				using(NetworkStream stream = client.GetStream())
 				{
-					bytes = ReceiveRawPacket(stream)!;
+					(byte type, byte[]? bytes) = ReceiveRawPacket(stream);
 					Log("Received a request");
-					if(bytes.Count == 0)
+					if(bytes == null || bytes.Length == 0)
 					{
 						Log("The request was empty, ignoring it", severity: LogSeverity.Warning);
 					}
 					else
 					{
-						if(HandlePacket(bytes, stream))
+						if(HandlePacket(type, bytes, stream))
 						{
 							Log("Received a package that says the server should close");
 							break;
@@ -145,16 +145,16 @@ class ClientCore : Core
 		listener.Stop();
 	}
 
-	public bool HandlePacket(List<byte> bytes, NetworkStream stream)
+	public bool HandlePacket(byte typeByte, byte[] bytes, NetworkStream stream)
 	{
 		// THIS MIGHT CHANGE AS SENDING RAW JSON MIGHT BE TOO EXPENSIVE/SLOW
 		// possible improvements: Huffman or Burrows-Wheeler+RLE
-		if(bytes[0] >= (byte)NetworkingConstants.PacketType.PACKET_COUNT)
+		if(typeByte >= (byte)NetworkingConstants.PacketType.PACKET_COUNT)
 		{
-			throw new Exception($"ERROR: Unknown packet type encountered: ({bytes[0]})");
+			throw new Exception($"ERROR: Unknown packet type encountered: ({typeByte})");
 		}
-		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)bytes[0];
-		string packet = Encoding.UTF8.GetString(bytes.GetRange(1, bytes.Count - 1).ToArray());
+		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)typeByte;
+		string packet = Encoding.UTF8.GetString(bytes);
 		List<byte> payload = new List<byte>();
 		switch(type)
 		{
