@@ -483,6 +483,7 @@ class DuelCore : Core
 				case GameConstants.State.MainActionTaken:
 				{
 					initPlayer = 1 - initPlayer;
+					players[initPlayer].passed = false;
 					state = GameConstants.State.MainInitGained;
 				}
 				break;
@@ -505,6 +506,7 @@ class DuelCore : Core
 				case GameConstants.State.BattleActionTaken:
 				{
 					initPlayer = 1 - initPlayer;
+					players[initPlayer].passed = false;
 					state = GameConstants.State.BattleInitGained;
 				}
 				break;
@@ -873,27 +875,33 @@ class DuelCore : Core
 				{
 					case GameConstants.State.MainInitGained:
 					{
-						if(players[1 - player].passed)
+						if(!players[player].passed)
 						{
-							state = GameConstants.State.BattleStart;
-						}
-						else
-						{
-							players[player].passed = true;
-							state = GameConstants.State.MainActionTaken;
+							if(players[1 - player].passed)
+							{
+								state = GameConstants.State.BattleStart;
+							}
+							else
+							{
+								players[player].passed = true;
+								state = GameConstants.State.MainActionTaken;
+							}
 						}
 					}
 					break;
 					case GameConstants.State.BattleInitGained:
 					{
-						if(players[1 - player].passed)
+						if(!players[player].passed)
 						{
-							state = GameConstants.State.DamageCalc;
-						}
-						else
-						{
-							players[player].passed = true;
-							state = GameConstants.State.BattleActionTaken;
+							if(players[1 - player].passed)
+							{
+								state = GameConstants.State.DamageCalc;
+							}
+							else
+							{
+								players[player].passed = true;
+								state = GameConstants.State.BattleActionTaken;
+							}
 						}
 					}
 					break;
