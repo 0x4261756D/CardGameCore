@@ -942,8 +942,8 @@ class DuelCore : Core
 				{
 					info.effect();
 					info.uses++;
-					SendFieldUpdates();
 					EvaluateLingeringEffects();
+					SendFieldUpdates();
 					return;
 				}
 			}
