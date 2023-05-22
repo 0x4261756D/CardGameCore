@@ -98,7 +98,7 @@ class ClientCore : Core
 					{
 						return;
 					}
-					CardGameUtils.Structs.CardStruct[] list = DeserializeJson<ServerPackets.AdditionalCardsResponse>(Encoding.UTF8.GetString(response)).cards;
+					CardGameUtils.Structs.CardStruct[] list = DeserializeJson<ServerPackets.AdditionalCardsResponse>(response).cards;
 					foreach(CardGameUtils.Structs.CardStruct card in list)
 					{
 						cards.Remove(card);
@@ -154,13 +154,12 @@ class ClientCore : Core
 			throw new Exception($"ERROR: Unknown packet type encountered: ({typeByte})");
 		}
 		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)typeByte;
-		string packet = Encoding.UTF8.GetString(bytes);
 		List<byte> payload = new List<byte>();
 		switch(type)
 		{
 			case NetworkingConstants.PacketType.DeckNamesRequest:
 			{
-				DeckPackets.NamesRequest request = DeserializeJson<DeckPackets.NamesRequest>(packet);
+				DeckPackets.NamesRequest request = DeserializeJson<DeckPackets.NamesRequest>(bytes);
 				payload = GeneratePayload<DeckPackets.NamesResponse>(new DeckPackets.NamesResponse
 				{
 					names = decks.ConvertAll(x => x.name).ToArray()
@@ -169,7 +168,7 @@ class ClientCore : Core
 			break;
 			case NetworkingConstants.PacketType.DeckListRequest:
 			{
-				DeckPackets.ListRequest request = DeserializeJson<DeckPackets.ListRequest>(packet);
+				DeckPackets.ListRequest request = DeserializeJson<DeckPackets.ListRequest>(bytes);
 				payload = GeneratePayload<DeckPackets.ListResponse>(new DeckPackets.ListResponse
 				{
 					deck = FindDeckByName(request.name!),
@@ -178,7 +177,7 @@ class ClientCore : Core
 			break;
 			case NetworkingConstants.PacketType.DeckSearchRequest:
 			{
-				DeckPackets.SearchRequest request = DeserializeJson<DeckPackets.SearchRequest>(packet);
+				DeckPackets.SearchRequest request = DeserializeJson<DeckPackets.SearchRequest>(bytes);
 				payload = GeneratePayload<DeckPackets.SearchResponse>(new DeckPackets.SearchResponse
 				{
 					cards = FilterCards(cards, request.filter!, request.playerClass).ToArray()
@@ -187,7 +186,7 @@ class ClientCore : Core
 			break;
 			case NetworkingConstants.PacketType.DeckListUpdateRequest:
 			{
-				DeckPackets.Deck deck = DeserializeJson<DeckPackets.ListUpdateRequest>(packet).deck;
+				DeckPackets.Deck deck = DeserializeJson<DeckPackets.ListUpdateRequest>(bytes).deck;
 				deck.name = Regex.Replace(deck.name, @"[\./\\]", "");
 				int index = decks.FindIndex(x => x.name == deck.name);
 				if(deck.cards != null)
@@ -214,7 +213,7 @@ class ClientCore : Core
 			}
 			break;
 			default:
-				throw new Exception($"ERROR: Unable to process this packet: ({type}) | {packet}");
+				throw new Exception($"ERROR: Unable to process this packet: ({type}) | {Encoding.UTF8.GetString(bytes)}");
 		}
 		stream.Write(payload.ToArray(), 0, payload.Count);
 		return false;

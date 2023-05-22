@@ -804,8 +804,7 @@ class DuelCore : Core
 				else
 				{
 					Program.replay?.actions.Add(new Replay.GameAction(packet: bytes, packetType: typeByte, player: i, clientToServer: true));
-					string packet = Encoding.UTF8.GetString(bytes);
-					if(HandlePacket(typeByte, packet, i))
+					if(HandlePacket(typeByte, bytes, i))
 					{
 						Log($"{players[i].name} is giving up, closing.");
 						return true;
@@ -820,7 +819,7 @@ class DuelCore : Core
 		return false;
 	}
 
-	private bool HandlePacket(byte typeByte, string packet, int player)
+	private bool HandlePacket(byte typeByte, byte[] packet, int player)
 	{
 		// THIS MIGHT CHANGE AS SENDING RAW JSON MIGHT BE TOO EXPENSIVE/SLOW
 		// possible improvements: Huffman or Burrows-Wheeler+RLE
@@ -1874,7 +1873,7 @@ class DuelCore : Core
 	{
 		byte[]? payload = ReceivePacket<T>(playerStreams[player]);
 		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: NetworkingConstants.PacketDict[typeof(T)], packet: payload, clientToServer: true));
-		return (payload == null) ? (T)new PacketContent() : DeserializeJson<T>(Encoding.UTF8.GetString(payload));
+		return (payload == null) ? (T)new PacketContent() : DeserializeJson<T>(payload);
 	}
 	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
 	{
