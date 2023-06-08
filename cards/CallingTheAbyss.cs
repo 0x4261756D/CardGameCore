@@ -14,7 +14,7 @@ class CallingtheAbyss : Spell
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
+		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
 	}
 
 	public void BenefitEffect()
@@ -30,10 +30,4 @@ class CallingtheAbyss : Spell
 		PayLife(player: Controller, amount: 6);
 		RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: BenefitEffect, state: State.TurnStart, influenceLocation: Location.ALL, oneshot: true), referrer: this);
 	}
-
-	public bool CastCondition()
-	{
-		return true;
-	}
-
 }
