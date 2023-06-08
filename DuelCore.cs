@@ -1710,7 +1710,7 @@ class DuelCore : Core
 	}
 	public void DiscardImpl(Card card)
 	{
-		if(card.Location != GameConstants.Location.Hand)
+		if(card.Location != GameConstants.Location.Hand || !card.CanBeDiscarded())
 		{
 			throw new Exception($"Tried to discard a card that is not in the hand but at {card.Location}");
 		}
