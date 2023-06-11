@@ -21,8 +21,9 @@ class Deck
 		cards.Add(c);
 	}
 
-	internal Card Pop()
+	internal Card? Pop()
 	{
+		if(cards.Count == 0) return null;
 		Card ret = cards[0];
 		cards.RemoveAt(0);
 		ret.Location = GameConstants.Location.UNKNOWN;

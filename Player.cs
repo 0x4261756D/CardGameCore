@@ -38,7 +38,15 @@ class Player
 	{
 		for(int i = 0; i < amount; i++)
 		{
-			hand.Add(deck.Pop());
+			Card? card = deck.Pop();
+			if(card == null)
+			{
+				life -= 1;
+			}
+			else
+			{
+				hand.Add(card);
+			}
 		}
 	}
 	internal void CastCreature(Card card, int zone)
