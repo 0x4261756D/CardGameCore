@@ -189,6 +189,7 @@ public abstract class Card
 			card_type: CardType,
 			card_class: CardClass,
 			uid: uid, life: Life, power: Power, cost: Cost,
+			base_cost: BaseCost, base_life: BaseLife, base_power: BasePower,
 			location: Location, position: Position,
 			is_class_ability: IsClassAbility,
 			can_be_class_ability: CanBeClassAbility,

@@ -1,10 +1,8 @@
-using System.Diagnostics;
 using System.IO.Pipes;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using CardGameUtils;
-using CardGameUtils.Structs;
 using static CardGameUtils.Functions;
 using static CardGameUtils.Structs.NetworkingStructs;
 
