@@ -1699,7 +1699,7 @@ class DuelCore : Core
 	public void DiscardAmountImpl(int player, int amount)
 	{
 		Card[] cards = players[player].hand.GetDiscardable(null);
-		amount = Math.Max(cards.Length, amount);
+		amount = Math.Min(cards.Length, amount);
 		Card[] targets = SelectCardsImpl(player: player, amount: amount, cards: cards, description: "Select cards to discard");
 		foreach(Card target in targets)
 		{
