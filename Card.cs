@@ -47,7 +47,7 @@ public abstract class Card
 			if(_cost < 0) _cost = 0;
 		}
 	}
-	public int BaseLife, BasePower, BaseCost;
+	public readonly int BaseLife, BasePower, BaseCost;
 	public GameConstants.Location Location;
 	public bool IsClassAbility, CanBeClassAbility;
 	public int Controller;
