@@ -180,7 +180,7 @@ class ClientCore : Core
 				DeckPackets.SearchRequest request = DeserializeJson<DeckPackets.SearchRequest>(bytes);
 				payload = GeneratePayload<DeckPackets.SearchResponse>(new DeckPackets.SearchResponse
 				{
-					cards = FilterCards(cards, request.filter!, request.playerClass).ToArray()
+					cards = FilterCards(cards, request.filter!, request.playerClass)
 				});
 			}
 			break;
@@ -226,11 +226,11 @@ class ClientCore : Core
 		File.WriteAllText(Path.Combine(Program.config.deck_config!.deck_location, deck.name + ".dek"), deckString);
 	}
 
-	private List<CardStruct> FilterCards(List<CardStruct> cards, string filter, GameConstants.PlayerClass playerClass)
+	private CardStruct[] FilterCards(List<CardStruct> cards, string filter, GameConstants.PlayerClass playerClass)
 	{
 		return cards.Where(x =>
 			(playerClass == GameConstants.PlayerClass.All || x.card_class == GameConstants.PlayerClass.All || x.card_class == playerClass)
-			&& x.ToString().ToLower().Contains(filter)).ToList();
+			&& x.ToString().ToLower().Contains(filter)).ToArray();
 	}
 
 	private DeckPackets.Deck FindDeckByName(string name)
