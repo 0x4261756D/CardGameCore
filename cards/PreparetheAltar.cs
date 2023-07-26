@@ -23,7 +23,7 @@ class PreparetheAltar : Spell
 	public void GainDiscardEffect()
 	{
 		PlayerChangeMomentum(player: Controller, amount: 1);
-		bool doDiscard = AskYesNo(player: Controller, question: "Discard 1?");
+		bool doDiscard = GetDiscardable(Controller, null).Length > 0 && AskYesNo(player: Controller, question: "Discard 1?");
 		if(doDiscard)
 		{
 			DiscardAmount(player: Controller, amount: 1);
