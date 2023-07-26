@@ -8,8 +8,7 @@ class PreparetheAltar : Spell
 		Name: "Prepare the Altar",
 		CardClass: PlayerClass.Cultist,
 		OriginalCost: 1,
-		Text: "{Cast}: Discard 1. Gain Momentum equal to its cost.\n{Revelation}: Gain 1 Momentum. You may discard 1.",
-		CanBeClassAbility: true
+		Text: "{Cast}: Discard 1. Gain Momentum equal to its cost.\n{Revelation}: Gain 1 Momentum. You may discard 1."
 		)
 	{ }
 

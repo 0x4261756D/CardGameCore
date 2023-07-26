@@ -9,8 +9,7 @@ class GatherMaterial : Spell
 		Name: "Gather Material",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 1,
-		Text: "{Cast}: [Gather] 6. If the gathered card is a creature with [Brittle] gain 1 Momentum.\n{Revelation}: If you control a creature with [Brittle], add this to your hand.",
-		CanBeClassAbility: true
+		Text: "{Cast}: [Gather] 6. If the gathered card is a creature with [Brittle] gain 1 Momentum.\n{Revelation}: If you control a creature with [Brittle], add this to your hand."
 		)
 	{ }
 
