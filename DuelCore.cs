@@ -1700,6 +1700,10 @@ class DuelCore : Core
 	{
 		Card[] cards = players[player].hand.GetDiscardable(null);
 		amount = Math.Min(cards.Length, amount);
+		if(amount == 0)
+		{
+			return;
+		}
 		Card[] targets = SelectCardsImpl(player: player, amount: amount, cards: cards, description: "Select cards to discard");
 		foreach(Card target in targets)
 		{
