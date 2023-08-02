@@ -20,7 +20,7 @@ class Scorch : Spell
 
 	public void CastEffect()
 	{
-		Card target = SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Target creature to scorch")[0];
+		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Target creature to scorch");
 		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: ScorchEffect, referrer: target));
 	}
 

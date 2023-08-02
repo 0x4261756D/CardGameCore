@@ -36,12 +36,17 @@ public class CardUtils
 		Card[] fields = GetForBoth(Card.GetFieldUsed);
 		if(fields.Length > 0 && Card.AskYesNo(player: player, question: description + " a creature?"))
 		{
-			Card target = Card.SelectCards(player: player, cards: fields, amount: 1, description: "Select target to " + description.ToLower())[0];
+			Card target = SelectSingleCard(player: player, cards: fields, description: "Select target to " + description.ToLower());
 			Card.RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => target.Life += amount, referrer: target));
 		}
 		else
 		{
 			Card.PlayerChangeLife(player: Card.AskYesNo(player: player, question: description + " the opponent?") ? 1 - player : player, amount: amount, source: source);
 		}
+	}
+
+	public static Card SelectSingleCard(int player, Card[] cards, string description)
+	{
+		return Card.SelectCards(player, cards, 1, description)[0];
 	}
 }

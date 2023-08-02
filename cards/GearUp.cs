@@ -20,7 +20,7 @@ class GearUp : Spell
 
 	public void CastEffect()
 	{
-		Card target = SelectCards(player: Controller, cards: GetFieldUsed(Controller), amount: 1, description: "Target creature to reinforce")[0];
+		Card target = SelectSingleCard(player: Controller, cards: GetFieldUsed(Controller), description: "Target creature to reinforce");
 		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: BuffEffect, referrer: target));
 	}
 
@@ -29,7 +29,6 @@ class GearUp : Spell
 	{
 		target.Life += 2;
 		target.Power += 2;
-		//target.RegisterKeyword(Keyword.Brittle);
 	}
 
 	public bool CastCondition()

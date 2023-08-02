@@ -20,7 +20,7 @@ class Rebuild : Spell
 
 	public void CastEffect()
 	{
-		Card target = SelectCards(player: Controller, cards: FilterValid(GetForBoth(GetGrave), c => c.CardType == CardType.Creature), amount: 1, description: "Select creature to rebuild")[0];
+		Card target = SelectSingleCard(player: Controller, cards: FilterValid(GetForBoth(GetGrave), c => c.CardType == CardType.Creature), description: "Select creature to rebuild");
 		MoveToField(choosingPlayer: Controller, targetPlayer: Controller, card: target);
 		target.RegisterKeyword(Keyword.Brittle);
 	}

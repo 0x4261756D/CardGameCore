@@ -27,7 +27,7 @@ class Pupeteer : Creature
 
 	private void MoveEffect()
 	{
-		Card target = SelectCards(player: Controller, cards: GetFieldUsed(player: Controller), amount: 1, description: "Select creature to move")[0];
+		Card target = SelectSingleCard(player: Controller, cards: GetFieldUsed(player: Controller), description: "Select creature to move");
 		Move(card: target, zone: SelectZone(choosingPlayer: Controller, targetPlayer: Controller));
 	}
 

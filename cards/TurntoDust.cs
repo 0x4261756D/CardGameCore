@@ -20,7 +20,7 @@ class TurntoDust : Spell
 
 	private void CastEffect()
 	{
-		SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Select target to make Brittle")[0].RegisterKeyword(Keyword.Brittle);
+		SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Select target to make Brittle").RegisterKeyword(Keyword.Brittle);
 	}
 
 	private bool CastCondition()

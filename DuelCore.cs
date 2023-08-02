@@ -1491,7 +1491,7 @@ class DuelCore : Core
 	public Card GatherImpl(int player, int amount)
 	{
 		Card[] possibleCards = players[player].deck.GetRange(0, amount);
-		Card target = SelectCardsImpl(player: player, cards: possibleCards, amount: 1, description: "Select card to gather")[0];
+		Card target = CardUtils.SelectSingleCard(player: player, cards: possibleCards, description: "Select card to gather");
 		players[player].deck.Remove(target);
 		players[player].hand.Add(target);
 		players[player].deck.Shuffle();

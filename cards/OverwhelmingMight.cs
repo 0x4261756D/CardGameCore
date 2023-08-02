@@ -31,7 +31,7 @@ class OverwhelmingMight : Spell
 
 	private void CastEffect()
 	{
-		Card target = SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Select target to damage")[0];
+		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Select target to damage");
 		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: DamageEffect, referrer: target));
 		if(GetDiscardable(Controller, ignore: this).Length > 0 && GetForBoth(GetFieldUsed).Length > 0 && AskYesNo(player: Controller, question: "Discard a card to recast?"))
 		{

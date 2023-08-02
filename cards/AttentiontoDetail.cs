@@ -20,7 +20,7 @@ class AttentiontoDetail : Spell
 
 	public void CastEffect()
 	{
-		Card target = SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Select card to copy")[0];
+		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Select card to copy");
 		Card copy = CreateTokenCopy(player: Controller, card: target);
 		copy.RegisterKeyword(Keyword.Brittle);
 	}

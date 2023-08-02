@@ -32,7 +32,7 @@ class DrainSoul : Spell
 
 	private void CastEffect()
 	{
-		Card target = SelectCards(player: Controller, cards: GetFieldUsed(Controller), amount: 1, description: "Select creature to drain")[0];
+		Card target = SelectSingleCard(player: Controller, cards: GetFieldUsed(Controller), description: "Select creature to drain");
 		Destroy(target);
 		PlayerChangeLife(player: Controller, amount: target.Power, source: this);
 	}

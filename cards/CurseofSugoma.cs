@@ -21,7 +21,7 @@ class CurseofSugoma : Spell
 
 	public void DiscardEffect()
 	{
-		SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Select card to inflict the Curse of Sugoma upon")[0].RegisterKeyword(Keyword.Decaying);
+		SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Select card to inflict the Curse of Sugoma upon").RegisterKeyword(Keyword.Decaying);
 	}
 	public bool DiscardCondition()
 	{
@@ -30,7 +30,7 @@ class CurseofSugoma : Spell
 
 	public void CastEffect()
 	{
-		Card target = SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Target creature to curse")[0];
+		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Target creature to curse");
 		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: CurseEffect, referrer: target));
 	}
 

@@ -31,7 +31,7 @@ class SugomaGodoftheAbyss : Creature
 	public void ActivatedEffect()
 	{
 		DiscardAmount(player: Controller, amount: 1);
-		Card target = SelectCards(player: Controller, cards: GetForBoth(GetFieldUsed), amount: 1, description: "Select card to destroy")[0];
+		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Select card to destroy");
 		Destroy(target);
 	}
 

@@ -25,13 +25,13 @@ class FlashingFire : Spell
 		bool killed = false;
 		if(fields.Length > 0 && AskYesNo(player: Controller, question: "Damage creature?"))
 		{
-			Card target = Card.SelectCards(player: Controller, cards: fields, amount: 1, description: "Select target to damage")[0];
+			Card target = SelectSingleCard(player: Controller, cards: fields, description: "Select target to damage");
 			killed = target.Life <= damage;
-			Card.RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => target.Life -= damage, referrer: target));
+			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => target.Life -= damage, referrer: target));
 		}
 		else
 		{
-			Card.PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Damage the opponent?") ? 1 - Controller : Controller, amount: -damage, source: this);
+			PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Damage the opponent?") ? 1 - Controller : Controller, amount: -damage, source: this);
 		}
 		if(killed)
 		{

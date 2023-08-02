@@ -37,7 +37,7 @@ class BrittleBehemoth : Creature
 
 	public void RevelationEffect()
 	{
-		Card target = SelectCards(player: Controller, cards: FilterValid(cards: GetForBoth(GetFieldUsed), isValid: Filter), amount: 1, description: "Select creature to frighten")[0];
+		Card target = SelectSingleCard(player: Controller, cards: FilterValid(cards: GetForBoth(GetFieldUsed), isValid: Filter), description: "Select creature to frighten");
 		target.CanMove = false;
 		RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: () => target.CanMove = true, state: State.TurnEnd, influenceLocation: Location.ALL, oneshot: true), referrer: target);
 	}

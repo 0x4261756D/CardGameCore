@@ -20,7 +20,7 @@ class BurningMemory : Spell
 
 	public void CastEffect()
 	{
-		Card target = SelectCards(player: Controller, cards: GetForBoth(GetGrave), amount: 1, description: "Select creature to let glow")[0];
+		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetGrave), description: "Select creature to let glow");
 		CreateToken(player: Controller, power: target.BasePower, life: target.BaseLife, name: "Afterglow").RegisterKeyword(Keyword.Decaying);
 	}
 

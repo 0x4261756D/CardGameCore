@@ -27,7 +27,7 @@ class DeceivingTactician : Creature
 
 	private void MoveEffect()
 	{
-		Card target = SelectCards(player: Controller, cards: GetFieldUsed(player: 1 - Controller), amount: 1, description: "Select creature to move")[0];
+		Card target = SelectSingleCard(player: Controller, cards: GetFieldUsed(player: 1 - Controller), description: "Select creature to move");
 		Move(card: target, zone: SelectZone(choosingPlayer: Controller, targetPlayer: 1 - Controller));
 	}
 }

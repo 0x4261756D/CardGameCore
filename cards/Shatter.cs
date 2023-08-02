@@ -20,7 +20,7 @@ class Shatter : Spell
 
 	public void CastEffect()
 	{
-		Card target = SelectCards(player: Controller, cards: GetFieldUsed(Controller), amount: 1, description: "Select target to destroy")[0];
+		Card target = SelectSingleCard(player: Controller, cards: GetFieldUsed(Controller), description: "Select target to destroy");
 		int damage = target.Power;
 		Destroy(target);
 		PlayerChangeLife(player: 1 - Controller, amount: -damage, source: this);
