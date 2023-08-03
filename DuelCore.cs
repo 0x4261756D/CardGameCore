@@ -717,7 +717,6 @@ class DuelCore : Core
 		}
 		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (tg) => tg.Life += amount, referrer: target));
 		EvaluateLingeringEffects();
-
 	}
 
 	private void DealDamage(int player, int amount, Card source)

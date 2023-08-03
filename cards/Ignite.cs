@@ -30,13 +30,13 @@ class Ignite : Spell
 
 	public void IgniteEffect()
 	{
+		int damage = -GetIgniteDamage(Controller);
 		if(forcedTarget == null)
 		{
-			ChangeLifeOfAnyTarget(player: Controller, amount: -GetIgniteDamage(Controller), description: "Damage", source: this);
+			ChangeLifeOfAnyTarget(player: Controller, amount: damage, description: "Damage", source: this);
 		}
 		else
 		{
-			int damage = GetIgniteDamage(Controller);
 			CreatureChangeLife(target: forcedTarget, amount: damage, source: this);
 		}
 	}
