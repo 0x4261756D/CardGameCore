@@ -21,22 +21,19 @@ class FlashingFire : Spell
 	private void CastEffect()
 	{
 		Card[] fields = GetForBoth(GetFieldUsed);
-		int damage = GetCastCount(player: Controller, name: this.Name);
-		bool killed = false;
+		int damage = -GetCastCount(player: Controller, name: this.Name);
 		if(fields.Length > 0 && AskYesNo(player: Controller, question: "Damage creature?"))
 		{
 			Card target = SelectSingleCard(player: Controller, cards: fields, description: "Select target to damage");
-			// TODO: This does not work with damage caps
-			killed = target.Life <= damage;
 			CreatureChangeLife(target, amount: damage, source: this);
+			if(!target.Location.HasFlag(Location.Field))
+			{
+				MoveToHand(player: Controller, card: this);
+			}
 		}
 		else
 		{
-			PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Damage the opponent?") ? 1 - Controller : Controller, amount: -damage, source: this);
-		}
-		if(killed)
-		{
-			MoveToHand(player: Controller, card: this);
+			PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Damage the opponent?") ? 1 - Controller : Controller, amount: damage, source: this);
 		}
 	}
 }
