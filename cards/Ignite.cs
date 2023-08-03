@@ -37,7 +37,7 @@ class Ignite : Spell
 		else
 		{
 			int damage = GetIgniteDamage(Controller);
-			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (target) => { target.Life -= damage; }, referrer: forcedTarget));
+			CreatureChangeLife(target: forcedTarget, amount: damage, source: this);
 		}
 	}
 

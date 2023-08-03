@@ -26,8 +26,9 @@ class FlashingFire : Spell
 		if(fields.Length > 0 && AskYesNo(player: Controller, question: "Damage creature?"))
 		{
 			Card target = SelectSingleCard(player: Controller, cards: fields, description: "Select target to damage");
+			// TODO: This does not work with damage caps
 			killed = target.Life <= damage;
-			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => target.Life -= damage, referrer: target));
+			CreatureChangeLife(target, amount: damage, source: this);
 		}
 		else
 		{

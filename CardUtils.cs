@@ -1,5 +1,4 @@
 namespace CardGameCore;
-using static CardGameUtils.Functions;
 public class CardUtils
 {
 	public static bool HasEmpty(Card?[] cards)
@@ -37,7 +36,7 @@ public class CardUtils
 		if(fields.Length > 0 && Card.AskYesNo(player: player, question: description + " a creature?"))
 		{
 			Card target = SelectSingleCard(player: player, cards: fields, description: "Select target to " + description.ToLower());
-			Card.RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => target.Life += amount, referrer: target));
+			Card.CreatureChangeLife(target, amount, source);
 		}
 		else
 		{

@@ -136,6 +136,7 @@ class DuelCore : Core
 		Card.GetDiscardable = GetDiscardableImpl;
 		Card.RefreshAbility = ResetAbilityImpl;
 		Card.RegisterDealsDamageTrigger = RegisterDealsDamageTriggerImpl;
+		Card.CreatureChangeLife = CreatureChangeLifeImpl;
 	}
 
 	public override void Init(PipeStream? pipeStream)
@@ -548,9 +549,8 @@ class DuelCore : Core
 						}
 						else
 						{
-							RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (target) => target.Life -= card1.Power, referrer: card0));
-							RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (target) => target.Life -= card0.Power, referrer: card1));
-							EvaluateLingeringEffects();
+							CreatureChangeLifeImpl(target: card0, amount: -card1.Power, source: card1);
+							CreatureChangeLifeImpl(target: card1, amount: -card0.Power, source: card0);
 							if(card0.Life == 0 && card1.Life != 0)
 							{
 								ProcessTriggers(victoriousTriggers, card1.uid);
@@ -707,6 +707,17 @@ class DuelCore : Core
 				result = GameConstants.GameResult.Won
 			}, 1 - player);
 		}
+	}
+	public void CreatureChangeLifeImpl(Card target, int amount, Card source)
+	{
+		if(amount == 0) return;
+		if(amount < 0 && source.CardType == GameConstants.CardType.Spell)
+		{
+			players[source.Controller].dealtSpellDamages[turn] -= amount;
+		}
+		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (tg) => tg.Life += amount, referrer: target));
+		EvaluateLingeringEffects();
+
 	}
 
 	private void DealDamage(int player, int amount, Card source)
