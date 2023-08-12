@@ -51,17 +51,24 @@ class ClientCore : Core
 				name = Path.GetFileNameWithoutExtension(deckfile)
 			};
 			decklist.RemoveAt(0);
-			if(decklist[0].StartsWith("#"))
+			if(decklist.Count > 0)
 			{
-				deck.ability = cards[cards.FindIndex(x => x.name == decklist[0].Substring(1))];
-				decklist.RemoveAt(0);
+				if(decklist[0].StartsWith("#"))
+				{
+					deck.ability = cards[cards.FindIndex(x => x.name == decklist[0].Substring(1))];
+					decklist.RemoveAt(0);
+				}
+				if(decklist[0].StartsWith("|"))
+				{
+					deck.quest = cards[cards.FindIndex(x => x.name == decklist[0].Substring(1))];
+					decklist.RemoveAt(0);
+				}
+				deck.cards = DecklistToCards(decklist);
 			}
-			if(decklist[0].StartsWith("|"))
+			else
 			{
-				deck.quest = cards[cards.FindIndex(x => x.name == decklist[0].Substring(1))];
-				decklist.RemoveAt(0);
+				deck.cards = new CardStruct[0];
 			}
-			deck.cards = DecklistToCards(decklist);
 			decks.Add(deck);
 		}
 	}
