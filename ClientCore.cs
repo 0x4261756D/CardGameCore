@@ -230,7 +230,7 @@ class ClientCore : Core
 	{
 		return cards.Where(x =>
 			(playerClass == GameConstants.PlayerClass.All || x.card_class == GameConstants.PlayerClass.All || x.card_class == playerClass)
-			&& x.ToString().ToLower().Contains(filter)).ToArray();
+			&& x.ToString().ToLower().Contains(filter.ToLower())).ToArray();
 	}
 
 	private DeckPackets.Deck FindDeckByName(string name)
