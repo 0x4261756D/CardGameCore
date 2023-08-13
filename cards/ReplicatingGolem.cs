@@ -10,8 +10,8 @@ class ReplicatingGolem : Creature
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 3,
 		Text: "{Attack}: Create a token copy of this card with [Brittle].",
-		OriginalPower: 1,
-		OriginalLife: 1
+		OriginalPower: 3,
+		OriginalLife: 2
 		)
 	{ }
 
