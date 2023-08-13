@@ -40,7 +40,7 @@ class DuelCore : Core
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
 	private Dictionary<int, List<Trigger>> victoriousTriggers = new Dictionary<int, List<Trigger>>();
 	private Dictionary<int, List<Trigger>> attackTriggers = new Dictionary<int, List<Trigger>>();
-	private Dictionary<int, List<Trigger>> deathTriggers = new Dictionary<int, List<Trigger>>();
+	private Dictionary<int, List<TargetingTrigger>> deathTriggers = new Dictionary<int, List<TargetingTrigger>>();
 	private Dictionary<int, List<GenericDeathTrigger>> genericDeathTriggers = new Dictionary<int, List<GenericDeathTrigger>>();
 	private Dictionary<int, List<DiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<DiscardTrigger>>();
 	private Dictionary<int, List<DiscardTrigger>> discardTriggers = new Dictionary<int, List<DiscardTrigger>>();
@@ -378,6 +378,20 @@ class DuelCore : Core
 				if(card != null && card.Life <= 0)
 				{
 					DestroyImpl(card);
+				}
+			}
+		}
+	}
+
+	private void ProcessTargetingTriggers(Dictionary<int, List<TargetingTrigger>> triggers, Card target)
+	{
+		if(triggers.ContainsKey(target.uid))
+		{
+			foreach(TargetingTrigger trigger in triggers[target.uid])
+			{
+				if(trigger.condition(target))
+				{
+					trigger.effect(target);
 				}
 			}
 		}
@@ -999,9 +1013,9 @@ class DuelCore : Core
 						{
 							foreach(GenericCastTrigger trigger in genericCastTriggers[p.quest.uid])
 							{
-								if(trigger.condition(castCard: players[player].ability))
+								if(trigger.condition(target: players[player].ability))
 								{
-									trigger.effect(castCard: players[player].ability);
+									trigger.effect(target: players[player].ability);
 									if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
 									{
 										p.quest.Reward();
@@ -1018,9 +1032,9 @@ class DuelCore : Core
 							{
 								foreach(GenericCastTrigger trigger in genericCastTriggers[possiblyTriggeringCard.uid])
 								{
-									if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(castCard: players[player].ability))
+									if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: players[player].ability))
 									{
-										trigger.effect(castCard: players[player].ability);
+										trigger.effect(target: players[player].ability);
 									}
 								}
 							}
@@ -1309,9 +1323,9 @@ class DuelCore : Core
 			{
 				foreach(GenericCastTrigger trigger in genericCastTriggers[p.quest.uid])
 				{
-					if(trigger.condition(castCard: card))
+					if(trigger.condition(target: card))
 					{
-						trigger.effect(castCard: card);
+						trigger.effect(target: card);
 						if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
 						{
 							p.quest.Reward();
@@ -1328,9 +1342,9 @@ class DuelCore : Core
 				{
 					foreach(GenericCastTrigger trigger in genericCastTriggers[possiblyTriggeringCard.uid])
 					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(castCard: card))
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: card))
 						{
-							trigger.effect(castCard: card);
+							trigger.effect(target: card);
 						}
 					}
 				}
@@ -1455,11 +1469,11 @@ class DuelCore : Core
 		}
 		attackTriggers[referrer.uid].Add(info);
 	}
-	public void RegisterDeathTriggerImpl(Trigger info, Card referrer)
+	public void RegisterDeathTriggerImpl(TargetingTrigger info, Card referrer)
 	{
 		if(!deathTriggers.ContainsKey(referrer.uid))
 		{
-			deathTriggers[referrer.uid] = new List<Trigger>();
+			deathTriggers[referrer.uid] = new List<TargetingTrigger>();
 		}
 		deathTriggers[referrer.uid].Add(info);
 	}
@@ -1576,7 +1590,7 @@ class DuelCore : Core
 			players[card.Controller].brittleDeathCounts[turn]++;
 		}
 		players[card.Controller].deathCounts[turn]++;
-		ProcessTriggers(deathTriggers, card.uid);
+		ProcessTargetingTriggers(deathTriggers, card);
 		SendFieldUpdates();
 		foreach(Player player in players)
 		{
@@ -1586,9 +1600,9 @@ class DuelCore : Core
 				{
 					foreach(GenericDeathTrigger trigger in genericDeathTriggers[fieldCard.uid])
 					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(destroyedCard: card))
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: card))
 						{
-							trigger.effect(destroyedCard: card);
+							trigger.effect(target: card);
 						}
 					}
 				}
@@ -1599,9 +1613,9 @@ class DuelCore : Core
 				{
 					foreach(GenericDeathTrigger trigger in genericDeathTriggers[graveCard.uid])
 					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Grave) && trigger.condition(destroyedCard: card))
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Grave) && trigger.condition(target: card))
 						{
-							trigger.effect(destroyedCard: card);
+							trigger.effect(target: card);
 						}
 					}
 				}
@@ -1612,9 +1626,9 @@ class DuelCore : Core
 				{
 					foreach(GenericDeathTrigger trigger in genericDeathTriggers[handCard.uid])
 					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition(destroyedCard: card))
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition(target: card))
 						{
-							trigger.effect(destroyedCard: card);
+							trigger.effect(target: card);
 						}
 					}
 				}
@@ -1626,9 +1640,9 @@ class DuelCore : Core
 			{
 				foreach(GenericDeathTrigger trigger in genericDeathTriggers[player.quest.uid])
 				{
-					if(trigger.condition(destroyedCard: card))
+					if(trigger.condition(target: card))
 					{
-						trigger.effect(destroyedCard: card);
+						trigger.effect(target: card);
 						if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
 						{
 							player.quest.Reward();

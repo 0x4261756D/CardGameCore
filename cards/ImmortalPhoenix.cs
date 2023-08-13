@@ -16,13 +16,13 @@ class ImmortalPhoenix : Creature
 
 	public override void Init()
 	{
-		RegisterDeathTrigger(trigger: new Trigger(effect: DeathEffect), referrer: this);
+		RegisterDeathTrigger(trigger: new TargetingTrigger(effect: DeathEffect), referrer: this);
 	}
 
-	private void DeathEffect()
+	private void DeathEffect(Card target)
 	{
-		MoveToHand(player: Controller, card: this);
-		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: PhoenixEffect, referrer: this, influenceLocation: Location.ALL));
+		MoveToHand(player: Controller, card: target);
+		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: PhoenixEffect, referrer: target, influenceLocation: Location.ALL));
 	}
 
 	private void PhoenixEffect(Card target)

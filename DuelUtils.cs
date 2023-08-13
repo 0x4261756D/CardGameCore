@@ -35,6 +35,24 @@ public class Trigger
 	}
 }
 
+public class TargetingTrigger
+{
+	public TargetingCondition condition;
+	public TargetingEffect effect;
+
+	public TargetingTrigger(TargetingEffect effect, TargetingCondition condition)
+	{
+		this.effect = effect;
+		this.condition = condition;
+	}
+
+	public TargetingTrigger(TargetingEffect effect)
+	{
+		this.effect = effect;
+		this.condition = (_) => true;
+	}
+}
+
 public class DiscardTrigger : Trigger
 {
 	public GameConstants.Location influenceLocation;
@@ -112,16 +130,16 @@ public class RevelationTrigger : Trigger
 public class GenericCastTrigger : Trigger
 {
 	public GameConstants.Location influenceLocation;
-	public new GenericCastTriggerCondition condition;
-	public new GenericCastTriggerEffect effect;
+	public new TargetingCondition condition;
+	public new TargetingEffect effect;
 
-	public GenericCastTrigger(GenericCastTriggerEffect effect, GenericCastTriggerCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public GenericCastTrigger(TargetingEffect effect, TargetingCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
 		this.influenceLocation = influenceLocation;
 		this.condition = condition;
 		this.effect = effect;
 	}
-	public GenericCastTrigger(GenericCastTriggerEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public GenericCastTrigger(TargetingEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
 		this.influenceLocation = influenceLocation;
 		this.condition = (_) => true;
@@ -131,17 +149,17 @@ public class GenericCastTrigger : Trigger
 
 public class GenericDeathTrigger : Trigger
 {
-	public new GenericDeathTriggerCondition condition;
-	public new GenericDeathTriggerEffect effect;
+	public new TargetingCondition condition;
+	public new TargetingEffect effect;
 	public GameConstants.Location influenceLocation;
 
-	public GenericDeathTrigger(GenericDeathTriggerEffect effect, GenericDeathTriggerCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public GenericDeathTrigger(TargetingEffect effect, TargetingCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
 		this.effect = effect;
 		this.condition = condition;
 		this.influenceLocation = influenceLocation;
 	}
-	public GenericDeathTrigger(GenericDeathTriggerEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field) : this(effect, (_) => true, influenceLocation) { }
+	public GenericDeathTrigger(TargetingEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field) : this(effect, (_) => true, influenceLocation) { }
 }
 
 public class LingeringEffectInfo
@@ -188,11 +206,8 @@ public class ActivatedEffectInfo
 
 public delegate bool TriggerCondition();
 public delegate void Effect();
-public delegate bool GenericCastTriggerCondition(Card castCard);
-public delegate void GenericCastTriggerEffect(Card castCard);
-public delegate bool GenericDeathTriggerCondition(Card destroyedCard);
-public delegate void GenericDeathTriggerEffect(Card destroyedCard);
 public delegate void TargetingEffect(Card target);
+public delegate bool TargetingCondition(Card target);
 
 public delegate void RegisterCastTriggerDelegate(CastTrigger trigger, Card referrer);
 public delegate void RegisterGenericCastTriggerDelegate(GenericCastTrigger trigger, Card referrer);
@@ -201,7 +216,7 @@ public delegate void RegisterDiscardTriggerDelegate(DiscardTrigger trigger, Card
 public delegate void RegisterStateReachedTriggerDelegate(StateReachedTrigger trigger, Card referrer);
 public delegate void RegisterVictoriousTriggerDelegate(Trigger trigger, Card referrer);
 public delegate void RegisterAttackTriggerDelegate(Trigger trigger, Card referrer);
-public delegate void RegisterDeathTriggerDelegate(Trigger trigger, Card referrer);
+public delegate void RegisterDeathTriggerDelegate(TargetingTrigger trigger, Card referrer);
 public delegate void RegisterGenericDeathTriggerDelegate(GenericDeathTrigger trigger, Card referrer);
 public delegate void RegisterDealsDamageTriggerDelegate(Trigger trigger, Card referrer);
 public delegate void RegisterLingeringEffectDelegate(LingeringEffectInfo info);
