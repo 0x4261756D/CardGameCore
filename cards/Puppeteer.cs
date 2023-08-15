@@ -9,7 +9,7 @@ class Pupeteer : Creature
 		Name: "Pupeteer",
 		CardClass: PlayerClass.All,
 		OriginalCost: 2,
-		Text: "{Activate}: Move target creature you control.",
+		Text: "{Activate}: Move your target creature.",
 		OriginalPower: 3,
 		OriginalLife: 3
 		)

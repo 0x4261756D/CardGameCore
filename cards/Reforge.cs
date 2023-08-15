@@ -9,7 +9,7 @@ class Reforge : Spell
 		Name: "Reforge",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 1,
-		Text: "{Cast}: Return target creature you control to your hand. Create a token copy of it."
+		Text: "{Cast}: Return your target creature to your hand. Create a token copy of it."
 		)
 	{ }
 
