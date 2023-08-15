@@ -1783,7 +1783,7 @@ class DuelCore : Core
 	}
 	private void AddCardToLocation(Card card, GameConstants.Location location)
 	{
-		switch(card.Location)
+		switch(location)
 		{
 			case GameConstants.Location.Deck:
 			{
