@@ -459,7 +459,7 @@ class DuelCore : Core
 							foreach(Card card in cards)
 							{
 								players[i].hand.Remove(card);
-								players[i].deck.Add(card);
+								AddCardToLocation(card, GameConstants.Location.Deck);
 							}
 							players[i].deck.Shuffle();
 							players[i].Draw(cards.Length);
@@ -1278,6 +1278,7 @@ class DuelCore : Core
 	}
 	private void MoveToFieldImpl(int choosingPlayer, int targetPlayer, Card card)
 	{
+		EvaluateLingeringEffects();
 		RemoveCardFromItsLocation(card);
 		int zone = SelectZoneImpl(choosingPlayer: choosingPlayer, targetPlayer: targetPlayer);
 		if(card.Controller != targetPlayer)
@@ -1285,6 +1286,7 @@ class DuelCore : Core
 			RegisterControllerChange(card);
 		}
 		players[targetPlayer].field.Add(card, zone);
+		RemoveOutdatedTemporaryLingeringEffects(card);
 	}
 	private void CastImpl(int player, Card card)
 	{
@@ -1303,12 +1305,12 @@ class DuelCore : Core
 		{
 			case GameConstants.CardType.Creature:
 			{
-				players[player].CastCreature(card, SelectZoneImpl(player, player));
+				MoveToFieldImpl(player, player, card);
 			}
 			break;
 			case GameConstants.CardType.Spell:
 			{
-				players[player].CastSpell(card);
+				AddCardToLocation(card, GameConstants.Location.Grave);
 			}
 			break;
 			default:
@@ -1521,7 +1523,7 @@ class DuelCore : Core
 		Card[] possibleCards = players[player].deck.GetRange(0, amount);
 		Card target = CardUtils.SelectSingleCard(player: player, cards: possibleCards, description: "Select card to gather");
 		players[player].deck.Remove(target);
-		players[player].hand.Add(target);
+		MoveToHandImpl(player, target);
 		players[player].deck.Shuffle();
 		return target;
 	}
@@ -1582,6 +1584,7 @@ class DuelCore : Core
 			RegisterControllerChange(card);
 		}
 		players[player].hand.Add(card);
+		RemoveOutdatedTemporaryLingeringEffects(card);
 	}
 	public Card[] GetDiscardableImpl(int player, Card? ignore)
 	{
@@ -1666,6 +1669,16 @@ class DuelCore : Core
 		}
 		EvaluateLingeringEffects();
 	}
+	private void RemoveOutdatedTemporaryLingeringEffects(Card card)
+	{
+		if(temporaryLingeringEffects.ContainsKey(card.uid))
+		{
+			if(temporaryLingeringEffects[card.uid].RemoveAll(x => !x.influenceLocation.HasFlag(card.Location)) > 0)
+			{
+				EvaluateLingeringEffects();
+			}
+		}
+	}
 	public bool RemoveCardFromItsLocation(Card card)
 	{
 		switch(card.Location)
@@ -1695,7 +1708,7 @@ class DuelCore : Core
 			if(RemoveCardFromItsLocation(card))
 			{
 				shouldShuffle[card.BaseController] = true;
-				players[card.Controller].deck.Add(card);
+				AddCardToLocation(card, GameConstants.Location.Deck);
 			}
 			else
 			{
@@ -1744,13 +1757,36 @@ class DuelCore : Core
 			DiscardImpl(target);
 		}
 	}
+	private void AddCardToLocation(Card card, GameConstants.Location location)
+	{
+		EvaluateLingeringEffects();
+		switch(card.Location)
+		{
+			case GameConstants.Location.Deck:
+			{
+				players[card.BaseController].deck.Add(card);
+			}
+			break;
+			case GameConstants.Location.Grave:
+			{
+				players[card.BaseController].grave.Add(card);
+			}
+			break;
+			default:
+			{
+				throw new Exception($"Tried to add card {card.Name} to location {location} of {card.BaseController}");
+			}
+		}
+		RemoveOutdatedTemporaryLingeringEffects(card);
+	}
 	public void DiscardImpl(Card card)
 	{
 		if(card.Location != GameConstants.Location.Hand || !card.CanBeDiscarded())
 		{
 			throw new Exception($"Tried to discard a card that is not in the hand but at {card.Location}");
 		}
-		players[card.Controller].Discard(card);
+		players[card.Controller].hand.Remove(card);
+		AddCardToLocation(card, GameConstants.Location.Grave);
 		players[card.Controller].discardCounts[turn]++;
 		if(discardTriggers.ContainsKey(card.uid))
 		{
@@ -1813,7 +1849,6 @@ class DuelCore : Core
 		{
 			throw new Exception($"Tried to create a token but the field is full");
 		}
-		int zone = SelectZoneImpl(player, player);
 		Token token = new Token
 		(
 			Name: name,
@@ -1823,7 +1858,7 @@ class DuelCore : Core
 			OriginalPower: power,
 			OriginalController: player
 		);
-		players[player].field.Add(token, zone);
+		MoveToFieldImpl(player, player, token);
 		return token;
 	}
 	public Card CreateTokenCopyImpl(int player, Card card)
@@ -1832,7 +1867,6 @@ class DuelCore : Core
 		{
 			throw new Exception($"Tried to create a token but the field is full");
 		}
-		int zone = SelectZoneImpl(choosingPlayer: player, targetPlayer: player);
 		Card token;
 		if(card.GetType() == typeof(Token))
 		{
@@ -1847,7 +1881,7 @@ class DuelCore : Core
 			token = CreateBasicCard(card.GetType(), player);
 			token.RegisterKeyword(Keyword.Token);
 		}
-		players[player].field.Add(token, zone);
+		MoveToFieldImpl(player, player, card);
 		return token;
 	}
 	public int SelectZoneImpl(int choosingPlayer, int targetPlayer)
