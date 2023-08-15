@@ -22,6 +22,7 @@ class Grave
 			return;
 		}
 		card.Location = GameConstants.Location.Grave;
+		card.ClearModifications();
 		cards.Add(card);
 	}
 
