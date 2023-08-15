@@ -1343,7 +1343,8 @@ class DuelCore : Core
 	private void CastImpl(int player, Card card)
 	{
 		EvaluateLingeringEffects();
-		if(!card.isInitialized)
+		bool isNew = !card.isInitialized;
+		if(isNew)
 		{
 			card.Init();
 			card.isInitialized = true;
@@ -1354,20 +1355,23 @@ class DuelCore : Core
 		string?[] shownReasons = new string?[2];
 		shownReasons[player] = "Cast";
 		SendFieldUpdates(shownCards: shownCards, shownReasons: shownReasons);
-		switch(card.CardType)
+		if(!isNew)
 		{
-			case GameConstants.CardType.Creature:
+			switch(card.CardType)
 			{
-				MoveToFieldImpl(player, player, card);
+				case GameConstants.CardType.Creature:
+				{
+					MoveToFieldImpl(player, player, card);
+				}
+				break;
+				case GameConstants.CardType.Spell:
+				{
+					AddCardToLocation(card, GameConstants.Location.Grave);
+				}
+				break;
+				default:
+					throw new NotImplementedException($"Casting {card.CardType} cards");
 			}
-			break;
-			case GameConstants.CardType.Spell:
-			{
-				AddCardToLocation(card, GameConstants.Location.Grave);
-			}
-			break;
-			default:
-				throw new NotImplementedException($"Casting {card.CardType} cards");
 		}
 		if(!players[player].castCounts.ContainsKey(card.Name))
 		{
