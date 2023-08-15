@@ -1299,6 +1299,7 @@ class DuelCore : Core
 	}
 	private void CastImpl(int player, Card card)
 	{
+		EvaluateLingeringEffects();
 		if(!card.isInitialized)
 		{
 			card.Init();
@@ -1605,7 +1606,6 @@ class DuelCore : Core
 	}
 	public void DestroyImpl(Card card)
 	{
-		EvaluateLingeringEffects();
 		switch(card.Location)
 		{
 			case GameConstants.Location.Field:
@@ -1726,6 +1726,7 @@ class DuelCore : Core
 	}
 	public void ReturnCardsToDeckImpl(Card[] cards)
 	{
+		EvaluateLingeringEffects();
 		bool[] shouldShuffle = new bool[players.Length];
 		foreach(Card card in cards)
 		{
@@ -1783,7 +1784,6 @@ class DuelCore : Core
 	}
 	private void AddCardToLocation(Card card, GameConstants.Location location)
 	{
-		EvaluateLingeringEffects();
 		switch(card.Location)
 		{
 			case GameConstants.Location.Deck:
@@ -1805,6 +1805,7 @@ class DuelCore : Core
 	}
 	public void DiscardImpl(Card card)
 	{
+		EvaluateLingeringEffects();
 		if(card.Location != GameConstants.Location.Hand || !card.CanBeDiscarded())
 		{
 			throw new Exception($"Tried to discard a card that is not in the hand but at {card.Location}");
