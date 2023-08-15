@@ -12,8 +12,8 @@ public abstract class Card
 	public GameConstants.CardType CardType;
 	public GameConstants.PlayerClass CardClass;
 	public int uid, Position;
-	private int _life, _power, _cost, _controller;
-	
+	private int _life, _power, _cost;
+
 	public int Life
 	{
 		get => _life;
@@ -166,7 +166,7 @@ public abstract class Card
 		_life = BaseLife;
 		_power = BasePower;
 		_cost = BaseCost;
-		_controller = BaseController;
+		Controller = BaseController;
 		damageCap = baseDamageCap;
 	}
 
@@ -354,6 +354,7 @@ public class Token : Creature
 	{
 		this.BaseController = OriginalController;
 		RegisterKeyword(Keyword.Token);
+		ClearModifications();
 	}
 	public override void Init()
 	{
