@@ -17,7 +17,7 @@ class Grave
 
 	internal void Add(Card card)
 	{
-		if(card.Keywords.ContainsKey(Keyword.Token) || card.Location == GameConstants.Location.UNKNOWN)
+		if(card.Keywords.ContainsKey(Keyword.Token))
 		{
 			return;
 		}
