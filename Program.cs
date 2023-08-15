@@ -183,7 +183,7 @@ class Program
 			foreach(Type card in Assembly.GetExecutingAssembly().GetTypes().Where(Program.IsCardSubclass))
 			{
 				Card c = (Card)Activator.CreateInstance(card)!;
-				cards.Add(c.ToStruct());
+				cards.Add(c.ToStruct(true));
 			}
 			File.WriteAllText(path, JsonSerializer.Serialize(new NetworkingStructs.ServerPackets.AdditionalCardsResponse
 			{
