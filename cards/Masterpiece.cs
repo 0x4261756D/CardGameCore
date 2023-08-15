@@ -8,7 +8,7 @@ class Masterpiece : Spell
 	public Masterpiece() : base(
 		Name: "Masterpiece",
 		CardClass: PlayerClass.Artificer,
-		OriginalCost: 5,
+		OriginalCost: 6,
 		Text: "{Cast}: Target a creature in your Grave, create any number X/X token copies of it (min. 1), where X is the sum of the target's Power and Life."
 		)
 	{ }
