@@ -1877,7 +1877,7 @@ class DuelCore : Core
 		Token token = new Token
 		(
 			Name: name,
-			Text: "[Token]",
+			Text: "",
 			OriginalCost: 0,
 			OriginalLife: life,
 			OriginalPower: power,
