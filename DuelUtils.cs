@@ -232,7 +232,7 @@ public delegate void DiscardAmountDelegate(int player, int amount);
 public delegate Card CreateTokenDelegate(int player, int power, int life, string name);
 public delegate Card CreateTokenCopyDelegate(int player, Card card);
 public delegate int GetYXTurnsAgoDelegate(int player, int turns);
-public delegate void CreatureChangeLifeDelegate(Card target, int amount, Card source);
+public delegate void CreatureChangeStatDelegate(Card target, int amount, Card source);
 public delegate void PlayerChangeLifeDelegate(int player, int amount, Card source);
 public delegate void PlayerChangeMomentumDelegate(int player, int amount);
 public delegate void DestroyDelegate(Card card);

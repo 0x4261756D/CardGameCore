@@ -138,6 +138,7 @@ class DuelCore : Core
 		Card.RefreshAbility = ResetAbilityImpl;
 		Card.RegisterDealsDamageTrigger = RegisterDealsDamageTriggerImpl;
 		Card.CreatureChangeLife = CreatureChangeLifeImpl;
+		Card.CreatureChangePower = CreatureChangePowerImpl;
 	}
 
 	public override void Init(PipeStream? pipeStream)
@@ -731,6 +732,12 @@ class DuelCore : Core
 			players[source.Controller].dealtSpellDamages[turn] -= amount;
 		}
 		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (tg) => tg.Life += amount, referrer: target));
+		EvaluateLingeringEffects();
+	}
+	public void CreatureChangePowerImpl(Card target, int amount, Card source)
+	{
+		if(amount == 0) return;
+		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (tg) => tg.Power += amount, referrer: target));
 		EvaluateLingeringEffects();
 	}
 

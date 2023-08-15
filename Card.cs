@@ -158,7 +158,8 @@ public abstract class Card
 	public static RevealDelegate Reveal = (_, _) => { };
 	public static GetDiscardableDelegate GetDiscardable = (_, _) => new Card[0];
 	public static RefreshAbilityDelegate RefreshAbility = (_) => { };
-	public static CreatureChangeLifeDelegate CreatureChangeLife = (_, _, _) => { };
+	public static CreatureChangeStatDelegate CreatureChangeLife = (_, _, _) => { };
+	public static CreatureChangeStatDelegate CreatureChangePower = (_, _, _) => { };
 
 	public void ClearModifications()
 	{
