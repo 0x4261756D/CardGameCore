@@ -21,6 +21,7 @@ class Recalibrate : Spell
 	private void CastEffect()
 	{
 		Card target = SelectSingleCard(player: Controller, GetFieldUsed(player: 1 - Controller), description: "Select card to recalibrate");
+		target.RegisterKeyword(Keyword.Brittle);
 		MoveToField(choosingPlayer: Controller, targetPlayer: Controller, card: target);
 	}
 
