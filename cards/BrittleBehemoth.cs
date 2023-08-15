@@ -24,12 +24,17 @@ class BrittleBehemoth : Creature
 
 	public void VictoriousEffect()
 	{
-		CreatureChangeLife(target: this, amount: 2, source: this);
-		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (target) => target.Power += 2, referrer: this));
+		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: BoostEffect, referrer: this));
 		if(Keywords.Remove(Keyword.Brittle))
 		{
 			RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: ResetBrittleEffect, state: State.TurnEnd, influenceLocation: Location.ALL, oneshot: true), referrer: this);
 		}
+	}
+
+	public void BoostEffect(Card target)
+	{
+		target.Life += 2;
+		target.Power += 2;
 	}
 
 	public void ResetBrittleEffect()
