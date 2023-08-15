@@ -21,7 +21,7 @@ class BlazingArchmage : Creature
 
 	public void CastIgniteEffect(Card target)
 	{
-		Cast(Controller, new Ignite() { Controller = Controller });
+		Cast(Controller, new Ignite() { BaseController = this.Controller, Controller = this.Controller });
 	}
 
 	public bool CastIgniteCondition(Card target)

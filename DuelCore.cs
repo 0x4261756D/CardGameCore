@@ -1834,6 +1834,10 @@ class DuelCore : Core
 	}
 	private void AddCardToLocation(Card card, GameConstants.Location location)
 	{
+		if(card.BaseController < 0)
+		{
+			throw new Exception($"Tried to add a '{card.Name}' to {location} but BaseController was negative");
+		}
 		switch(location)
 		{
 			case GameConstants.Location.Deck:
