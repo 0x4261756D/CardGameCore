@@ -12,7 +12,8 @@ public abstract class Card
 	public GameConstants.CardType CardType;
 	public GameConstants.PlayerClass CardClass;
 	public int uid, Position;
-	private int _life, _power, _cost;
+	private int _life, _power, _cost, _controller;
+	
 	public int Life
 	{
 		get => _life;
@@ -47,10 +48,22 @@ public abstract class Card
 			if(_cost < 0) _cost = 0;
 		}
 	}
+	public int Controller { get; set; }
 	public readonly int BaseLife, BasePower, BaseCost;
+	private int _baseController = -1;
+	public int BaseController
+	{
+		get => _baseController;
+		set
+		{
+			if(_baseController == -1)
+			{
+				_baseController = value;
+			}
+		}
+	}
 	public GameConstants.Location Location;
 	public bool IsClassAbility, CanBeClassAbility;
-	public int Controller;
 	public bool CanMove = true;
 	public int damageCap, baseDamageCap;
 	public Dictionary<Keyword, int> Keywords = new Dictionary<Keyword, int>();
@@ -72,7 +85,6 @@ public abstract class Card
 		string Text,
 		bool IsClassAbility,
 		bool CanBeClassAbility,
-		int Controller = 0,
 		int OriginalCost = 0,
 		int OriginalLife = 0,
 		int OriginalPower = 0,
@@ -89,7 +101,6 @@ public abstract class Card
 		this.Position = OriginalPositon;
 		this.Location = OriginalLocation;
 		this.IsClassAbility = IsClassAbility;
-		this.Controller = Controller;
 		this.CanBeClassAbility = CanBeClassAbility;
 		this.uid = DuelCore.UIDCount;
 		DuelCore.UIDCount++;
@@ -153,6 +164,7 @@ public abstract class Card
 		_life = BaseLife;
 		_power = BasePower;
 		_cost = BaseCost;
+		_controller = BaseController;
 		damageCap = baseDamageCap;
 	}
 
@@ -194,7 +206,8 @@ public abstract class Card
 			location: Location, position: Position,
 			is_class_ability: IsClassAbility,
 			can_be_class_ability: CanBeClassAbility,
-			controller: Controller);
+			controller: Controller,
+			base_controller: BaseController);
 	}
 
 	public static bool operator ==(Card? first, Card? second)
@@ -328,7 +341,7 @@ public class Token : Creature
 		int OriginalCost,
 		int OriginalLife,
 		int OriginalPower,
-		int Controller) : base(
+		int OriginalController) : base(
 			Name: Name,
 			Text: Text,
 			OriginalCost: OriginalCost,
@@ -337,7 +350,7 @@ public class Token : Creature
 			CardClass: GameConstants.PlayerClass.All
 		)
 	{
-		this.Controller = Controller;
+		this.BaseController = OriginalController;
 		RegisterKeyword(Keyword.Token);
 	}
 	public override void Init()

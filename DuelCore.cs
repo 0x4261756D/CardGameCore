@@ -159,7 +159,7 @@ class DuelCore : Core
 	private Card CreateBasicCard(Type type, int controller)
 	{
 		Card c = (Card)Activator.CreateInstance(type)!;
-		c.Controller = controller;
+		c.BaseController = controller;
 		c.Init();
 		c.isInitialized = true;
 		return c;
@@ -1280,7 +1280,10 @@ class DuelCore : Core
 	{
 		RemoveCardFromItsLocation(card);
 		int zone = SelectZoneImpl(choosingPlayer: choosingPlayer, targetPlayer: targetPlayer);
-		card.Controller = targetPlayer;
+		if(card.Controller != targetPlayer)
+		{
+			RegisterControllerChange(card);
+		}
 		players[targetPlayer].field.Add(card, zone);
 	}
 	private void CastImpl(int player, Card card)
@@ -1444,6 +1447,7 @@ class DuelCore : Core
 			temporaryLingeringEffects[info.referrer.uid] = new List<LingeringEffectInfo>();
 		}
 		temporaryLingeringEffects[info.referrer.uid].Add(info);
+		EvaluateLingeringEffects();
 	}
 	public void RegisterActivatedEffectImpl(ActivatedEffectInfo info)
 	{
@@ -1546,6 +1550,7 @@ class DuelCore : Core
 	}
 	public void MoveToHandImpl(int player, Card card)
 	{
+		EvaluateLingeringEffects();
 		switch(card.Location)
 		{
 			case GameConstants.Location.Deck:
@@ -1572,24 +1577,29 @@ class DuelCore : Core
 			default:
 				throw new Exception($"Cannot add a card from {card.Location} to hand");
 		}
+		if(card.Controller != player)
+		{
+			RegisterControllerChange(card);
+		}
 		players[player].hand.Add(card);
 	}
 	public Card[] GetDiscardableImpl(int player, Card? ignore)
 	{
 		return players[player].hand.GetDiscardable(ignore);
 	}
-	public void DestroyImpl(Card card)
+	private void RegisterControllerChange(Card card, GameConstants.Location influenceLocation = ~(GameConstants.Location.Grave | GameConstants.Location.Deck))
 	{
-		players[card.Controller].Destroy(card);
-		if(temporaryLingeringEffects.Remove(card.uid))
+		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (target) => target.Controller = 1 - target.Controller, referrer: card, influenceLocation: influenceLocation));
+	}
+	public void DestroyImpl(Card card)
 		{
 			EvaluateLingeringEffects();
 		}
 		if(card.Keywords.ContainsKey(Keyword.Brittle))
 		{
-			players[card.Controller].brittleDeathCounts[turn]++;
+			players[card.BaseController].brittleDeathCounts[turn]++;
 		}
-		players[card.Controller].deathCounts[turn]++;
+		players[card.BaseController].deathCounts[turn]++;
 		ProcessTargetingTriggers(deathTriggers, card);
 		SendFieldUpdates();
 		foreach(Player player in players)
@@ -1684,7 +1694,7 @@ class DuelCore : Core
 		{
 			if(RemoveCardFromItsLocation(card))
 			{
-				shouldShuffle[card.Controller] = true;
+				shouldShuffle[card.BaseController] = true;
 				players[card.Controller].deck.Add(card);
 			}
 			else
@@ -1811,7 +1821,7 @@ class DuelCore : Core
 			OriginalCost: 0,
 			OriginalLife: life,
 			OriginalPower: power,
-			Controller: player
+			OriginalController: player
 		);
 		players[player].field.Add(token, zone);
 		return token;
