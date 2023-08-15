@@ -569,6 +569,7 @@ class DuelCore : Core
 						}
 						else
 						{
+							EvaluateLingeringEffects();
 							CreatureChangeLifeImpl(target: card0, amount: -card1.Power, source: card1);
 							CreatureChangeLifeImpl(target: card1, amount: -card0.Power, source: card0);
 							if(card0.Life == 0 && card1.Life != 0)

@@ -160,6 +160,6 @@ class Field
 				return;
 			}
 		}
-		throw new Exception($"Could not remove {card} from the field because it was not present");
+		throw new Exception($"Could not remove {card} ({card.uid}) from the field because it was not present (location: {card.Location}, position: {card.Position}, controller. {card.Controller}/{card.BaseController})");
 	}
 }
