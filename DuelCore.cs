@@ -111,7 +111,7 @@ class DuelCore : Core
 		Card.CreateTokenOnField = CreateTokenOnFieldImpl;
 		Card.CreateToken = CreateTokenImpl;
 		Card.CreateTokenCopyOnField = CreateTokenCopyOnFieldImpl;
-		Card.CreateTokenCopy= CreateTokenCopyImpl;
+		Card.CreateTokenCopy = CreateTokenCopyImpl;
 		Card.GetDiscardCountXTurnsAgo = GetDiscardCountXTurnsAgoImpl;
 		Card.GetDamageDealtXTurnsAgo = GetDamageDealtXTurnsAgoImpl;
 		Card.GetSpellDamageDealtXTurnsAgo = GetSpellDamageDealtXTurnsAgoImpl;
