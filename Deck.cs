@@ -44,7 +44,7 @@ class Deck
 
 	internal Card[] GetRange(int position, int amount)
 	{
-		return cards.GetRange(position, amount).ToArray();
+		return cards.GetRange(position, Math.Min(amount, cards.Count)).ToArray();
 	}
 
 	internal void Remove(Card card)
