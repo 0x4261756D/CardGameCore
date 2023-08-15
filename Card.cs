@@ -130,6 +130,7 @@ public abstract class Card
 	public static DiscardAmountDelegate DiscardAmount = (_, _) => { };
 	public static CreateTokenDelegate CreateToken = (_, _, _, _) => new ClientCoreDummyCard();
 	public static CreateTokenCopyDelegate CreateTokenCopy = (_, _) => new ClientCoreDummyCard();
+	public static CreateTokenCopyDelegate CreateTokenCopyNotOnField = (_, _) => new ClientCoreDummyCard();
 	public static GetYXTurnsAgoDelegate GetDiscardCountXTurnsAgo = (_, _) => -1;
 	public static GetYXTurnsAgoDelegate GetDamageDealtXTurnsAgo = (_, _) => -1;
 	public static GetYXTurnsAgoDelegate GetSpellDamageDealtXTurnsAgo = (_, _) => -1;

@@ -108,6 +108,7 @@ class DuelCore : Core
 		Card.DiscardAmount = DiscardAmountImpl;
 		Card.CreateToken = CreateTokenImpl;
 		Card.CreateTokenCopy = CreateTokenCopyImpl;
+		Card.CreateTokenCopyNotOnField = CreateTokenCopyNotOnFieldImpl;
 		Card.GetDiscardCountXTurnsAgo = GetDiscardCountXTurnsAgoImpl;
 		Card.GetDamageDealtXTurnsAgo = GetDamageDealtXTurnsAgoImpl;
 		Card.GetSpellDamageDealtXTurnsAgo = GetSpellDamageDealtXTurnsAgoImpl;
@@ -1878,6 +1879,12 @@ class DuelCore : Core
 	}
 	public Card CreateTokenCopyImpl(int player, Card card)
 	{
+		Card token = CreateTokenCopyNotOnFieldImpl(player, card);
+		MoveToFieldImpl(player, player, token);
+		return token;
+	}
+	public Card CreateTokenCopyNotOnFieldImpl(int player, Card card)
+	{
 		if(!players[player].field.HasEmpty())
 		{
 			throw new Exception($"Tried to create a token but the field is full");
@@ -1896,7 +1903,6 @@ class DuelCore : Core
 			token = CreateBasicCard(card.GetType(), player);
 			token.RegisterKeyword(Keyword.Token);
 		}
-		MoveToFieldImpl(player, player, card);
 		return token;
 	}
 	public int SelectZoneImpl(int choosingPlayer, int targetPlayer)
