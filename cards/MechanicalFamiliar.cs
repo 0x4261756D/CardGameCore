@@ -17,7 +17,7 @@ class MechanicalFamiliar : Creature
 
 	public override void Init()
 	{
-		RegisterGenericCastTrigger(trigger: new GenericCastTrigger(effect: CreateEffect, condition: CreateCondition), referrer: this);
+		RegisterTokenCreationTrigger(trigger: new GenericCastTrigger(effect: CreateEffect, condition: CreateCondition), referrer: this);
 		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect), referrer: this);
 	}
 
