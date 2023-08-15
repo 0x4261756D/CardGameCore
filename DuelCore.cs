@@ -162,6 +162,7 @@ class DuelCore : Core
 	{
 		Card c = (Card)Activator.CreateInstance(type)!;
 		c.BaseController = controller;
+		c.ClearModifications();
 		c.Init();
 		c.isInitialized = true;
 		return c;
