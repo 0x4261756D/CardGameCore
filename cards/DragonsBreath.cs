@@ -23,13 +23,8 @@ class DragonsBreath : Spell
 		foreach(Card card in GetForBoth(GetFieldUsed))
 		{
 			card.RegisterKeyword(Keyword.Decaying);
-			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: DebuffEffect, referrer: card));
+			CreatureChangePower(target: card, amount: -2, source: this);
 		}
-	}
-
-	public void DebuffEffect(Card target)
-	{
-		target.Power -= 2;
 	}
 
 	private bool CastCondition()

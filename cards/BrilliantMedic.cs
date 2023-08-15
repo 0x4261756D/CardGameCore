@@ -30,7 +30,7 @@ class BrilliantMedic : Creature
 		else
 		{
 			Card target = SelectSingleCard(player: Controller, cards: fields, description: "Select target to heal");
-			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => target.Life += Math.Min(4, target.BaseLife - target.Life), referrer: target));
+			CreatureChangeLife(target: target, Math.Min(4, target.BaseLife - target.Life), source: this);
 		}
 	}
 }

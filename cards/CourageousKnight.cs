@@ -23,7 +23,7 @@ class CourageousKnight : Creature
 	{
 		if(castCard.CardType == CardType.Creature)
 		{
-			RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: (_) => Power++, referrer: this));
+			CreatureChangePower(target: this, amount: 1, source: this);
 		}
 	}
 
