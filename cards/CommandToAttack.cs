@@ -25,6 +25,7 @@ class CommandtoAttack : Spell
 			Card token = CreateToken(player: Controller, power: 2, life: 1, name: "Construct");
 			token.RegisterKeyword(Keyword.Decaying);
 			token.RegisterKeyword(Keyword.Brittle);
+			MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token);
 		}
 	}
 

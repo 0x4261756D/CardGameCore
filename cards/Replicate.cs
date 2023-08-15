@@ -21,7 +21,7 @@ class Replicate : Spell
 	private void CastEffect()
 	{
 		Card target = SelectSingleCard(player: Controller, GetFieldUsed(player: 1 - Controller), description: "Select card to replicate");
-		CreateTokenCopy(player: Controller, card: target);
+		CreateTokenCopyOnField(player: Controller, card: target);
 	}
 
 	private bool CastCondition()

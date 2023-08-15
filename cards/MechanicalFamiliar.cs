@@ -36,7 +36,7 @@ class MechanicalFamiliar : Creature
 	{
 		if(AskYesNo(player: Controller, question: "Create another one?"))
 		{
-			CreateTokenCopy(player: Controller, card: target);
+			CreateTokenCopyOnField(player: Controller, card: target);
 		}
 	}
 }

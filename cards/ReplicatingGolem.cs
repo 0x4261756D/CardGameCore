@@ -22,7 +22,9 @@ class ReplicatingGolem : Creature
 
 	public void AttackEffect()
 	{
-		CreateTokenCopy(player: Controller, card: this).RegisterKeyword(Keyword.Brittle);
+		Card token = CreateTokenCopy(player: Controller, card: this);
+		token.RegisterKeyword(Keyword.Brittle);
+		MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token);
 	}
 
 }

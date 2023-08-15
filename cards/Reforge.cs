@@ -21,7 +21,7 @@ class Reforge : Spell
 	private void CastEffect()
 	{
 		Card target = SelectSingleCard(player: Controller, GetFieldUsed(player: Controller), description: "Select card to reforge");
-		Card token = CreateTokenCopyNotOnField(player: Controller, card: target);
+		Card token = CreateTokenCopy(player: Controller, card: target);
 		MoveToHand(player: Controller, card: target);
 		MoveToField(choosingPlayer: Controller, targetPlayer: Controller, card: token);
 	}

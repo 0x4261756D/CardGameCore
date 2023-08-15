@@ -37,6 +37,7 @@ class DuelCore : Core
 
 	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
 	private Dictionary<int, List<GenericCastTrigger>> genericCastTriggers = new Dictionary<int, List<GenericCastTrigger>>();
+	private Dictionary<int, List<GenericCastTrigger>> tokenCreationTriggers = new Dictionary<int, List<GenericCastTrigger>>();
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
 	private Dictionary<int, List<Trigger>> victoriousTriggers = new Dictionary<int, List<Trigger>>();
 	private Dictionary<int, List<Trigger>> attackTriggers = new Dictionary<int, List<Trigger>>();
@@ -99,6 +100,7 @@ class DuelCore : Core
 		Card.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		Card.RegisterTemporaryLingeringEffect = RegisterTemporaryLingeringEffectImpl;
 		Card.RegisterActivatedEffect = RegisterActivatedEffectImpl;
+		Card.RegisterTokenCreationTrigger = RegisterTokenCreationTriggerImpl;
 		Card.GetGrave = GetGraveImpl;
 		Card.GetField = GetFieldImpl;
 		Card.GetFieldUsed = GetFieldUsedImpl;
@@ -106,9 +108,10 @@ class DuelCore : Core
 		Card.SelectCards = SelectCardsImpl;
 		Card.Discard = DiscardImpl;
 		Card.DiscardAmount = DiscardAmountImpl;
+		Card.CreateTokenOnField = CreateTokenOnFieldImpl;
 		Card.CreateToken = CreateTokenImpl;
-		Card.CreateTokenCopy = CreateTokenCopyImpl;
-		Card.CreateTokenCopyNotOnField = CreateTokenCopyNotOnFieldImpl;
+		Card.CreateTokenCopyOnField = CreateTokenCopyOnFieldImpl;
+		Card.CreateTokenCopy= CreateTokenCopyImpl;
 		Card.GetDiscardCountXTurnsAgo = GetDiscardCountXTurnsAgoImpl;
 		Card.GetDamageDealtXTurnsAgo = GetDamageDealtXTurnsAgoImpl;
 		Card.GetSpellDamageDealtXTurnsAgo = GetSpellDamageDealtXTurnsAgoImpl;
@@ -1296,6 +1299,46 @@ class DuelCore : Core
 		}
 		players[targetPlayer].field.Add(card, zone);
 		RemoveOutdatedTemporaryLingeringEffects(card);
+		if(card.Keywords.ContainsKey(Keyword.Token))
+		{
+			foreach(Player p in players)
+			{
+				if(tokenCreationTriggers.ContainsKey(p.quest.uid))
+				{
+					foreach(GenericCastTrigger trigger in tokenCreationTriggers[p.quest.uid])
+					{
+						if(trigger.condition(target: card))
+						{
+							trigger.effect(target: card);
+							if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
+							{
+								p.quest.Reward();
+								p.quest.Text += "\nREWARD CLAIMED";
+								rewardClaimed = true;
+								break;
+							}
+
+						}
+					}
+				}
+				foreach(Card possiblyTriggeringCard in p.field.GetUsed())
+				{
+					if(tokenCreationTriggers.ContainsKey(possiblyTriggeringCard.uid))
+					{
+						Log($"Token creation triggers for {possiblyTriggeringCard.Name}:");
+						foreach(GenericCastTrigger trigger in tokenCreationTriggers[possiblyTriggeringCard.uid])
+						{
+							Log($"\tlocation: {trigger.influenceLocation}");
+							if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: card))
+							{
+								Log($"triggers");
+								trigger.effect(target: card);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	private void CastImpl(int player, Card card)
 	{
@@ -1500,6 +1543,14 @@ class DuelCore : Core
 			genericDeathTriggers[referrer.uid] = new List<GenericDeathTrigger>();
 		}
 		genericDeathTriggers[referrer.uid].Add(info);
+	}
+	private void RegisterTokenCreationTriggerImpl(GenericCastTrigger trigger, Card referrer)
+	{
+		if(!tokenCreationTriggers.ContainsKey(referrer.uid))
+		{
+			tokenCreationTriggers[referrer.uid] = new List<GenericCastTrigger>();
+		}
+		tokenCreationTriggers[referrer.uid].Add(trigger);
 	}
 	public Card?[] GetFieldImpl(int player)
 	{
@@ -1866,7 +1917,10 @@ class DuelCore : Core
 			}
 		}
 	}
-
+	public void CreateTokenOnFieldImpl(int player, int power, int life, string name)
+	{
+		MoveToFieldImpl(player, player, CreateTokenImpl(player, power, life, name));
+	}
 	public Card CreateTokenImpl(int player, int power, int life, string name)
 	{
 		if(!players[player].field.HasEmpty())
@@ -1882,16 +1936,13 @@ class DuelCore : Core
 			OriginalPower: power,
 			OriginalController: player
 		);
-		MoveToFieldImpl(player, player, token);
 		return token;
+	}
+	public void CreateTokenCopyOnFieldImpl(int player, Card card)
+	{
+		MoveToFieldImpl(player, player, CreateTokenCopyImpl(player, card));
 	}
 	public Card CreateTokenCopyImpl(int player, Card card)
-	{
-		Card token = CreateTokenCopyNotOnFieldImpl(player, card);
-		MoveToFieldImpl(player, player, token);
-		return token;
-	}
-	public Card CreateTokenCopyNotOnFieldImpl(int player, Card card)
 	{
 		if(!players[player].field.HasEmpty())
 		{

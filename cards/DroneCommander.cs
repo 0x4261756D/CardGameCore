@@ -28,7 +28,9 @@ class DroneCommander : Creature
 
 	private void RevelationEffect()
 	{
-		CreateToken(player: Controller, power: 3, life: 2, name: "Drone").RegisterKeyword(Keyword.Brittle);
+		Card token = CreateToken(player: Controller, power: 3, life: 2, name: "Drone");
+		token.RegisterKeyword(Keyword.Brittle);
+		MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token);
 	}
 
 	// TODO: Should these tokens also have [Brittle]?
@@ -36,7 +38,7 @@ class DroneCommander : Creature
 	{
 		for(int i = 0; i < 2 && HasEmpty(GetField(Controller)); i++)
 		{
-			CreateToken(player: Controller, power: 3, life: 2, name: "Drone");
+			CreateTokenOnField(player: Controller, power: 3, life: 2, name: "Drone");
 		}
 	}
 

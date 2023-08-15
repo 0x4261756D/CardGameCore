@@ -25,7 +25,8 @@ class Masterpiece : Spell
 		{
 			Card token = CreateTokenCopy(player: Controller, target);
 			CreatureChangeLife(target: token, amount: target.Power, source: this);
-			RegisterLingeringEffect(new LingeringEffectInfo(effect: (t) => t.Power += target.Life, referrer: token));
+			CreatureChangePower(target: token, amount: target.Life, source: this);
+			MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token);
 		}
 	}
 
