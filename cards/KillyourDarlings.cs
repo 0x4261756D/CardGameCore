@@ -3,9 +3,9 @@ using CardGameCore;
 using static CardGameUtils.GameConstants;
 using static CardGameCore.CardUtils;
 
-class KillYourDarlings : Spell
+class KillyourDarlings : Spell
 {
-	public KillYourDarlings() : base(
+	public KillyourDarlings() : base(
 		Name: "Kill your Darlings",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 3,
