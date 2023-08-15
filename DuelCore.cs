@@ -1595,8 +1595,23 @@ class DuelCore : Core
 		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (target) => target.Controller = 1 - target.Controller, referrer: card, influenceLocation: influenceLocation));
 	}
 	public void DestroyImpl(Card card)
+	{
+		EvaluateLingeringEffects();
+		switch(card.Location)
 		{
-			EvaluateLingeringEffects();
+			case GameConstants.Location.Field:
+			{
+				players[card.Controller].field.Remove(card);
+				AddCardToLocation(card, GameConstants.Location.Grave);
+			}
+			break;
+			case GameConstants.Location.UNKNOWN:
+			{
+				Functions.Log($"Destroying {card.Name} at UNKNOWN", severity: Functions.LogSeverity.Warning);
+			}
+			break;
+			default:
+				throw new Exception($"Destroying {card.Name} at {card.Location} is not supported");
 		}
 		if(card.Keywords.ContainsKey(Keyword.Brittle))
 		{

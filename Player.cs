@@ -49,44 +49,11 @@ class Player
 			}
 		}
 	}
-	internal void CastCreature(Card card, int zone)
-	{
-		field.Add(card, zone);
-	}
-	internal void CastSpell(Card card)
-	{
-		grave.Add(card);
-	}
 
 	internal void ClearCardModifications()
 	{
 		igniteDamage = baseIgniteDamage;
 		hand.ClearCardModifications();
 		field.ClearCardModifications();
-	}
-
-	internal void Discard(Card card)
-	{
-		hand.Remove(card);
-		grave.Add(card);
-	}
-	internal void Destroy(Card card)
-	{
-		switch(card.Location)
-		{
-			case GameConstants.Location.Field:
-			{
-				grave.Add(card);
-				field.Remove(card);
-			}
-			break;
-			case GameConstants.Location.UNKNOWN:
-			{
-				Functions.Log($"Destroying {card.Name} at UNKNOWN", severity: Functions.LogSeverity.Warning);
-			}
-			break;
-			default:
-				throw new Exception($"Destroying {card.Name} at {card.Location} is not supported");
-		}
 	}
 }
