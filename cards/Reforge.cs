@@ -9,7 +9,7 @@ class Reforge : Spell
 		Name: "Reforge",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 1,
-		Text: "{Cast}: Return your target creature to your hand. Create a token copy of it."
+		Text: "{Cast}: Return your target non-token creature to your hand. Create a token copy of it."
 		)
 	{ }
 
@@ -20,7 +20,7 @@ class Reforge : Spell
 
 	private void CastEffect()
 	{
-		Card target = SelectSingleCard(player: Controller, GetFieldUsed(player: Controller), description: "Select card to reforge");
+		Card target = SelectSingleCard(player: Controller, FilterValid(cards: GetFieldUsed(player: Controller), isValid: (card) => !card.Keywords.ContainsKey(Keyword.Token)), description: "Select card to reforge");
 		Card token = CreateTokenCopy(player: Controller, card: target);
 		MoveToHand(player: Controller, card: target);
 		MoveToField(choosingPlayer: Controller, targetPlayer: Controller, card: token);
@@ -28,6 +28,6 @@ class Reforge : Spell
 
 	private bool CastCondition()
 	{
-		return HasUsed(GetField(Controller)); 
+		return ContainsValid(cards: GetFieldUsed(Controller), isValid: (card) => !card.Keywords.ContainsKey(Keyword.Token));
 	}
 }

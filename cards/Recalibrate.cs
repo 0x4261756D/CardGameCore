@@ -26,6 +26,6 @@ class Recalibrate : Spell
 
 	private bool CastCondition()
 	{
-		return HasEmpty(GetField(Controller)) && HasUsed(GetField(1 - Controller)); 
+		return HasEmpty(GetField(Controller)) && HasUsed(GetField(1 - Controller));
 	}
 }
