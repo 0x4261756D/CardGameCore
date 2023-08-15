@@ -8,7 +8,7 @@ class FieryFamiliar : Creature
 		Name: "Fiery Familiar",
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 1,
-		Text: "Your \"Ignite\" deals +1 damage \n{Revelation}: Add this to your hand.",
+		Text: "Your \"Ignite\" deals +1 damage.\n{Revelation}: Add this to your hand.",
 		OriginalPower: 1,
 		OriginalLife: 2
 		)

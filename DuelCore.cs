@@ -37,10 +37,11 @@ class DuelCore : Core
 
 	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
 	private Dictionary<int, List<GenericCastTrigger>> genericCastTriggers = new Dictionary<int, List<GenericCastTrigger>>();
+	private Dictionary<int, List<GenericCastTrigger>> tokenCreationTriggers = new Dictionary<int, List<GenericCastTrigger>>();
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
 	private Dictionary<int, List<Trigger>> victoriousTriggers = new Dictionary<int, List<Trigger>>();
 	private Dictionary<int, List<Trigger>> attackTriggers = new Dictionary<int, List<Trigger>>();
-	private Dictionary<int, List<Trigger>> deathTriggers = new Dictionary<int, List<Trigger>>();
+	private Dictionary<int, List<TargetingTrigger>> deathTriggers = new Dictionary<int, List<TargetingTrigger>>();
 	private Dictionary<int, List<GenericDeathTrigger>> genericDeathTriggers = new Dictionary<int, List<GenericDeathTrigger>>();
 	private Dictionary<int, List<DiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<DiscardTrigger>>();
 	private Dictionary<int, List<DiscardTrigger>> discardTriggers = new Dictionary<int, List<DiscardTrigger>>();
@@ -99,6 +100,7 @@ class DuelCore : Core
 		Card.RegisterLingeringEffect = RegisterLingeringEffectImpl;
 		Card.RegisterTemporaryLingeringEffect = RegisterTemporaryLingeringEffectImpl;
 		Card.RegisterActivatedEffect = RegisterActivatedEffectImpl;
+		Card.RegisterTokenCreationTrigger = RegisterTokenCreationTriggerImpl;
 		Card.GetGrave = GetGraveImpl;
 		Card.GetField = GetFieldImpl;
 		Card.GetFieldUsed = GetFieldUsedImpl;
@@ -106,7 +108,9 @@ class DuelCore : Core
 		Card.SelectCards = SelectCardsImpl;
 		Card.Discard = DiscardImpl;
 		Card.DiscardAmount = DiscardAmountImpl;
+		Card.CreateTokenOnField = CreateTokenOnFieldImpl;
 		Card.CreateToken = CreateTokenImpl;
+		Card.CreateTokenCopyOnField = CreateTokenCopyOnFieldImpl;
 		Card.CreateTokenCopy = CreateTokenCopyImpl;
 		Card.GetDiscardCountXTurnsAgo = GetDiscardCountXTurnsAgoImpl;
 		Card.GetDamageDealtXTurnsAgo = GetDamageDealtXTurnsAgoImpl;
@@ -137,6 +141,7 @@ class DuelCore : Core
 		Card.RefreshAbility = ResetAbilityImpl;
 		Card.RegisterDealsDamageTrigger = RegisterDealsDamageTriggerImpl;
 		Card.CreatureChangeLife = CreatureChangeLifeImpl;
+		Card.CreatureChangePower = CreatureChangePowerImpl;
 	}
 
 	public override void Init(PipeStream? pipeStream)
@@ -159,7 +164,8 @@ class DuelCore : Core
 	private Card CreateBasicCard(Type type, int controller)
 	{
 		Card c = (Card)Activator.CreateInstance(type)!;
-		c.Controller = controller;
+		c.BaseController = controller;
+		c.ClearModifications();
 		c.Init();
 		c.isInitialized = true;
 		return c;
@@ -383,6 +389,20 @@ class DuelCore : Core
 		}
 	}
 
+	private void ProcessTargetingTriggers(Dictionary<int, List<TargetingTrigger>> triggers, Card target)
+	{
+		if(triggers.ContainsKey(target.uid))
+		{
+			foreach(TargetingTrigger trigger in triggers[target.uid])
+			{
+				if(trigger.condition(target))
+				{
+					trigger.effect(target);
+				}
+			}
+		}
+	}
+
 	public void ProcessTriggers<T>(Dictionary<int, List<T>> triggers, int uid) where T : Trigger
 	{
 		if(triggers.ContainsKey(uid))
@@ -445,7 +465,7 @@ class DuelCore : Core
 							foreach(Card card in cards)
 							{
 								players[i].hand.Remove(card);
-								players[i].deck.Add(card);
+								AddCardToLocation(card, GameConstants.Location.Deck);
 							}
 							players[i].deck.Shuffle();
 							players[i].Draw(cards.Length);
@@ -716,6 +736,12 @@ class DuelCore : Core
 			players[source.Controller].dealtSpellDamages[turn] -= amount;
 		}
 		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (tg) => tg.Life += amount, referrer: target));
+		EvaluateLingeringEffects();
+	}
+	public void CreatureChangePowerImpl(Card target, int amount, Card source)
+	{
+		if(amount == 0) return;
+		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (tg) => tg.Power += amount, referrer: target));
 		EvaluateLingeringEffects();
 	}
 
@@ -999,9 +1025,9 @@ class DuelCore : Core
 						{
 							foreach(GenericCastTrigger trigger in genericCastTriggers[p.quest.uid])
 							{
-								if(trigger.condition(castCard: players[player].ability))
+								if(trigger.condition(target: players[player].ability))
 								{
-									trigger.effect(castCard: players[player].ability);
+									trigger.effect(target: players[player].ability);
 									if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
 									{
 										p.quest.Reward();
@@ -1018,9 +1044,9 @@ class DuelCore : Core
 							{
 								foreach(GenericCastTrigger trigger in genericCastTriggers[possiblyTriggeringCard.uid])
 								{
-									if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(castCard: players[player].ability))
+									if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: players[player].ability))
 									{
-										trigger.effect(castCard: players[player].ability);
+										trigger.effect(target: players[player].ability);
 									}
 								}
 							}
@@ -1264,13 +1290,59 @@ class DuelCore : Core
 	}
 	private void MoveToFieldImpl(int choosingPlayer, int targetPlayer, Card card)
 	{
+		EvaluateLingeringEffects();
 		RemoveCardFromItsLocation(card);
 		int zone = SelectZoneImpl(choosingPlayer: choosingPlayer, targetPlayer: targetPlayer);
-		card.Controller = targetPlayer;
+		if(card.Controller != targetPlayer)
+		{
+			RegisterControllerChange(card);
+		}
 		players[targetPlayer].field.Add(card, zone);
+		RemoveOutdatedTemporaryLingeringEffects(card);
+		if(card.Keywords.ContainsKey(Keyword.Token))
+		{
+			foreach(Player p in players)
+			{
+				if(tokenCreationTriggers.ContainsKey(p.quest.uid))
+				{
+					foreach(GenericCastTrigger trigger in tokenCreationTriggers[p.quest.uid])
+					{
+						if(trigger.condition(target: card))
+						{
+							trigger.effect(target: card);
+							if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
+							{
+								p.quest.Reward();
+								p.quest.Text += "\nREWARD CLAIMED";
+								rewardClaimed = true;
+								break;
+							}
+
+						}
+					}
+				}
+				foreach(Card possiblyTriggeringCard in p.field.GetUsed())
+				{
+					if(tokenCreationTriggers.ContainsKey(possiblyTriggeringCard.uid))
+					{
+						Log($"Token creation triggers for {possiblyTriggeringCard.Name}:");
+						foreach(GenericCastTrigger trigger in tokenCreationTriggers[possiblyTriggeringCard.uid])
+						{
+							Log($"\tlocation: {trigger.influenceLocation}");
+							if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: card))
+							{
+								Log($"triggers");
+								trigger.effect(target: card);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	private void CastImpl(int player, Card card)
 	{
+		EvaluateLingeringEffects();
 		if(!card.isInitialized)
 		{
 			card.Init();
@@ -1286,12 +1358,12 @@ class DuelCore : Core
 		{
 			case GameConstants.CardType.Creature:
 			{
-				players[player].CastCreature(card, SelectZoneImpl(player, player));
+				MoveToFieldImpl(player, player, card);
 			}
 			break;
 			case GameConstants.CardType.Spell:
 			{
-				players[player].CastSpell(card);
+				AddCardToLocation(card, GameConstants.Location.Grave);
 			}
 			break;
 			default:
@@ -1309,9 +1381,9 @@ class DuelCore : Core
 			{
 				foreach(GenericCastTrigger trigger in genericCastTriggers[p.quest.uid])
 				{
-					if(trigger.condition(castCard: card))
+					if(trigger.condition(target: card))
 					{
-						trigger.effect(castCard: card);
+						trigger.effect(target: card);
 						if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
 						{
 							p.quest.Reward();
@@ -1328,9 +1400,9 @@ class DuelCore : Core
 				{
 					foreach(GenericCastTrigger trigger in genericCastTriggers[possiblyTriggeringCard.uid])
 					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(castCard: card))
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: card))
 						{
-							trigger.effect(castCard: card);
+							trigger.effect(target: card);
 						}
 					}
 				}
@@ -1430,6 +1502,7 @@ class DuelCore : Core
 			temporaryLingeringEffects[info.referrer.uid] = new List<LingeringEffectInfo>();
 		}
 		temporaryLingeringEffects[info.referrer.uid].Add(info);
+		EvaluateLingeringEffects();
 	}
 	public void RegisterActivatedEffectImpl(ActivatedEffectInfo info)
 	{
@@ -1455,11 +1528,11 @@ class DuelCore : Core
 		}
 		attackTriggers[referrer.uid].Add(info);
 	}
-	public void RegisterDeathTriggerImpl(Trigger info, Card referrer)
+	public void RegisterDeathTriggerImpl(TargetingTrigger info, Card referrer)
 	{
 		if(!deathTriggers.ContainsKey(referrer.uid))
 		{
-			deathTriggers[referrer.uid] = new List<Trigger>();
+			deathTriggers[referrer.uid] = new List<TargetingTrigger>();
 		}
 		deathTriggers[referrer.uid].Add(info);
 	}
@@ -1470,6 +1543,14 @@ class DuelCore : Core
 			genericDeathTriggers[referrer.uid] = new List<GenericDeathTrigger>();
 		}
 		genericDeathTriggers[referrer.uid].Add(info);
+	}
+	private void RegisterTokenCreationTriggerImpl(GenericCastTrigger trigger, Card referrer)
+	{
+		if(!tokenCreationTriggers.ContainsKey(referrer.uid))
+		{
+			tokenCreationTriggers[referrer.uid] = new List<GenericCastTrigger>();
+		}
+		tokenCreationTriggers[referrer.uid].Add(trigger);
 	}
 	public Card?[] GetFieldImpl(int player)
 	{
@@ -1502,8 +1583,7 @@ class DuelCore : Core
 	{
 		Card[] possibleCards = players[player].deck.GetRange(0, amount);
 		Card target = CardUtils.SelectSingleCard(player: player, cards: possibleCards, description: "Select card to gather");
-		players[player].deck.Remove(target);
-		players[player].hand.Add(target);
+		MoveToHandImpl(player, target);
 		players[player].deck.Shuffle();
 		return target;
 	}
@@ -1532,6 +1612,7 @@ class DuelCore : Core
 	}
 	public void MoveToHandImpl(int player, Card card)
 	{
+		EvaluateLingeringEffects();
 		switch(card.Location)
 		{
 			case GameConstants.Location.Deck:
@@ -1558,25 +1639,45 @@ class DuelCore : Core
 			default:
 				throw new Exception($"Cannot add a card from {card.Location} to hand");
 		}
+		if(card.Controller != player)
+		{
+			RegisterControllerChange(card);
+		}
 		players[player].hand.Add(card);
+		RemoveOutdatedTemporaryLingeringEffects(card);
 	}
 	public Card[] GetDiscardableImpl(int player, Card? ignore)
 	{
 		return players[player].hand.GetDiscardable(ignore);
 	}
+	private void RegisterControllerChange(Card card, GameConstants.Location influenceLocation = ~(GameConstants.Location.Grave | GameConstants.Location.Deck))
+	{
+		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (target) => target.Controller = 1 - target.Controller, referrer: card, influenceLocation: influenceLocation));
+	}
 	public void DestroyImpl(Card card)
 	{
-		players[card.Controller].Destroy(card);
-		if(temporaryLingeringEffects.Remove(card.uid))
+		switch(card.Location)
 		{
-			EvaluateLingeringEffects();
+			case GameConstants.Location.Field:
+			{
+				players[card.Controller].field.Remove(card);
+				AddCardToLocation(card, GameConstants.Location.Grave);
+			}
+			break;
+			case GameConstants.Location.UNKNOWN:
+			{
+				Functions.Log($"Destroying {card.Name} at UNKNOWN", severity: Functions.LogSeverity.Warning);
+			}
+			break;
+			default:
+				throw new Exception($"Destroying {card.Name} at {card.Location} is not supported");
 		}
 		if(card.Keywords.ContainsKey(Keyword.Brittle))
 		{
-			players[card.Controller].brittleDeathCounts[turn]++;
+			players[card.BaseController].brittleDeathCounts[turn]++;
 		}
-		players[card.Controller].deathCounts[turn]++;
-		ProcessTriggers(deathTriggers, card.uid);
+		players[card.BaseController].deathCounts[turn]++;
+		ProcessTargetingTriggers(deathTriggers, card);
 		SendFieldUpdates();
 		foreach(Player player in players)
 		{
@@ -1586,9 +1687,9 @@ class DuelCore : Core
 				{
 					foreach(GenericDeathTrigger trigger in genericDeathTriggers[fieldCard.uid])
 					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(destroyedCard: card))
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: card))
 						{
-							trigger.effect(destroyedCard: card);
+							trigger.effect(target: card);
 						}
 					}
 				}
@@ -1599,9 +1700,9 @@ class DuelCore : Core
 				{
 					foreach(GenericDeathTrigger trigger in genericDeathTriggers[graveCard.uid])
 					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Grave) && trigger.condition(destroyedCard: card))
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Grave) && trigger.condition(target: card))
 						{
-							trigger.effect(destroyedCard: card);
+							trigger.effect(target: card);
 						}
 					}
 				}
@@ -1612,9 +1713,9 @@ class DuelCore : Core
 				{
 					foreach(GenericDeathTrigger trigger in genericDeathTriggers[handCard.uid])
 					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition(destroyedCard: card))
+						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition(target: card))
 						{
-							trigger.effect(destroyedCard: card);
+							trigger.effect(target: card);
 						}
 					}
 				}
@@ -1626,9 +1727,9 @@ class DuelCore : Core
 			{
 				foreach(GenericDeathTrigger trigger in genericDeathTriggers[player.quest.uid])
 				{
-					if(trigger.condition(destroyedCard: card))
+					if(trigger.condition(target: card))
 					{
-						trigger.effect(destroyedCard: card);
+						trigger.effect(target: card);
 						if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
 						{
 							player.quest.Reward();
@@ -1641,6 +1742,16 @@ class DuelCore : Core
 			}
 		}
 		EvaluateLingeringEffects();
+	}
+	private void RemoveOutdatedTemporaryLingeringEffects(Card card)
+	{
+		if(temporaryLingeringEffects.ContainsKey(card.uid))
+		{
+			if(temporaryLingeringEffects[card.uid].RemoveAll(x => !x.influenceLocation.HasFlag(card.Location)) > 0)
+			{
+				EvaluateLingeringEffects();
+			}
+		}
 	}
 	public bool RemoveCardFromItsLocation(Card card)
 	{
@@ -1665,13 +1776,14 @@ class DuelCore : Core
 	}
 	public void ReturnCardsToDeckImpl(Card[] cards)
 	{
+		EvaluateLingeringEffects();
 		bool[] shouldShuffle = new bool[players.Length];
 		foreach(Card card in cards)
 		{
 			if(RemoveCardFromItsLocation(card))
 			{
-				shouldShuffle[card.Controller] = true;
-				players[card.Controller].deck.Add(card);
+				shouldShuffle[card.BaseController] = true;
+				AddCardToLocation(card, GameConstants.Location.Deck);
 			}
 			else
 			{
@@ -1720,13 +1832,36 @@ class DuelCore : Core
 			DiscardImpl(target);
 		}
 	}
+	private void AddCardToLocation(Card card, GameConstants.Location location)
+	{
+		switch(location)
+		{
+			case GameConstants.Location.Deck:
+			{
+				players[card.BaseController].deck.Add(card);
+			}
+			break;
+			case GameConstants.Location.Grave:
+			{
+				players[card.BaseController].grave.Add(card);
+			}
+			break;
+			default:
+			{
+				throw new Exception($"Tried to add card {card.Name} to location {location} of {card.BaseController}");
+			}
+		}
+		RemoveOutdatedTemporaryLingeringEffects(card);
+	}
 	public void DiscardImpl(Card card)
 	{
+		EvaluateLingeringEffects();
 		if(card.Location != GameConstants.Location.Hand || !card.CanBeDiscarded())
 		{
 			throw new Exception($"Tried to discard a card that is not in the hand but at {card.Location}");
 		}
-		players[card.Controller].Discard(card);
+		players[card.Controller].hand.Remove(card);
+		AddCardToLocation(card, GameConstants.Location.Grave);
 		players[card.Controller].discardCounts[turn]++;
 		if(discardTriggers.ContainsKey(card.uid))
 		{
@@ -1782,25 +1917,30 @@ class DuelCore : Core
 			}
 		}
 	}
-
+	public void CreateTokenOnFieldImpl(int player, int power, int life, string name)
+	{
+		MoveToFieldImpl(player, player, CreateTokenImpl(player, power, life, name));
+	}
 	public Card CreateTokenImpl(int player, int power, int life, string name)
 	{
 		if(!players[player].field.HasEmpty())
 		{
 			throw new Exception($"Tried to create a token but the field is full");
 		}
-		int zone = SelectZoneImpl(player, player);
 		Token token = new Token
 		(
 			Name: name,
-			Text: "[Token]",
+			Text: "",
 			OriginalCost: 0,
 			OriginalLife: life,
 			OriginalPower: power,
-			Controller: player
+			OriginalController: player
 		);
-		players[player].field.Add(token, zone);
 		return token;
+	}
+	public void CreateTokenCopyOnFieldImpl(int player, Card card)
+	{
+		MoveToFieldImpl(player, player, CreateTokenCopyImpl(player, card));
 	}
 	public Card CreateTokenCopyImpl(int player, Card card)
 	{
@@ -1808,7 +1948,6 @@ class DuelCore : Core
 		{
 			throw new Exception($"Tried to create a token but the field is full");
 		}
-		int zone = SelectZoneImpl(choosingPlayer: player, targetPlayer: player);
 		Card token;
 		if(card.GetType() == typeof(Token))
 		{
@@ -1823,7 +1962,6 @@ class DuelCore : Core
 			token = CreateBasicCard(card.GetType(), player);
 			token.RegisterKeyword(Keyword.Token);
 		}
-		players[player].field.Add(token, zone);
 		return token;
 	}
 	public int SelectZoneImpl(int choosingPlayer, int targetPlayer)

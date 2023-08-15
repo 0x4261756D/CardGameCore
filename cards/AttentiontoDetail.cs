@@ -23,6 +23,7 @@ class AttentiontoDetail : Spell
 		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Select card to copy");
 		Card copy = CreateTokenCopy(player: Controller, card: target);
 		copy.RegisterKeyword(Keyword.Brittle);
+		MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: copy);
 	}
 	public bool CastCondition()
 	{

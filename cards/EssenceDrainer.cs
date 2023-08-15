@@ -28,5 +28,4 @@ class EssenceDrainer : Creature
 			target.Life += count * 2;
 		}, referrer: this));
 	}
-
 }

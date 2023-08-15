@@ -23,12 +23,7 @@ class Swordbreaker : Creature
 	public void CastEffect()
 	{
 		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Target creature to weaken");
-		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: WeakenEffect, referrer: target));
-	}
-
-	public void WeakenEffect(Card target)
-	{
-		target.Power -= 3;
+		CreatureChangePower(target: target, amount: -3, source: this);
 	}
 
 	public bool CastCondition()

@@ -13,6 +13,7 @@ public abstract class Card
 	public GameConstants.PlayerClass CardClass;
 	public int uid, Position;
 	private int _life, _power, _cost;
+
 	public int Life
 	{
 		get => _life;
@@ -47,10 +48,22 @@ public abstract class Card
 			if(_cost < 0) _cost = 0;
 		}
 	}
+	public int Controller { get; set; }
 	public readonly int BaseLife, BasePower, BaseCost;
+	private int _baseController = -1;
+	public int BaseController
+	{
+		get => _baseController;
+		set
+		{
+			if(_baseController == -1)
+			{
+				_baseController = value;
+			}
+		}
+	}
 	public GameConstants.Location Location;
 	public bool IsClassAbility, CanBeClassAbility;
-	public int Controller;
 	public bool CanMove = true;
 	public int damageCap, baseDamageCap;
 	public Dictionary<Keyword, int> Keywords = new Dictionary<Keyword, int>();
@@ -72,7 +85,6 @@ public abstract class Card
 		string Text,
 		bool IsClassAbility,
 		bool CanBeClassAbility,
-		int Controller = 0,
 		int OriginalCost = 0,
 		int OriginalLife = 0,
 		int OriginalPower = 0,
@@ -89,7 +101,6 @@ public abstract class Card
 		this.Position = OriginalPositon;
 		this.Location = OriginalLocation;
 		this.IsClassAbility = IsClassAbility;
-		this.Controller = Controller;
 		this.CanBeClassAbility = CanBeClassAbility;
 		this.uid = DuelCore.UIDCount;
 		DuelCore.UIDCount++;
@@ -98,6 +109,7 @@ public abstract class Card
 
 	public static RegisterCastTriggerDelegate RegisterCastTrigger = (_, _) => { };
 	public static RegisterGenericCastTriggerDelegate RegisterGenericCastTrigger = (_, _) => { };
+	public static RegisterGenericCastTriggerDelegate RegisterTokenCreationTrigger = (_, _) => { };
 	public static RegisterRevelationTriggerDelegate RegisterRevelationTrigger = (_, _) => { };
 	public static RegisterDiscardTriggerDelegate RegisterYouDiscardTrigger = (_, _) => { };
 	public static RegisterDiscardTriggerDelegate RegisterDiscardTrigger = (_, _) => { };
@@ -118,7 +130,9 @@ public abstract class Card
 	public static DiscardDelegate Discard = (_) => { };
 	public static DiscardAmountDelegate DiscardAmount = (_, _) => { };
 	public static CreateTokenDelegate CreateToken = (_, _, _, _) => new ClientCoreDummyCard();
+	public static CreateTokenOnFieldDelegate CreateTokenOnField = (_, _, _, _) => { };
 	public static CreateTokenCopyDelegate CreateTokenCopy = (_, _) => new ClientCoreDummyCard();
+	public static CreateTokenCopyOnFieldDelegate CreateTokenCopyOnField = (_, _) => { };
 	public static GetYXTurnsAgoDelegate GetDiscardCountXTurnsAgo = (_, _) => -1;
 	public static GetYXTurnsAgoDelegate GetDamageDealtXTurnsAgo = (_, _) => -1;
 	public static GetYXTurnsAgoDelegate GetSpellDamageDealtXTurnsAgo = (_, _) => -1;
@@ -146,13 +160,15 @@ public abstract class Card
 	public static RevealDelegate Reveal = (_, _) => { };
 	public static GetDiscardableDelegate GetDiscardable = (_, _) => new Card[0];
 	public static RefreshAbilityDelegate RefreshAbility = (_) => { };
-	public static CreatureChangeLifeDelegate CreatureChangeLife = (_, _, _) => { };
+	public static CreatureChangeStatDelegate CreatureChangeLife = (_, _, _) => { };
+	public static CreatureChangeStatDelegate CreatureChangePower = (_, _, _) => { };
 
 	public void ClearModifications()
 	{
 		_life = BaseLife;
 		_power = BasePower;
 		_cost = BaseCost;
+		Controller = BaseController;
 		damageCap = baseDamageCap;
 	}
 
@@ -194,7 +210,8 @@ public abstract class Card
 			location: Location, position: Position,
 			is_class_ability: IsClassAbility,
 			can_be_class_ability: CanBeClassAbility,
-			controller: Controller);
+			controller: Controller,
+			base_controller: BaseController);
 	}
 
 	public static bool operator ==(Card? first, Card? second)
@@ -328,7 +345,7 @@ public class Token : Creature
 		int OriginalCost,
 		int OriginalLife,
 		int OriginalPower,
-		int Controller) : base(
+		int OriginalController) : base(
 			Name: Name,
 			Text: Text,
 			OriginalCost: OriginalCost,
@@ -337,8 +354,9 @@ public class Token : Creature
 			CardClass: GameConstants.PlayerClass.All
 		)
 	{
-		this.Controller = Controller;
+		this.BaseController = OriginalController;
 		RegisterKeyword(Keyword.Token);
+		ClearModifications();
 	}
 	public override void Init()
 	{

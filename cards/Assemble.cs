@@ -27,7 +27,9 @@ class Assemble : Spell
 
 	public void CastEffect()
 	{
-		CreateToken(player: Controller, power: 2, life: 1, name: "Construct").RegisterKeyword(Keyword.Brittle);
+		Card token = CreateToken(player: Controller, power: 2, life: 1, name: "Construct");
+		token.RegisterKeyword(Keyword.Brittle);
+		MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token);
 	}
 
 	public bool CastCondition()

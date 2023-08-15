@@ -19,8 +19,12 @@ class FieryIllusion : Spell
 
 	private void CastEffect()
 	{
-		CreateToken(player: Controller, power: 0, life: 1, name: "Illusion").RegisterKeyword(Keyword.Decaying);
-		CreateToken(player: Controller, power: 0, life: 1, name: "Illusion").RegisterKeyword(Keyword.Decaying);
+		for(int i = 0; i < 2; i++)
+		{
+			Card token = CreateToken(player: Controller, power: 0, life: 1, name: "Illusion");
+			token.RegisterKeyword(Keyword.Decaying);
+			MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token);
+		}
 	}
 
 	public bool CastCondition()

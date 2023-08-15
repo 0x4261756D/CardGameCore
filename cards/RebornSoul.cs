@@ -26,7 +26,7 @@ class RebornSoul : Creature
 		if(AskYesNo(player: Controller, question: "Discard?"))
 		{
 			DiscardAmount(player: Controller, amount: 1);
-			CreateToken(player: Controller, power: 2, life: 2, name: "Weaker Soul");
+			CreateTokenOnField(player: Controller, power: 2, life: 2, name: "Weaker Soul");
 		}
 	}
 }

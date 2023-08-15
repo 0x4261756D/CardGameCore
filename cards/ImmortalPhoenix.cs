@@ -8,7 +8,7 @@ class ImmortalPhoenix : Creature
 		Name: "Immortal Phoenix",
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 2,
-		Text: "{Death}: Return this to your hand. For the rest of the game all \"Immortal Phoenix\" you control gain +1/+1. ",
+		Text: "{Death}: Return this to your hand. For the rest of the game all your \"Immortal Phoenix\" gain +1/+1. ",
 		OriginalPower: 2,
 		OriginalLife: 2
 		)
@@ -16,13 +16,13 @@ class ImmortalPhoenix : Creature
 
 	public override void Init()
 	{
-		RegisterDeathTrigger(trigger: new Trigger(effect: DeathEffect), referrer: this);
+		RegisterDeathTrigger(trigger: new TargetingTrigger(effect: DeathEffect), referrer: this);
 	}
 
-	private void DeathEffect()
+	private void DeathEffect(Card target)
 	{
-		MoveToHand(player: Controller, card: this);
-		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: PhoenixEffect, referrer: this, influenceLocation: Location.ALL));
+		MoveToHand(player: Controller, card: target);
+		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: PhoenixEffect, referrer: target, influenceLocation: Location.ALL));
 	}
 
 	private void PhoenixEffect(Card target)

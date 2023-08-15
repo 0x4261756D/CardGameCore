@@ -9,7 +9,7 @@ class BrittleBehemoth : Creature
 		Name: "Brittle Behemoth",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 4,
-		Text: "[Brittle]\n{Victorious}: Lose [Brittle] this turn.\n{Revelation}: Target creature with less than 7 power can't move this turn.",
+		Text: "[Brittle]\n{Victorious}: Gain +2/+2 and lose [Brittle] this turn.\n{Revelation}: Target creature with less than 7 power can't move this turn.",
 		OriginalPower: 6,
 		OriginalLife: 4
 		)
@@ -24,10 +24,17 @@ class BrittleBehemoth : Creature
 
 	public void VictoriousEffect()
 	{
+		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: BoostEffect, referrer: this));
 		if(Keywords.Remove(Keyword.Brittle))
 		{
 			RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: ResetBrittleEffect, state: State.TurnEnd, influenceLocation: Location.ALL, oneshot: true), referrer: this);
 		}
+	}
+
+	public void BoostEffect(Card target)
+	{
+		target.Life += 2;
+		target.Power += 2;
 	}
 
 	public void ResetBrittleEffect()

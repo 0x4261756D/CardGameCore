@@ -22,12 +22,6 @@ class RottingHydra : Creature
 
 	public void VictoriousEffect()
 	{
-		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: BuffEffect, referrer: this));
+		CreatureChangeLife(target: this, amount: 3, source: this);
 	}
-
-	public void BuffEffect(Card _)
-	{
-		this.Life += 3;
-	}
-
 }
