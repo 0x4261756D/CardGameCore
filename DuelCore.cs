@@ -531,54 +531,53 @@ class DuelCore : Core
 				break;
 				case GameConstants.State.DamageCalc:
 				{
-					if(markedZone == null)
+					if(markedZone != null)
 					{
-						throw new Exception("No zone marked during damage calc");
-					}
-					Card? card0 = players[0].field.GetByPosition(GetMarkedZoneForPlayer(0));
-					Card? card1 = players[1].field.GetByPosition(GetMarkedZoneForPlayer(1));
-					if(card0 != null)
-					{
-						ProcessTriggers(attackTriggers, card0.uid);
-					}
-					if(card1 != null)
-					{
-						ProcessTriggers(attackTriggers, card1.uid);
-					}
-					if(card0 == null)
-					{
+						Card? card0 = players[0].field.GetByPosition(GetMarkedZoneForPlayer(0));
+						Card? card1 = players[1].field.GetByPosition(GetMarkedZoneForPlayer(1));
+						if(card0 != null)
+						{
+							ProcessTriggers(attackTriggers, card0.uid);
+						}
 						if(card1 != null)
 						{
-							// Deal damage to player
-							DealDamage(player: 0, amount: card1.Power, source: card1);
-							if(players[0].life <= 0)
-							{
-								return true;
-							}
+							ProcessTriggers(attackTriggers, card1.uid);
 						}
-					}
-					else
-					{
-						if(card1 == null)
+						if(card0 == null)
 						{
-							DealDamage(player: 1, amount: card0.Power, source: card0);
-							if(players[1].life <= 0)
+							if(card1 != null)
 							{
-								return true;
+								// Deal damage to player
+								DealDamage(player: 0, amount: card1.Power, source: card1);
+								if(players[0].life <= 0)
+								{
+									return true;
+								}
 							}
 						}
 						else
 						{
-							EvaluateLingeringEffects();
-							CreatureChangeLifeImpl(target: card0, amount: -card1.Power, source: card1);
-							CreatureChangeLifeImpl(target: card1, amount: -card0.Power, source: card0);
-							if(card0.Life == 0 && card1.Life != 0)
+							if(card1 == null)
 							{
-								ProcessTriggers(victoriousTriggers, card1.uid);
+								DealDamage(player: 1, amount: card0.Power, source: card0);
+								if(players[1].life <= 0)
+								{
+									return true;
+								}
 							}
-							if(card1.Life == 0 && card0.Life != 0)
+							else
 							{
-								ProcessTriggers(victoriousTriggers, card0.uid);
+								EvaluateLingeringEffects();
+								CreatureChangeLifeImpl(target: card0, amount: -card1.Power, source: card1);
+								CreatureChangeLifeImpl(target: card1, amount: -card0.Power, source: card0);
+								if(card0.Life == 0 && card1.Life != 0)
+								{
+									ProcessTriggers(victoriousTriggers, card1.uid);
+								}
+								if(card1.Life == 0 && card0.Life != 0)
+								{
+									ProcessTriggers(victoriousTriggers, card0.uid);
+								}
 							}
 						}
 					}
@@ -788,6 +787,7 @@ class DuelCore : Core
 	{
 		if(markedZone == null)
 		{
+			state = GameConstants.State.TurnEnd;
 			return;
 		}
 		if(turnPlayer == 0)
@@ -796,8 +796,6 @@ class DuelCore : Core
 			if(markedZone == GameConstants.FIELD_SIZE)
 			{
 				markedZone = null;
-				state = GameConstants.State.TurnEnd;
-				return;
 			}
 		}
 		else
@@ -806,8 +804,6 @@ class DuelCore : Core
 			if(markedZone < 0)
 			{
 				markedZone = null;
-				state = GameConstants.State.TurnEnd;
-				return;
 			}
 		}
 		initPlayer = turnPlayer;
