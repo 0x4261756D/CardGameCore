@@ -1011,6 +1011,11 @@ class DuelCore : Core
 			{
 				if(players[player].ability.Position == 0 && players[player].momentum > 0 && castTriggers.ContainsKey(players[player].ability.uid))
 				{
+					Card?[] shownCards = new Card?[2];
+					shownCards[player] = players[player].ability;
+					string?[] shownReasons = new string?[2];
+					shownReasons[player] = "Ability";
+					SendFieldUpdates(shownCards: shownCards, shownReasons: shownReasons);
 					players[player].momentum--;
 					foreach(CastTrigger trigger in castTriggers[players[player].ability.uid])
 					{
