@@ -8,7 +8,7 @@ class MechanicalTitan : Creature
 		Name: "Mechanical Titan",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 6,
-		Text: "[Colossal] +1\nCosts 1 less to cast for each creature with [Brittle] that died last turn.\n{Revelation}: Gain 3 life.",
+		Text: "[Colossal] +1\nCosts 1 less to cast for each of your creatures that died last turn.\n{Revelation}: Gain 3 life.",
 		OriginalPower: 7,
 		OriginalLife: 7
 		)
@@ -28,6 +28,6 @@ class MechanicalTitan : Creature
 
 	private void CostReductionEffect(Card target)
 	{
-		this.Cost -= GetBrittleDeathCountXTurnsAgo(player: Controller, turns: 1);
+		this.Cost -= GetDeathCountXTurnsAgo(player: Controller, turns: 1);
 	}
 }
