@@ -9,7 +9,7 @@ class ReplicatingGolem : Creature
 		Name: "Replicating Golem",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 3,
-		Text: "{Attack}: Create a token copy of this card with [Brittle].",
+		Text: "{Victorious or deals damage}: Create a token copy of this card with [Brittle].",
 		OriginalPower: 3,
 		OriginalLife: 2
 		)
@@ -17,10 +17,11 @@ class ReplicatingGolem : Creature
 
 	public override void Init()
 	{
-		RegisterAttackTrigger(trigger: new Trigger(effect: AttackEffect, condition: () => HasEmpty(GetField(Controller))), referrer: this);
+		RegisterVictoriousTrigger(trigger: new Trigger(effect: DuplicateEffect, condition: () => HasEmpty(GetField(Controller))), referrer: this);
+		RegisterDealsDamageTrigger(trigger: new Trigger(effect: DuplicateEffect, condition: () => HasEmpty(GetField(Controller))), referrer: this);
 	}
 
-	public void AttackEffect()
+	public void DuplicateEffect()
 	{
 		Card token = CreateTokenCopy(player: Controller, card: this);
 		token.RegisterKeyword(Keyword.Brittle);
