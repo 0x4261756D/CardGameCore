@@ -10,7 +10,7 @@ class TreasureChest : Creature
 		OriginalCost: 2,
 		Text: "{Death}: Draw 2.\n{Revelation}: Reveal 2.",
 		OriginalPower: 0,
-		OriginalLife: 4
+		OriginalLife: 3
 		)
 	{ }
 
