@@ -8,6 +8,7 @@ public enum Keyword
 	Brittle,
 	Token,
 	Decaying,
+	Immovable,
 }
 
 public class Trigger

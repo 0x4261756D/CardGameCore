@@ -9,7 +9,7 @@ class BrittleBehemoth : Creature
 		Name: "Brittle Behemoth",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 4,
-		Text: "[Brittle]\n{Victorious}: Gain +2/+2 and lose [Brittle] this turn.\n{Revelation}: Target creature with less than 7 power can't move this turn.",
+		Text: "[Brittle]\n{Victorious}: Gain +2/+2 and lose [Brittle] this turn.\n{Revelation}: Target creature with less than 7 power gains [Immovable] until the end of turn.",
 		OriginalPower: 6,
 		OriginalLife: 4
 		)
@@ -45,8 +45,8 @@ class BrittleBehemoth : Creature
 	public void RevelationEffect()
 	{
 		Card target = SelectSingleCard(player: Controller, cards: FilterValid(cards: GetForBoth(GetFieldUsed), isValid: Filter), description: "Select creature to frighten");
-		target.CanMove = false;
-		RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: () => target.CanMove = true, state: State.TurnEnd, influenceLocation: Location.ALL, oneshot: true), referrer: target);
+		target.RegisterKeyword(Keyword.Immovable);
+		RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: () => target.Keywords.Remove(Keyword.Immovable), state: State.TurnEnd, influenceLocation: Location.ALL, oneshot: true), referrer: target);
 	}
 
 	public bool RevelationCondition()

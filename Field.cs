@@ -110,7 +110,7 @@ class Field
 			Functions.Log($"Called CanMove for an empty position", severity: Functions.LogSeverity.Warning);
 			return false;
 		}
-		if(!card.CanMove)
+		if(card.Keywords.ContainsKey(Keyword.Immovable))
 		{
 			return false;
 		}

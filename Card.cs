@@ -64,7 +64,6 @@ public abstract class Card
 	}
 	public GameConstants.Location Location;
 	public bool IsClassAbility, CanBeClassAbility;
-	public bool CanMove = true;
 	public int damageCap, baseDamageCap;
 	public Dictionary<Keyword, int> Keywords = new Dictionary<Keyword, int>();
 	public abstract void Init();
