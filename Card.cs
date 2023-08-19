@@ -109,6 +109,7 @@ public abstract class Card
 	public static RegisterCastTriggerDelegate RegisterCastTrigger = (_, _) => { };
 	public static RegisterGenericCastTriggerDelegate RegisterGenericCastTrigger = (_, _) => { };
 	public static RegisterGenericCastTriggerDelegate RegisterTokenCreationTrigger = (_, _) => { };
+	public static RegisterGenericCastTriggerDelegate RegisterGenericEntersFieldTrigger = (_, _) => { };
 	public static RegisterRevelationTriggerDelegate RegisterRevelationTrigger = (_, _) => { };
 	public static RegisterDiscardTriggerDelegate RegisterYouDiscardTrigger = (_, _) => { };
 	public static RegisterDiscardTriggerDelegate RegisterDiscardTrigger = (_, _) => { };

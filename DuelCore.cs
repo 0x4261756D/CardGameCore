@@ -38,6 +38,7 @@ class DuelCore : Core
 	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
 	private Dictionary<int, List<GenericCastTrigger>> genericCastTriggers = new Dictionary<int, List<GenericCastTrigger>>();
 	private Dictionary<int, List<GenericCastTrigger>> tokenCreationTriggers = new Dictionary<int, List<GenericCastTrigger>>();
+	private Dictionary<int, List<GenericCastTrigger>> genericEnterFieldTriggers = new Dictionary<int, List<GenericCastTrigger>>();
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
 	private Dictionary<int, List<Trigger>> victoriousTriggers = new Dictionary<int, List<Trigger>>();
 	private Dictionary<int, List<Trigger>> attackTriggers = new Dictionary<int, List<Trigger>>();
@@ -89,6 +90,7 @@ class DuelCore : Core
 	{
 		Card.RegisterCastTrigger = RegisterCastTriggerImpl;
 		Card.RegisterGenericCastTrigger = RegisterGenericCastTriggerImpl;
+		Card.RegisterGenericEntersFieldTrigger = RegisterGenericEntersFieldTriggerImpl;
 		Card.RegisterRevelationTrigger = RegisterRevelationTriggerImpl;
 		Card.RegisterYouDiscardTrigger = RegisterYouDiscardTriggerImpl;
 		Card.RegisterDiscardTrigger = RegisterDiscardTriggerImpl;
@@ -1293,6 +1295,7 @@ class DuelCore : Core
 	private void MoveToFieldImpl(int choosingPlayer, int targetPlayer, Card card)
 	{
 		EvaluateLingeringEffects();
+		bool wasAlreadyOnField = card.Location == GameConstants.Location.Field;
 		RemoveCardFromItsLocation(card);
 		int zone = SelectZoneImpl(choosingPlayer: choosingPlayer, targetPlayer: targetPlayer);
 		if(card.Controller != targetPlayer)
@@ -1301,6 +1304,46 @@ class DuelCore : Core
 		}
 		players[targetPlayer].field.Add(card, zone);
 		RemoveOutdatedTemporaryLingeringEffects(card);
+		if(!wasAlreadyOnField)
+		{
+			foreach(Player p in players)
+			{
+				if(genericEnterFieldTriggers.ContainsKey(p.quest.uid))
+				{
+					foreach(GenericCastTrigger trigger in genericEnterFieldTriggers[p.quest.uid])
+					{
+						if(trigger.condition(target: card))
+						{
+							trigger.effect(target: card);
+							if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
+							{
+								p.quest.Reward();
+								p.quest.Text += "\nREWARD CLAIMED";
+								rewardClaimed = true;
+								break;
+							}
+
+						}
+					}
+				}
+				foreach(Card possiblyTriggeringCard in p.field.GetUsed())
+				{
+					if(genericEnterFieldTriggers.ContainsKey(possiblyTriggeringCard.uid))
+					{
+						Log($"Token creation triggers for {possiblyTriggeringCard.Name}:");
+						foreach(GenericCastTrigger trigger in genericEnterFieldTriggers[possiblyTriggeringCard.uid])
+						{
+							Log($"\tlocation: {trigger.influenceLocation}");
+							if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: card))
+							{
+								Log($"triggers");
+								trigger.effect(target: card);
+							}
+						}
+					}
+				}
+			}
+		}
 		if(card.Keywords.ContainsKey(Keyword.Token))
 		{
 			foreach(Player p in players)
@@ -1319,7 +1362,6 @@ class DuelCore : Core
 								rewardClaimed = true;
 								break;
 							}
-
 						}
 					}
 				}
@@ -1454,6 +1496,14 @@ class DuelCore : Core
 			revelationTriggers[referrer.uid] = new List<RevelationTrigger>();
 		}
 		revelationTriggers[referrer.uid].Add(trigger);
+	}
+	public void RegisterGenericEntersFieldTriggerImpl(GenericCastTrigger trigger, Card referrer)
+	{
+		if(!genericEnterFieldTriggers.ContainsKey(referrer.uid))
+		{
+			genericEnterFieldTriggers[referrer.uid] = new List<GenericCastTrigger>();
+		}
+		genericEnterFieldTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterYouDiscardTriggerImpl(DiscardTrigger trigger, Card referrer)
 	{
