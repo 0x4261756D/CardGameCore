@@ -8,7 +8,7 @@ class CourageousKnight : Creature
 		Name: "Courageous Knight",
 		CardClass: PlayerClass.All,
 		OriginalCost: 3,
-		Text: "{A creature is cast}: Gain +1/+0.",
+		Text: "{A creature enters the field}: Gain +1/+0.",
 		OriginalPower: 0,
 		OriginalLife: 4
 		)
@@ -16,7 +16,7 @@ class CourageousKnight : Creature
 
 	public override void Init()
 	{
-		RegisterGenericCastTrigger(trigger: new GenericCastTrigger(effect: BuffEffect), referrer: this);
+		RegisterGenericEntersFieldTrigger(trigger: new GenericCastTrigger(effect: BuffEffect), referrer: this);
 	}
 
 	public void BuffEffect(Card castCard)
