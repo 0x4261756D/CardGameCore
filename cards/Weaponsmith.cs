@@ -7,7 +7,7 @@ class Weaponsmith : Creature
 	public Weaponsmith() : base(
 		Name: "Weaponsmith",
 		CardClass: PlayerClass.All,
-		OriginalCost: 3,
+		OriginalCost: 2,
 		Text: "Your other creatures gain +1/+1.",
 		OriginalPower: 2,
 		OriginalLife: 3
