@@ -85,7 +85,11 @@ class ClientCore : Core
 		List<CardGameUtils.Structs.CardStruct> c = new List<CardGameUtils.Structs.CardStruct>();
 		foreach(string line in decklist)
 		{
-			c.Add(cards[cards.FindIndex(x => x.name == line)]);
+			int index = cards.FindIndex(x => x.name == line);
+			if(index >= 0)
+			{
+				c.Add(cards[index]);
+			}
 		}
 		return c.ToArray();
 	}
