@@ -37,7 +37,7 @@ class DuelCore : Core
 
 	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
 	private Dictionary<int, List<GenericCastTrigger>> genericCastTriggers = new Dictionary<int, List<GenericCastTrigger>>();
-	private Dictionary<int, List<GenericCastTrigger>> tokenCreationTriggers = new Dictionary<int, List<GenericCastTrigger>>();
+	private Dictionary<int, List<TokenCreationTrigger>> tokenCreationTriggers = new Dictionary<int, List<TokenCreationTrigger>>();
 	private Dictionary<int, List<GenericCastTrigger>> genericEnterFieldTriggers = new Dictionary<int, List<GenericCastTrigger>>();
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
 	private Dictionary<int, List<Trigger>> victoriousTriggers = new Dictionary<int, List<Trigger>>();
@@ -1292,7 +1292,7 @@ class DuelCore : Core
 		players[player].Draw(amount);
 		SendFieldUpdates();
 	}
-	private void MoveToFieldImpl(int choosingPlayer, int targetPlayer, Card card)
+	private void MoveToFieldImpl(int choosingPlayer, int targetPlayer, Creature card, Card? source)
 	{
 		EvaluateLingeringEffects();
 		bool wasAlreadyOnField = card.Location == GameConstants.Location.Field;
@@ -1342,41 +1342,42 @@ class DuelCore : Core
 						}
 					}
 				}
-			}
-		}
-		if(card.Keywords.ContainsKey(Keyword.Token))
-		{
-			foreach(Player p in players)
-			{
-				if(tokenCreationTriggers.ContainsKey(p.quest.uid))
+				if(card.Keywords.ContainsKey(Keyword.Token))
 				{
-					foreach(GenericCastTrigger trigger in tokenCreationTriggers[p.quest.uid])
+					if(source == null)
 					{
-						if(trigger.condition(target: card))
+						throw new Exception($"Moving token {card.Name} to field but source was null");
+					}
+					if(tokenCreationTriggers.ContainsKey(p.quest.uid))
+					{
+						foreach(TokenCreationTrigger trigger in tokenCreationTriggers[p.quest.uid])
 						{
-							trigger.effect(target: card);
-							if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
+							if(trigger.condition(token: card, source: source))
 							{
-								p.quest.Reward();
-								p.quest.Text += "\nREWARD CLAIMED";
-								rewardClaimed = true;
-								break;
+								trigger.effect(token: card, source: source);
+								if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
+								{
+									p.quest.Reward();
+									p.quest.Text += "\nREWARD CLAIMED";
+									rewardClaimed = true;
+									break;
+								}
 							}
 						}
 					}
-				}
-				foreach(Card possiblyTriggeringCard in p.field.GetUsed())
-				{
-					if(tokenCreationTriggers.ContainsKey(possiblyTriggeringCard.uid))
+					foreach(Card possiblyTriggeringCard in p.field.GetUsed())
 					{
-						Log($"Token creation triggers for {possiblyTriggeringCard.Name}:");
-						foreach(GenericCastTrigger trigger in tokenCreationTriggers[possiblyTriggeringCard.uid])
+						if(tokenCreationTriggers.ContainsKey(possiblyTriggeringCard.uid))
 						{
-							Log($"\tlocation: {trigger.influenceLocation}");
-							if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: card))
+							Log($"Token creation triggers for {possiblyTriggeringCard.Name}:");
+							foreach(TokenCreationTrigger trigger in tokenCreationTriggers[possiblyTriggeringCard.uid])
 							{
-								Log($"triggers");
-								trigger.effect(target: card);
+								Log($"\tlocation: {trigger.influenceLocation}");
+								if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(token: card, source: source))
+								{
+									Log($"triggers");
+									trigger.effect(token: card, source: source);
+								}
 							}
 						}
 					}
@@ -1405,7 +1406,7 @@ class DuelCore : Core
 			{
 				case GameConstants.CardType.Creature:
 				{
-					MoveToFieldImpl(player, player, card);
+					MoveToFieldImpl(player, player, (Creature)card, null);
 				}
 				break;
 				case GameConstants.CardType.Spell:
@@ -1600,11 +1601,11 @@ class DuelCore : Core
 		}
 		genericDeathTriggers[referrer.uid].Add(info);
 	}
-	private void RegisterTokenCreationTriggerImpl(GenericCastTrigger trigger, Card referrer)
+	private void RegisterTokenCreationTriggerImpl(TokenCreationTrigger trigger, Card referrer)
 	{
 		if(!tokenCreationTriggers.ContainsKey(referrer.uid))
 		{
-			tokenCreationTriggers[referrer.uid] = new List<GenericCastTrigger>();
+			tokenCreationTriggers[referrer.uid] = new List<TokenCreationTrigger>();
 		}
 		tokenCreationTriggers[referrer.uid].Add(trigger);
 	}
@@ -1977,11 +1978,11 @@ class DuelCore : Core
 			}
 		}
 	}
-	public void CreateTokenOnFieldImpl(int player, int power, int life, string name)
+	public void CreateTokenOnFieldImpl(int player, int power, int life, string name, Card source)
 	{
-		MoveToFieldImpl(player, player, CreateTokenImpl(player, power, life, name));
+		MoveToFieldImpl(player, player, CreateTokenImpl(player, power, life, name), source);
 	}
-	public Card CreateTokenImpl(int player, int power, int life, string name)
+	public Token CreateTokenImpl(int player, int power, int life, string name)
 	{
 		if(!players[player].field.HasEmpty())
 		{
@@ -1998,17 +1999,17 @@ class DuelCore : Core
 		);
 		return token;
 	}
-	public void CreateTokenCopyOnFieldImpl(int player, Card card)
+	public void CreateTokenCopyOnFieldImpl(int player, Card card, Card source)
 	{
-		MoveToFieldImpl(player, player, CreateTokenCopyImpl(player, card));
+		MoveToFieldImpl(player, player, CreateTokenCopyImpl(player, card), source);
 	}
-	public Card CreateTokenCopyImpl(int player, Card card)
+	public Creature CreateTokenCopyImpl(int player, Card card)
 	{
 		if(!players[player].field.HasEmpty())
 		{
 			throw new Exception($"Tried to create a token but the field is full");
 		}
-		Card token;
+		Creature token;
 		if(card.GetType() == typeof(Token))
 		{
 			token = CreateTokenImpl(player: player, power: card.Power, life: card.Life, name: card.Name);
@@ -2019,7 +2020,7 @@ class DuelCore : Core
 		}
 		else
 		{
-			token = CreateBasicCard(card.GetType(), player);
+			token = (Creature)CreateBasicCard(card.GetType(), player);
 			token.RegisterKeyword(Keyword.Token);
 		}
 		return token;

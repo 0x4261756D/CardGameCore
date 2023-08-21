@@ -26,7 +26,7 @@ class UnholySummoning : Spell
 
 	public void DiscardEffect()
 	{
-		CreateTokenOnField(player: Controller, power: 3, life: 3, name: "Horror");
+		CreateTokenOnField(player: Controller, power: 3, life: 3, name: "Horror", source: this);
 	}
 
 	private bool Condition()
@@ -38,6 +38,6 @@ class UnholySummoning : Spell
 	{
 		Card target = SelectSingleCard(cards: GetDiscardable(Controller, ignore: this), player: Controller, description: "Select card to discard");
 		Discard(target);
-		CreateTokenOnField(player: Controller, power: target.Cost, life: target.Cost, name: "Horror");
+		CreateTokenOnField(player: Controller, power: target.Cost, life: target.Cost, name: "Horror", source: this);
 	}
 }

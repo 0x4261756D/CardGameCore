@@ -23,10 +23,10 @@ class Masterpiece : Spell
 		Card target = SelectSingleCard(Controller, FilterValid(cards: GetGrave(Controller), isValid: (card) => card.CardType == CardType.Creature), "Select masterpiece");
 		while(HasEmpty(GetField(Controller)) && AskYesNo(player: Controller, question: "Create another?"))
 		{
-			Card token = CreateTokenCopy(player: Controller, target);
+			Creature token = CreateTokenCopy(player: Controller, target);
 			CreatureChangeLife(target: token, amount: target.Power, source: this);
 			CreatureChangePower(target: token, amount: target.Life, source: this);
-			MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token);
+			MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token, source: this);
 		}
 	}
 

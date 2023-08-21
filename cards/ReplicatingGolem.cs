@@ -23,9 +23,9 @@ class ReplicatingGolem : Creature
 
 	public void DuplicateEffect()
 	{
-		Card token = CreateTokenCopy(player: Controller, card: this);
+		Creature token = CreateTokenCopy(player: Controller, card: this);
 		token.RegisterKeyword(Keyword.Brittle);
-		MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token);
+		MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token, source: this);
 	}
 
 }

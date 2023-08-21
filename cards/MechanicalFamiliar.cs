@@ -9,7 +9,7 @@ class MechanicalFamiliar : Creature
 		Name: "Mechanical Familiar",
 		CardClass: PlayerClass.Artificer,
 		OriginalCost: 1,
-		Text: "{You create a token with [Brittle]}: You may create another one.\n{Revelation}: Add this to your hand.",
+		Text: "{You create a token with [Brittle] except by \"Mechanical Familiar\"}: You may create another one.\n{Revelation}: Add this to your hand.",
 		OriginalPower: 1,
 		OriginalLife: 2
 		)
@@ -17,7 +17,7 @@ class MechanicalFamiliar : Creature
 
 	public override void Init()
 	{
-		RegisterTokenCreationTrigger(trigger: new GenericCastTrigger(effect: CreateEffect, condition: CreateCondition), referrer: this);
+		RegisterTokenCreationTrigger(trigger: new TokenCreationTrigger(effect: CreateEffect, condition: CreateCondition), referrer: this);
 		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect), referrer: this);
 	}
 
@@ -26,17 +26,17 @@ class MechanicalFamiliar : Creature
 		MoveToHand(player: Controller, card: this);
 	}
 
-	private bool CreateCondition(Card target)
+	private bool CreateCondition(Card token, Card source)
 	{
-		return target.Controller == Controller && target.Keywords.ContainsKey(Keyword.Token) && target.Keywords.ContainsKey(Keyword.Brittle) &&
+		return source.Name != this.Name && token.Controller == Controller && token.Keywords.ContainsKey(Keyword.Token) && token.Keywords.ContainsKey(Keyword.Brittle) &&
 			HasEmpty(GetField(Controller));
 	}
 
-	private void CreateEffect(Card target)
+	private void CreateEffect(Card token, Card source)
 	{
 		if(AskYesNo(player: Controller, question: "Create another one?"))
 		{
-			CreateTokenCopyOnField(player: Controller, card: target);
+			CreateTokenCopyOnField(player: Controller, card: token, source: this);
 		}
 	}
 }

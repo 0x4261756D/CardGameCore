@@ -28,17 +28,16 @@ class DroneCommander : Creature
 
 	private void RevelationEffect()
 	{
-		Card token = CreateToken(player: Controller, power: 3, life: 2, name: "Drone");
+		Token token = CreateToken(player: Controller, power: 3, life: 2, name: "Drone");
 		token.RegisterKeyword(Keyword.Brittle);
-		MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token);
+		MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token, source: this);
 	}
 
-	// TODO: Should these tokens also have [Brittle]?
 	private void CastEffect()
 	{
 		for(int i = 0; i < 2 && HasEmpty(GetField(Controller)); i++)
 		{
-			CreateTokenOnField(player: Controller, power: 3, life: 2, name: "Drone");
+			CreateTokenOnField(player: Controller, power: 3, life: 2, name: "Drone", source: this);
 		}
 	}
 

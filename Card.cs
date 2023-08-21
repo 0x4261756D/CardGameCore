@@ -108,7 +108,7 @@ public abstract class Card
 
 	public static RegisterCastTriggerDelegate RegisterCastTrigger = (_, _) => { };
 	public static RegisterGenericCastTriggerDelegate RegisterGenericCastTrigger = (_, _) => { };
-	public static RegisterGenericCastTriggerDelegate RegisterTokenCreationTrigger = (_, _) => { };
+	public static RegisterTokenCreationTriggerDelegate RegisterTokenCreationTrigger = (_, _) => { };
 	public static RegisterGenericCastTriggerDelegate RegisterGenericEntersFieldTrigger = (_, _) => { };
 	public static RegisterRevelationTriggerDelegate RegisterRevelationTrigger = (_, _) => { };
 	public static RegisterDiscardTriggerDelegate RegisterYouDiscardTrigger = (_, _) => { };
@@ -129,10 +129,10 @@ public abstract class Card
 	public static SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
 	public static DiscardDelegate Discard = (_) => { };
 	public static DiscardAmountDelegate DiscardAmount = (_, _) => { };
-	public static CreateTokenDelegate CreateToken = (_, _, _, _) => new ClientCoreDummyCard();
-	public static CreateTokenOnFieldDelegate CreateTokenOnField = (_, _, _, _) => { };
-	public static CreateTokenCopyDelegate CreateTokenCopy = (_, _) => new ClientCoreDummyCard();
-	public static CreateTokenCopyOnFieldDelegate CreateTokenCopyOnField = (_, _) => { };
+	public static CreateTokenDelegate CreateToken = (_, _, _, _) => new ClientCoreDummyToken();
+	public static CreateTokenOnFieldDelegate CreateTokenOnField = (_, _, _, _, _) => { };
+	public static CreateTokenCopyDelegate CreateTokenCopy = (_, _) => new ClientCoreDummyToken();
+	public static CreateTokenCopyOnFieldDelegate CreateTokenCopyOnField = (_, _, _) => { };
 	public static GetYXTurnsAgoDelegate GetDiscardCountXTurnsAgo = (_, _) => -1;
 	public static GetYXTurnsAgoDelegate GetDamageDealtXTurnsAgo = (_, _) => -1;
 	public static GetYXTurnsAgoDelegate GetSpellDamageDealtXTurnsAgo = (_, _) => -1;
@@ -154,7 +154,7 @@ public abstract class Card
 	public static MoveDelegate Move = (_, _) => { };
 	public static SelectZoneDelegate SelectZone = (_, _) => -1;
 	public static MoveToHandDelegate MoveToHand = (_, _) => { };
-	public static MoveToFieldDelegate MoveToField = (_, _, _) => { };
+	public static MoveToFieldDelegate MoveToField = (_, _, _, _) => { };
 	public static GetCastCountDelegate GetCastCount = (_, _) => -1;
 	public static ReturnCardsToDeckDelegate ReturnCardsToDeck = (_) => { };
 	public static RevealDelegate Reveal = (_, _) => { };
@@ -259,10 +259,17 @@ public abstract class Card
 		return cards.ToList().ConvertAll(x => x.ToStruct()).ToArray();
 	}
 }
-
 public class ClientCoreDummyCard : Card
 {
 	public ClientCoreDummyCard() : base(GameConstants.CardType.UNKNOWN, GameConstants.PlayerClass.UNKNOWN, "UNINITIALIZED", "UNINITIALIZED", false, false)
+	{ }
+	public override void Init()
+	{
+	}
+}
+public class ClientCoreDummyToken: Token
+{
+	public ClientCoreDummyToken() : base("UNINITIALIZED", "UNINITIALIZED", -1, -1, -1, -1)
 	{ }
 	public override void Init()
 	{

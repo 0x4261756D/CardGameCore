@@ -21,9 +21,9 @@ class FieryIllusion : Spell
 	{
 		for(int i = 0; i < 2; i++)
 		{
-			Card token = CreateToken(player: Controller, power: 0, life: 1, name: "Illusion");
+			Token token = CreateToken(player: Controller, power: 0, life: 1, name: "Illusion");
 			token.RegisterKeyword(Keyword.Decaying);
-			MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token);
+			MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token, source: this);
 		}
 	}
 

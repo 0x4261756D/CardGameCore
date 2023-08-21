@@ -148,6 +148,26 @@ public class GenericCastTrigger : Trigger
 	}
 }
 
+public class TokenCreationTrigger : Trigger
+{
+	public GameConstants.Location influenceLocation;
+	public new TokenCreationCondition condition;
+	public new TokenCreationEffect effect;
+
+	public TokenCreationTrigger(TokenCreationEffect effect, TokenCreationCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	{
+		this.influenceLocation = influenceLocation;
+		this.condition = condition;
+		this.effect = effect;
+	}
+	public TokenCreationTrigger(TokenCreationEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	{
+		this.influenceLocation = influenceLocation;
+		this.condition = (_, _) => true;
+		this.effect = effect;
+	}
+}
+
 public class GenericDeathTrigger : Trigger
 {
 	public new TargetingCondition condition;
@@ -209,9 +229,12 @@ public delegate bool TriggerCondition();
 public delegate void Effect();
 public delegate void TargetingEffect(Card target);
 public delegate bool TargetingCondition(Card target);
+public delegate void TokenCreationEffect(Card token, Card source);
+public delegate bool TokenCreationCondition(Card token, Card source);
 
 public delegate void RegisterCastTriggerDelegate(CastTrigger trigger, Card referrer);
 public delegate void RegisterGenericCastTriggerDelegate(GenericCastTrigger trigger, Card referrer);
+public delegate void RegisterTokenCreationTriggerDelegate(TokenCreationTrigger trigger, Card referrer);
 public delegate void RegisterRevelationTriggerDelegate(RevelationTrigger trigger, Card referrer);
 public delegate void RegisterDiscardTriggerDelegate(DiscardTrigger trigger, Card referrer);
 public delegate void RegisterStateReachedTriggerDelegate(StateReachedTrigger trigger, Card referrer);
@@ -230,10 +253,10 @@ public delegate Card?[] GetWholeFieldDelegate(int player);
 public delegate Card[] SelectCardsDelegate(int player, Card[] cards, int amount, string description);
 public delegate void DiscardDelegate(Card card);
 public delegate void DiscardAmountDelegate(int player, int amount);
-public delegate void CreateTokenOnFieldDelegate(int player, int power, int life, string name);
-public delegate Card CreateTokenDelegate(int player, int power, int life, string name);
-public delegate Card CreateTokenCopyDelegate(int player, Card card);
-public delegate void CreateTokenCopyOnFieldDelegate(int player, Card card);
+public delegate void CreateTokenOnFieldDelegate(int player, int power, int life, string name, Card source);
+public delegate Token CreateTokenDelegate(int player, int power, int life, string name);
+public delegate Creature CreateTokenCopyDelegate(int player, Card card);
+public delegate void CreateTokenCopyOnFieldDelegate(int player, Card card, Card source);
 public delegate int GetYXTurnsAgoDelegate(int player, int turns);
 public delegate void CreatureChangeStatDelegate(Card target, int amount, Card source);
 public delegate void PlayerChangeLifeDelegate(int player, int amount, Card source);
@@ -249,7 +272,7 @@ public delegate Card GatherDelegate(int player, int amount);
 public delegate void MoveDelegate(Card card, int zone);
 public delegate int SelectZoneDelegate(int choosingPlayer, int targetPlayer);
 public delegate void MoveToHandDelegate(int player, Card card);
-public delegate void MoveToFieldDelegate(int choosingPlayer, int targetPlayer, Card card);
+public delegate void MoveToFieldDelegate(int choosingPlayer, int targetPlayer, Creature card, Card source);
 public delegate int GetCastCountDelegate(int player, string name);
 public delegate void ReturnCardsToDeckDelegate(Card[] cards);
 public delegate void RevealDelegate(int player, int damage);

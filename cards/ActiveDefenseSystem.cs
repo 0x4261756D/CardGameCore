@@ -21,10 +21,10 @@ class ActiveDefenseSystem : Spell
 
 	private void CastEffect()
 	{
-		Card token = CreateToken(player: Controller, power: 1, life: 1, name: "Automaton");
+		Token token = CreateToken(player: Controller, power: 1, life: 1, name: "Automaton");
 		token.Text = TokenText;
 		RegisterDeathTrigger(trigger: new TargetingTrigger(effect: TokenDeathEffect), referrer: token);
-		MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token);
+		MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token, source: this);
 	}
 
 	private void TokenDeathEffect(Card target)
