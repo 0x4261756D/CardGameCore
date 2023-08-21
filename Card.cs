@@ -267,7 +267,7 @@ public class ClientCoreDummyCard : Card
 	{
 	}
 }
-public class ClientCoreDummyToken: Token
+public class ClientCoreDummyToken : Token
 {
 	public ClientCoreDummyToken() : base("UNINITIALIZED", "UNINITIALIZED", -1, -1, -1, -1)
 	{ }
