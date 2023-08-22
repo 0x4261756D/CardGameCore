@@ -11,34 +11,8 @@ public abstract class Card
 	public string Name, Text;
 	public GameConstants.CardType CardType;
 	public GameConstants.PlayerClass CardClass;
-	public int uid, Position;
-	private int _life, _power, _cost;
-
-	public int Life
-	{
-		get => _life;
-		set
-		{
-			if(damageCap > 0 && _life - value > damageCap)
-			{
-				_life -= damageCap;
-			}
-			else
-			{
-				_life = value;
-			}
-			if(_life < 0) _life = 0;
-		}
-	}
-	public int Power
-	{
-		get => _power;
-		set
-		{
-			_power = value;
-			if(_power < 0) _power = 0;
-		}
-	}
+	public int uid;
+	private int _cost, _baseController = -1;
 	public int Cost
 	{
 		get => _cost;
@@ -48,9 +22,9 @@ public abstract class Card
 			if(_cost < 0) _cost = 0;
 		}
 	}
+	public readonly int BaseCost;
+	public GameConstants.Location Location;
 	public int Controller { get; set; }
-	public readonly int BaseLife, BasePower, BaseCost;
-	private int _baseController = -1;
 	public int BaseController
 	{
 		get => _baseController;
@@ -62,50 +36,26 @@ public abstract class Card
 			}
 		}
 	}
-	public GameConstants.Location Location;
-	public bool IsClassAbility, CanBeClassAbility;
-	public int damageCap, baseDamageCap;
-	public Dictionary<Keyword, int> Keywords = new Dictionary<Keyword, int>();
 	public abstract void Init();
-
-	public int CalculateMovementCost()
-	{
-		return 1 + Keywords.GetValueOrDefault(Keyword.Colossal, 0);
-	}
-
-	public void RegisterKeyword(Keyword keyword, int amount = 0)
-	{
-		Keywords[keyword] = amount;
-	}
 
 	public Card(GameConstants.CardType CardType,
 		GameConstants.PlayerClass CardClass,
 		string Name,
 		string Text,
-		bool IsClassAbility,
-		bool CanBeClassAbility,
 		int OriginalCost = 0,
-		int OriginalLife = 0,
-		int OriginalPower = 0,
-		GameConstants.Location OriginalLocation = GameConstants.Location.UNKNOWN,
-		int OriginalPositon = 0)
+		GameConstants.Location OriginalLocation = GameConstants.Location.UNKNOWN)
 	{
 		this.CardType = CardType;
 		this.CardClass = CardClass;
 		this.Name = Name;
 		this.Text = Text;
-		this.BaseLife = OriginalLife;
-		this.BasePower = OriginalPower;
 		this.BaseCost = OriginalCost;
-		this.Position = OriginalPositon;
 		this.Location = OriginalLocation;
-		this.IsClassAbility = IsClassAbility;
-		this.CanBeClassAbility = CanBeClassAbility;
 		this.uid = DuelCore.UIDCount;
 		DuelCore.UIDCount++;
-		ClearModifications();
+		ResetToBaseState();
 	}
-
+	#region ScriptingFunctions
 	public static RegisterCastTriggerDelegate RegisterCastTrigger = (_, _) => { };
 	public static RegisterGenericCastTriggerDelegate RegisterGenericCastTrigger = (_, _) => { };
 	public static RegisterTokenCreationTriggerDelegate RegisterTokenCreationTrigger = (_, _) => { };
@@ -120,13 +70,13 @@ public abstract class Card
 	public static RegisterGenericDeathTriggerDelegate RegisterGenericDeathTrigger = (_, _) => { };
 	public static RegisterDealsDamageTriggerDelegate RegisterDealsDamageTrigger = (_, _) => { };
 	public static RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
-	public static RegisterTemporaryLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => { };
+	public static RegisterTemporaryLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => {};
 	public static RegisterActivatedEffectDelegate RegisterActivatedEffect = (_) => { };
 	public static GetCardsInLocationDelegate GetGrave = (_) => new Card[0];
-	public static GetWholeFieldDelegate GetField = (_) => new Card?[0];
-	public static GetCardsInLocationDelegate GetFieldUsed = (_) => new Card[0];
+	public static GetWholeFieldDelegate GetField = (_) => new Creature?[0];
+	public static GetFieldUsedDelegate GetFieldUsed = (_) => new Creature[0];
 	public static GetCardsInLocationDelegate GetHand = (_) => new Card[0];
-	public static SelectCardsDelegate SelectCards = (_, _, _, _) => new Card[0];
+	public static SelectCardsDelegate SelectCards = (_, _, _, _) => new Creature[0];
 	public static DiscardDelegate Discard = (_) => { };
 	public static DiscardAmountDelegate DiscardAmount = (_, _) => { };
 	public static CreateTokenDelegate CreateToken = (_, _, _, _) => new ClientCoreDummyToken();
@@ -162,57 +112,16 @@ public abstract class Card
 	public static RefreshAbilityDelegate RefreshAbility = (_) => { };
 	public static CreatureChangeStatDelegate CreatureChangeLife = (_, _, _) => { };
 	public static CreatureChangeStatDelegate CreatureChangePower = (_, _, _) => { };
-
-	public void ClearModifications()
+	#endregion ScriptingFunctions
+	public virtual void ResetToBaseState()
 	{
-		_life = BaseLife;
-		_power = BasePower;
 		_cost = BaseCost;
 		Controller = BaseController;
-		damageCap = baseDamageCap;
 	}
 
 	public virtual bool CanBeDiscarded() => true;
 
-	public virtual CardStruct ToStruct(bool client = false)
-	{
-		StringBuilder text = new StringBuilder();
-		if(client)
-		{
-			text.Append(Text);
-		}
-		else
-		{
-			if(Keywords.Count > 0)
-			{
-				foreach(var keyword in Keywords)
-				{
-					text.Append($"[{keyword.Key}] ");
-					if(keyword.Value != 0)
-					{
-						if(keyword.Key == Keyword.Colossal)
-						{
-							text.Append('+');
-						}
-						text.Append($"{keyword.Value}");
-					}
-					text.Append('\n');
-				}
-			}
-			text.Append(Regex.Replace(Text, @"(?m:^\[.+\]( \+?\d+)?$)\n?", ""));
-		}
-		return new CardStruct(name: Name,
-			text: text.ToString(),
-			card_type: CardType,
-			card_class: CardClass,
-			uid: uid, life: Life, power: Power, cost: Cost,
-			base_cost: BaseCost, base_life: BaseLife, base_power: BasePower,
-			location: Location, position: Position,
-			is_class_ability: IsClassAbility,
-			can_be_class_ability: CanBeClassAbility,
-			controller: Controller,
-			base_controller: BaseController);
-	}
+	public abstract CardStruct ToStruct(bool client = false);
 
 	public static bool operator ==(Card? first, Card? second)
 	{
@@ -261,10 +170,15 @@ public abstract class Card
 }
 public class ClientCoreDummyCard : Card
 {
-	public ClientCoreDummyCard() : base(GameConstants.CardType.UNKNOWN, GameConstants.PlayerClass.UNKNOWN, "UNINITIALIZED", "UNINITIALIZED", false, false)
+	public ClientCoreDummyCard() : base(GameConstants.CardType.UNKNOWN, GameConstants.PlayerClass.UNKNOWN, "UNINITIALIZED", "UNINITIALIZED")
 	{ }
 	public override void Init()
 	{
+	}
+
+	public override CardStruct ToStruct(bool client = false)
+	{
+		return new CardStruct("DUMMY", "DUMMY", GameConstants.CardType.UNKNOWN, GameConstants.PlayerClass.UNKNOWN, -1, -1, -1, -1, -1, -1, -1, GameConstants.Location.UNKNOWN, -1, false, false, -1, -1);
 	}
 }
 public class ClientCoreDummyToken : Token
@@ -278,27 +192,114 @@ public class ClientCoreDummyToken : Token
 
 public abstract class Creature : Card
 {
+	public readonly int BaseLife, BasePower;
+	public int damageCap, baseDamageCap;
+
+	private int _life, _power;
+	public int Position;
+	public int Life
+	{
+		get => _life;
+		set
+		{
+			if(damageCap > 0 && _life - value > damageCap)
+			{
+				_life -= damageCap;
+			}
+			else
+			{
+				_life = value;
+			}
+			if(_life < 0) _life = 0;
+		}
+	}
+	public int Power
+	{
+		get => _power;
+		set
+		{
+			_power = value;
+			if(_power < 0) _power = 0;
+		}
+	}
+	public Dictionary<Keyword, int> Keywords = new Dictionary<Keyword, int>();
 	public Creature(GameConstants.PlayerClass CardClass,
 		string Name,
 		string Text,
 		int OriginalCost,
 		int OriginalLife,
-		int OriginalPower
-		)
+		int OriginalPower)
 	: base(CardType: GameConstants.CardType.Creature,
 		CardClass: CardClass,
-		Name: Name,
+		Name: Name,	
 		Text: Text,
-		OriginalCost: OriginalCost,
-		OriginalLife: OriginalLife,
-		OriginalPower: OriginalPower,
-		IsClassAbility: false,
-		CanBeClassAbility: false)
-	{ }
+		OriginalCost: OriginalCost)
+	{
+		this.BaseLife = OriginalLife;
+		this.BasePower = OriginalPower;
+		ResetToBaseState();
+	}
+	public int CalculateMovementCost()
+	{
+		return 1 + Keywords.GetValueOrDefault(Keyword.Colossal, 0);
+	}
+	public void RegisterKeyword(Keyword keyword, int amount = 0)
+	{
+		Keywords[keyword] = amount;
+	}
+
+	public override void ResetToBaseState()
+	{
+		base.ResetToBaseState();
+		_life = BaseLife;
+		_power = BasePower;
+		damageCap = baseDamageCap;
+	}
+
+	public override CardStruct ToStruct(bool client = false)
+	{
+		StringBuilder text = new StringBuilder();
+		if(client)
+		{
+			text.Append(Text);
+		}
+		else
+		{
+			if(Keywords.Count > 0)
+			{
+				foreach(var keyword in Keywords)
+				{
+					text.Append($"[{keyword.Key}] ");
+					if(keyword.Value != 0)
+					{
+						if(keyword.Key == Keyword.Colossal)
+						{
+							text.Append('+');
+						}
+						text.Append($"{keyword.Value}");
+					}
+					text.Append('\n');
+				}
+			}
+			text.Append(Regex.Replace(Text, @"(?m:^\[.+\]( \+?\d+)?$)\n?", ""));
+		}
+		return new CardStruct(name: Name,
+			text: text.ToString(),
+			card_type: CardType,
+			card_class: CardClass,
+			uid: uid, life: Life, power: Power, cost: Cost,
+			base_cost: BaseCost, base_life: BaseLife, base_power: BasePower,
+			location: Location, position: Position,
+			is_class_ability: false,
+			can_be_class_ability: false,
+			controller: Controller,
+			base_controller: BaseController);
+	}
 }
 
 public abstract class Spell : Card
 {
+	public bool IsClassAbility, CanBeClassAbility;
 	public Spell(GameConstants.PlayerClass CardClass,
 		string Name,
 		string Text,
@@ -311,38 +312,62 @@ public abstract class Spell : Card
 			Name: Name,
 			Text: Text,
 			OriginalCost: OriginalCost,
-			OriginalLocation: OriginalLocation,
-			IsClassAbility: IsClassAbility,
-			CanBeClassAbility: CanBeClassAbility)
-	{ }
+			OriginalLocation: OriginalLocation)
+	{
+		this.IsClassAbility = IsClassAbility;
+		this.CanBeClassAbility = IsClassAbility;
+	}
+	public override CardStruct ToStruct(bool client = false)
+	{
+		return new CardStruct(name: Name,
+			text: Text,
+			card_type: CardType,
+			card_class: CardClass,
+			uid: uid, life: 0, power: 0, cost: Cost,
+			base_cost: BaseCost, base_life: 0, base_power: 0,
+			location: Location, position: 0,
+			is_class_ability: false,
+			can_be_class_ability: false,
+			controller: Controller,
+			base_controller: BaseController);
+	}
 }
 
 public abstract class Quest : Card
 {
+	private int _progress;
 	public int Progress
 	{
-		get => this.Position;
-		set => this.Position = Math.Min(value, this.Goal);
+		get => _progress;
+		set => _progress = Math.Min(value, this.Goal);
 	}
-	public int Goal
-	{
-		get => this.Cost;
-	}
+	public readonly int Goal;
 
 	public abstract void Reward();
 
 	public Quest(string Name, string Text, int ProgressGoal, GameConstants.PlayerClass CardClass) : base(
 		CardType: GameConstants.CardType.Quest,
 		CardClass: CardClass,
-		IsClassAbility: false,
-		CanBeClassAbility: false,
 		Name: Name,
-		Text: Text,
-		// Position = Progress, Cost = Goal
-		OriginalPositon: 0,
-		OriginalCost: ProgressGoal
-	)
-	{ }
+		Text: Text)
+	{
+		this.Goal = ProgressGoal;
+	}
+
+	public override CardStruct ToStruct(bool client = false)
+	{
+		return new CardStruct(name: Name,
+			text: Text,
+			card_type: CardType,
+			card_class: CardClass,
+			uid: uid, life: 0, power: 0, cost: Cost,
+			base_cost: BaseCost, base_life: 0, base_power: 0,
+			location: Location, position: Progress,
+			is_class_ability: false,
+			can_be_class_ability: false,
+			controller: Controller,
+			base_controller: BaseController);
+	}	
 }
 
 public class Token : Creature
@@ -363,7 +388,7 @@ public class Token : Creature
 	{
 		this.BaseController = OriginalController;
 		RegisterKeyword(Keyword.Token);
-		ClearModifications();
+		ResetToBaseState();
 	}
 	public override void Init()
 	{

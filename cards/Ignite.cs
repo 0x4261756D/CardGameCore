@@ -15,9 +15,9 @@ class Ignite : Spell
 		)
 	{ }
 
-	private Card? forcedTarget = null;
+	private Creature? forcedTarget = null;
 
-	public Ignite(Card forcedTarget) : this()
+	public Ignite(Creature forcedTarget) : this()
 	{
 		this.forcedTarget = forcedTarget;
 	}

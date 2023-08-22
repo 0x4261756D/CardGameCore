@@ -20,7 +20,7 @@ class Replicate : Spell
 
 	private void CastEffect()
 	{
-		Card target = SelectSingleCard(player: Controller, GetFieldUsed(player: Controller), description: "Select card to replicate");
+		Creature target = SelectSingleCard(player: Controller, GetFieldUsed(player: Controller), description: "Select card to replicate");
 		CreateTokenCopyOnField(player: Controller, card: target, source: this);
 	}
 

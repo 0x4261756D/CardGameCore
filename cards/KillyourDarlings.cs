@@ -20,7 +20,7 @@ class KillyourDarlings : Spell
 
 	private void CastEffect()
 	{
-		Card target = SelectSingleCard(Controller, GetFieldUsed(Controller), "Select darling");
+		Creature target = SelectSingleCard(Controller, GetFieldUsed(Controller), "Select darling");
 		int drawAmount = target.BaseCost / 2;
 		int momentumAmount = target.Power;
 		Destroy(target);

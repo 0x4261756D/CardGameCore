@@ -167,7 +167,7 @@ class DuelCore : Core
 	{
 		Card c = (Card)Activator.CreateInstance(type)!;
 		c.BaseController = controller;
-		c.ClearModifications();
+		c.ResetToBaseState();
 		c.Init();
 		c.isInitialized = true;
 		return c;
@@ -382,7 +382,7 @@ class DuelCore : Core
 		{
 			for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 			{
-				Card? card = player.field.GetByPosition(i);
+				Creature? card = player.field.GetByPosition(i);
 				if(card != null && card.Life <= 0)
 				{
 					DestroyImpl(card);
@@ -482,7 +482,7 @@ class DuelCore : Core
 				{
 					foreach(Player player in players)
 					{
-						player.ability.Position = 0;
+						player.abilityUsable = true;
 						player.momentum = momentumBase;
 						player.castCounts.Clear();
 						player.Draw(1);
@@ -535,8 +535,8 @@ class DuelCore : Core
 				{
 					if(markedZone != null)
 					{
-						Card? card0 = players[0].field.GetByPosition(GetMarkedZoneForPlayer(0));
-						Card? card1 = players[1].field.GetByPosition(GetMarkedZoneForPlayer(1));
+						Creature? card0 = players[0].field.GetByPosition(GetMarkedZoneForPlayer(0));
+						Creature? card1 = players[1].field.GetByPosition(GetMarkedZoneForPlayer(1));
 						if(card0 != null)
 						{
 							ProcessTriggers(attackTriggers, card0.uid);
@@ -596,7 +596,7 @@ class DuelCore : Core
 					{
 						for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 						{
-							Card? c = player.field.GetByPosition(i);
+							Creature? c = player.field.GetByPosition(i);
 							if(c != null)
 							{
 								if(c.Keywords.ContainsKey(Keyword.Brittle))
@@ -730,20 +730,20 @@ class DuelCore : Core
 			}, 1 - player);
 		}
 	}
-	public void CreatureChangeLifeImpl(Card target, int amount, Card source)
+	public void CreatureChangeLifeImpl(Creature target, int amount, Card source)
 	{
 		if(amount == 0) return;
 		if(amount < 0 && source.CardType == GameConstants.CardType.Spell)
 		{
 			players[source.Controller].dealtSpellDamages[turn] -= amount;
 		}
-		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (tg) => tg.Life += amount, referrer: target));
+		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => target.Life += amount, referrer: target));
 		EvaluateLingeringEffects();
 	}
-	public void CreatureChangePowerImpl(Card target, int amount, Card source)
+	public void CreatureChangePowerImpl(Creature target, int amount, Card source)
 	{
 		if(amount == 0) return;
-		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (tg) => tg.Power += amount, referrer: target));
+		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => target.Power += amount, referrer: target));
 		EvaluateLingeringEffects();
 	}
 
@@ -999,7 +999,7 @@ class DuelCore : Core
 			break;
 			case GameConstants.Location.Quest:
 			{
-				if(players[player].quest.Position >= players[player].quest.Cost)
+				if(players[player].quest.Progress >= players[player].quest.Goal)
 				{
 					throw new NotImplementedException($"GetActions for ignition quests");
 				}
@@ -1007,7 +1007,7 @@ class DuelCore : Core
 			break;
 			case GameConstants.Location.Ability:
 			{
-				if(players[player].ability.Position == 0 && players[player].momentum > 0 && castTriggers.ContainsKey(players[player].ability.uid))
+				if(players[player].abilityUsable && players[player].momentum > 0 && castTriggers.ContainsKey(players[player].ability.uid))
 				{
 					Card?[] shownCards = new Card?[2];
 					shownCards[player] = players[player].ability;
@@ -1055,14 +1055,14 @@ class DuelCore : Core
 								}
 							}
 						}
-						players[player].ability.Position = 1;
+						players[player].abilityUsable = false;
 					}
 				}
 			}
 			break;
 			case GameConstants.Location.Field:
 			{
-				Card card = players[player].field.GetByUID(uid);
+				Creature card = players[player].field.GetByUID(uid);
 				if(option == "Move")
 				{
 					if(players[player].field.CanMove(card.Position, players[player].momentum))
@@ -1083,7 +1083,7 @@ class DuelCore : Core
 		}
 	}
 
-	public void MoveImpl(Card card, int zone)
+	public void MoveImpl(Creature card, int zone)
 	{
 		players[card.Controller].field.Move(card.Position, zone);
 		SendFieldUpdates();
@@ -1142,7 +1142,7 @@ class DuelCore : Core
 			break;
 			case GameConstants.Location.Ability:
 			{
-				if(players[player].ability.Position == 0 && players[player].momentum > 0 && castTriggers.ContainsKey(players[player].ability.uid))
+				if(players[player].abilityUsable && players[player].momentum > 0 && castTriggers.ContainsKey(players[player].ability.uid))
 				{
 					options.Add("Use");
 				}
@@ -1150,7 +1150,7 @@ class DuelCore : Core
 			break;
 			case GameConstants.Location.Field:
 			{
-				Card card = players[player].field.GetByUID(uid);
+				Creature card = players[player].field.GetByUID(uid);
 				if(players[player].field.CanMove(card.Position, players[player].momentum))
 				{
 					options.Add("Move");
@@ -1463,7 +1463,7 @@ class DuelCore : Core
 
 	public void ResetAbilityImpl(int player)
 	{
-		players[player].ability.Position = 0;
+		players[player].abilityUsable = true;
 	}
 
 	public void RegisterCastTriggerImpl(CastTrigger trigger, Card referrer)
@@ -1609,11 +1609,11 @@ class DuelCore : Core
 		}
 		tokenCreationTriggers[referrer.uid].Add(trigger);
 	}
-	public Card?[] GetFieldImpl(int player)
+	public Creature?[] GetFieldImpl(int player)
 	{
 		return players[player].field.GetAll();
 	}
-	public Card[] GetFieldUsedImpl(int player)
+	public Creature[] GetFieldUsedImpl(int player)
 	{
 		return players[player].field.GetUsed();
 	}
@@ -1688,7 +1688,7 @@ class DuelCore : Core
 			}
 			break;
 			case GameConstants.Location.Field:
-				players[card.Controller].field.Remove(card);
+				players[card.Controller].field.Remove((Creature)card);
 				break;
 			case GameConstants.Location.Grave:
 				players[card.Controller].grave.Remove(card);
@@ -1711,7 +1711,7 @@ class DuelCore : Core
 	{
 		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (target) => target.Controller = 1 - target.Controller, referrer: card, influenceLocation: influenceLocation));
 	}
-	public void DestroyImpl(Card card)
+	public void DestroyImpl(Creature card)
 	{
 		switch(card.Location)
 		{
@@ -1818,7 +1818,7 @@ class DuelCore : Core
 				players[card.Controller].hand.Remove(card);
 				break;
 			case GameConstants.Location.Field:
-				players[card.Controller].field.Remove(card);
+				players[card.Controller].field.Remove((Creature)card);
 				break;
 			case GameConstants.Location.Grave:
 				players[card.Controller].grave.Remove(card);
@@ -1999,11 +1999,11 @@ class DuelCore : Core
 		);
 		return token;
 	}
-	public void CreateTokenCopyOnFieldImpl(int player, Card card, Card source)
+	public void CreateTokenCopyOnFieldImpl(int player, Creature card, Card source)
 	{
 		MoveToFieldImpl(player, player, CreateTokenCopyImpl(player, card), source);
 	}
-	public Creature CreateTokenCopyImpl(int player, Card card)
+	public Creature CreateTokenCopyImpl(int player, Creature card)
 	{
 		if(!players[player].field.HasEmpty())
 		{

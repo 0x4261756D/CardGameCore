@@ -20,19 +20,20 @@ class Scorch : Spell
 
 	public void CastEffect()
 	{
-		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Target creature to scorch");
+		Creature target = SelectSingleCard(player: Controller, cards: GetBothFieldsUsed(), description: "Target creature to scorch");
 		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: ScorchEffect, referrer: target));
 	}
 
-	public void ScorchEffect(Card target)
+	public void ScorchEffect(Card t)
 	{
+		Creature target = (Creature)t;
 		target.Power = 0;
 		target.RegisterKeyword(Keyword.Decaying);
 	}
 
 	private bool CastCondition()
 	{
-		return GetForBoth(GetFieldUsed).Length > 0;
+		return GetBothFieldsUsed().Length > 0;
 	}
 
 

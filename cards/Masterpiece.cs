@@ -20,7 +20,7 @@ class Masterpiece : Spell
 
 	private void CastEffect()
 	{
-		Card target = SelectSingleCard(Controller, FilterValid(cards: GetGrave(Controller), isValid: (card) => card.CardType == CardType.Creature), "Select masterpiece");
+		Creature target = (Creature)SelectSingleCard(Controller, FilterValid(cards: GetGrave(Controller), isValid: (card) => card.CardType == CardType.Creature), "Select masterpiece");
 		while(HasEmpty(GetField(Controller)) && AskYesNo(player: Controller, question: "Create another?"))
 		{
 			Creature token = CreateTokenCopy(player: Controller, target);

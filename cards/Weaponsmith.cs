@@ -21,7 +21,7 @@ class Weaponsmith : Creature
 
 	private void BuffEffect(Card _)
 	{
-		foreach(Card? card in GetField(this.Controller))
+		foreach(Creature? card in GetField(this.Controller))
 		{
 			if(card != null && card != this)
 			{

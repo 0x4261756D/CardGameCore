@@ -26,14 +26,14 @@ class OverwhelmingMight : Spell
 
 	private bool CastCondition()
 	{
-		return HasUsed(GetBothWholeFields());
+		return HasUsed(GetBothFieldsWhole());
 	}
 
 	private void CastEffect()
 	{
-		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Select target to damage");
+		Creature target = SelectSingleCard(player: Controller, cards: GetBothFieldsUsed(), description: "Select target to damage");
 		CreatureChangeLife(target, amount: -2, source: this);
-		if(GetDiscardable(Controller, ignore: this).Length > 0 && GetForBoth(GetFieldUsed).Length > 0 && AskYesNo(player: Controller, question: "Discard a card to recast?"))
+		if(GetDiscardable(Controller, ignore: this).Length > 0 && GetBothFieldsUsed().Length > 0 && AskYesNo(player: Controller, question: "Discard a card to recast?"))
 		{
 			DiscardAmount(player: Controller, amount: 1);
 			Cast(player: Controller, card: this);

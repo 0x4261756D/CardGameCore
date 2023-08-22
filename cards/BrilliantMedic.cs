@@ -22,14 +22,14 @@ class BrilliantMedic : Creature
 
 	public void HealEffect()
 	{
-		Card[] fields = FilterValid(cards: GetForBoth(Card.GetFieldUsed), isValid: (card) => card.Life < card.BaseLife);
+		Creature[] fields = FilterValid(cards: GetBothFieldsUsed(), isValid: (card) => card.Life < card.BaseLife);
 		if(fields.Length == 0 || Card.AskYesNo(player: Controller, question: "Heal a player?"))
 		{
 			PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Heal yourself?") ? Controller : 1 - Controller, amount: 4, source: this);
 		}
 		else
 		{
-			Card target = SelectSingleCard(player: Controller, cards: fields, description: "Select target to heal");
+			Creature target = SelectSingleCard(player: Controller, cards: fields, description: "Select target to heal");
 			CreatureChangeLife(target: target, Math.Min(4, target.BaseLife - target.Life), source: this);
 		}
 	}

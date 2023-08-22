@@ -22,12 +22,12 @@ class ApprenticeAlchemist : Creature
 
 	private bool CastCondition()
 	{
-		return HasUsed(GetBothWholeFields());
+		return HasUsed(GetBothFieldsWhole());
 	}
 
 	private void CastEffect()
 	{
-		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Select target to \"accidentally\" destroy");
+		Creature target = SelectSingleCard(player: Controller, cards: GetBothFieldsUsed(), description: "Select target to \"accidentally\" destroy");
 		int controller = target.Controller;
 		Destroy(target);
 		CreateTokenOnField(player: controller, power: target.BaseLife, life: target.BasePower, name: "Accident", source: this);

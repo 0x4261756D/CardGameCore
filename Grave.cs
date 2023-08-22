@@ -17,12 +17,12 @@ class Grave
 
 	internal void Add(Card card)
 	{
-		if(card.Keywords.ContainsKey(Keyword.Token))
+		if(card.CardType == GameConstants.CardType.Creature && ((Creature)card).Keywords.ContainsKey(Keyword.Token))
 		{
 			return;
 		}
 		card.Location = GameConstants.Location.Grave;
-		card.ClearModifications();
+		card.ResetToBaseState();
 		cards.Add(card);
 	}
 

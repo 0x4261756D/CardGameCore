@@ -31,10 +31,10 @@ class BrittleBehemoth : Creature
 		}
 	}
 
-	public void BoostEffect(Card target)
+	private void BoostEffect(Card target)
 	{
-		target.Life += 2;
-		target.Power += 2;
+		((Creature)target).Life += 2;
+		((Creature)target).Power += 2;
 	}
 
 	public void ResetBrittleEffect()
@@ -44,16 +44,16 @@ class BrittleBehemoth : Creature
 
 	public void RevelationEffect()
 	{
-		Card target = SelectSingleCard(player: Controller, cards: FilterValid(cards: GetForBoth(GetFieldUsed), isValid: Filter), description: "Select creature to frighten");
+		Creature target = SelectSingleCard(player: Controller, cards: FilterValid(cards: GetBothFieldsUsed(), isValid: Filter), description: "Select creature to frighten");
 		target.RegisterKeyword(Keyword.Immovable);
 		RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: () => target.Keywords.Remove(Keyword.Immovable), state: State.TurnEnd, influenceLocation: Location.ALL, oneshot: true), referrer: target);
 	}
 
 	public bool RevelationCondition()
 	{
-		return ContainsValid(cards: GetForBoth(GetFieldUsed), isValid: Filter);
+		return ContainsValid(cards: GetBothFieldsUsed(), isValid: Filter);
 	}
 
-	public bool Filter(Card card) => card.Power < 7;
+	public bool Filter(Creature card) => card.Power < 7;
 
 }

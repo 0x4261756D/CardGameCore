@@ -30,8 +30,9 @@ class PartScavenger : Creature
 		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: BoostEffect, referrer: this));
 	}
 
-	private void BoostEffect(Card target)
+	private void BoostEffect(Card t)
 	{
+		Creature target = (Creature)t;
 		target.Life += 2;
 		target.Power += 2;
 	}

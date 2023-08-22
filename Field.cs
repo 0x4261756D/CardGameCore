@@ -6,7 +6,7 @@ namespace CardGameCore;
 
 class Field
 {
-	private Card?[] cards = new Card?[GameConstants.FIELD_SIZE];
+	private Creature?[] cards = new Creature?[GameConstants.FIELD_SIZE];
 	public Field()
 	{
 
@@ -17,16 +17,16 @@ class Field
 		return cards.ToList().ConvertAll(x => x?.ToStruct()).ToArray();
 	}
 
-	internal Card?[] GetAll()
+	internal Creature?[] GetAll()
 	{
 		return cards;
 	}
-	internal Card[] GetUsed()
+	internal Creature[] GetUsed()
 	{
 		return cards.Where(x => x != null).ToArray()!;
 	}
 
-	internal void Add(Card card, int zone)
+	internal void Add(Creature card, int zone)
 	{
 		if(cards[zone] != null)
 		{
@@ -40,7 +40,7 @@ class Field
 	internal bool[] GetMovementOptions(int position, int momentum)
 	{
 		bool[] ret = new bool[GameConstants.FIELD_SIZE];
-		Card? card = cards[position];
+		Creature? card = cards[position];
 		if(card == null)
 		{
 			Functions.Log($"Called GetMovementOptions for an empty position", severity: Functions.LogSeverity.Warning);
@@ -71,9 +71,9 @@ class Field
 
 	internal void ClearCardModifications()
 	{
-		foreach(Card? card in cards)
+		foreach(Creature? card in cards)
 		{
-			card?.ClearModifications();
+			card?.ResetToBaseState();
 		}
 	}
 
@@ -82,9 +82,9 @@ class Field
 		return cards.Any(x => x == null);
 	}
 
-	internal Card GetByUID(int uid)
+	internal Creature GetByUID(int uid)
 	{
-		foreach(Card? card in cards)
+		foreach(Creature? card in cards)
 		{
 			if(card?.uid == uid)
 			{
@@ -93,7 +93,7 @@ class Field
 		}
 		throw new Exception($"Could not find card with UID {uid} on the field");
 	}
-	internal Card? GetByPosition(int position)
+	internal Creature? GetByPosition(int position)
 	{
 		if(position < 0 || position >= cards.Length)
 		{
@@ -104,7 +104,7 @@ class Field
 
 	internal bool CanMove(int position, int momentum)
 	{
-		Card? card = cards[position];
+		Creature? card = cards[position];
 		if(card == null)
 		{
 			Functions.Log($"Called CanMove for an empty position", severity: Functions.LogSeverity.Warning);
@@ -135,7 +135,7 @@ class Field
 
 	internal void Move(int position, int zone)
 	{
-		Card? card = cards[position];
+		Creature? card = cards[position];
 		if(card == null)
 		{
 			Functions.Log($"Called Move for an empty position", severity: Functions.LogSeverity.Warning);
@@ -150,7 +150,7 @@ class Field
 		cards[zone] = card;
 		card.Position = zone;
 	}
-	internal void Remove(Card card)
+	internal void Remove(Creature card)
 	{
 		for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 		{

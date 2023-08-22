@@ -31,13 +31,13 @@ class SugomaGodoftheAbyss : Creature
 	public void ActivatedEffect()
 	{
 		DiscardAmount(player: Controller, amount: 1);
-		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Select card to destroy");
+		Creature target = SelectSingleCard(player: Controller, cards: GetBothFieldsUsed(), description: "Select card to destroy");
 		Destroy(target);
 	}
 
 	public bool ActivatedCondition()
 	{
-		return HasUsed(GetBothWholeFields()) && GetDiscardable(Controller, ignore: null).Length > 0;
+		return HasUsed(GetBothFieldsWhole()) && GetDiscardable(Controller, ignore: null).Length > 0;
 	}
 
 	public override bool CanBeDiscarded()

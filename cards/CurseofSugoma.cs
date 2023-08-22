@@ -21,23 +21,24 @@ class CurseofSugoma : Spell
 
 	public void DiscardEffect()
 	{
-		SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Select card to inflict the Curse of Sugoma upon").RegisterKeyword(Keyword.Decaying);
+		SelectSingleCard(player: Controller, cards: GetBothFieldsUsed(), description: "Select card to inflict the Curse of Sugoma upon").RegisterKeyword(Keyword.Decaying);
 	}
 	public bool DiscardCondition()
 	{
-		return HasUsed(GetBothWholeFields());
+		return HasUsed(GetBothFieldsWhole());
 	}
 
 	public void CastEffect()
 	{
-		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Target creature to curse");
+		Creature target = SelectSingleCard(player: Controller, cards: GetBothFieldsUsed(), description: "Target creature to curse");
 		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: CurseEffect, referrer: target));
 	}
 
 	public void CurseEffect(Card target)
 	{
-		target.Power += 2;
-		target.Life -= 1;
+		Creature t = (Creature)target;
+		t.Power += 2;
+		t.Life -= 1;
 	}
 
 	private bool CastCondition()

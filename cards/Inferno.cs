@@ -20,7 +20,7 @@ class Inferno : Spell
 
 	private void CastEffect()
 	{
-		foreach(Card card in GetForBoth(GetFieldUsed))
+		foreach(Creature card in GetBothFieldsUsed())
 		{
 			Cast(player: Controller, card: new Ignite(forcedTarget: card) { BaseController = this.Controller, Controller = this.Controller });
 		}

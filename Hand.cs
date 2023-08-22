@@ -56,7 +56,7 @@ class Hand
 	{
 		foreach(Card card in cards)
 		{
-			card.ClearModifications();
+			card.ResetToBaseState();
 		}
 	}
 }

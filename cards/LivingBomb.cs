@@ -19,17 +19,17 @@ class LivingBomb : Spell
 
 	private bool CastCondition()
 	{
-		return HasUsed(GetBothWholeFields());
+		return HasUsed(GetBothFieldsWhole());
 	}
 
 	private void CastEffect()
 	{
-		Card target = SelectSingleCard(player: Controller, cards: GetForBoth(GetFieldUsed), description: "Select target");
+		Creature target = SelectSingleCard(player: Controller, cards: GetBothFieldsUsed(), description: "Select target");
 		RegisterDeathTrigger(trigger: new TargetingTrigger(effect: ExplosionEffect), referrer: target);
 	}
 
 	private void ExplosionEffect(Card target)
 	{
-		ChangeLifeOfAnyTarget(player: target.Controller, amount: -target.BaseLife, source: target);
+		ChangeLifeOfAnyTarget(player: target.Controller, amount: -((Creature)target).BaseLife, source: target);
 	}
 }

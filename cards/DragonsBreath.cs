@@ -20,7 +20,7 @@ class DragonsBreath : Spell
 
 	public void CastEffect()
 	{
-		foreach(Card card in GetForBoth(GetFieldUsed))
+		foreach(Creature card in GetBothFieldsUsed())
 		{
 			card.RegisterKeyword(Keyword.Decaying);
 			CreatureChangePower(target: card, amount: -2, source: this);
@@ -29,7 +29,7 @@ class DragonsBreath : Spell
 
 	private bool CastCondition()
 	{
-		return GetForBoth(GetFieldUsed).Length > 0;
+		return GetBothFieldsUsed().Length > 0;
 	}
 
 }

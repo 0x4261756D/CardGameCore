@@ -26,7 +26,7 @@ class GatherMaterial : Spell
 
 	private bool Filter(Card card)
 	{
-		return card.Keywords.ContainsKey(Keyword.Brittle);
+		return ((Creature)card).Keywords.ContainsKey(Keyword.Brittle);
 	}
 
 	private void RevelationEffect()

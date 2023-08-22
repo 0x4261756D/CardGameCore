@@ -36,8 +36,9 @@ class ImmortalPhoenix : Creature
 		}
 	}
 
-	private void BuffEffect(Card target)
+	private void BuffEffect(Card t)
 	{
+		Creature target = (Creature)t;
 		target.Life++;
 		target.Power++;
 	}

@@ -20,11 +20,11 @@ class FlashingFire : Spell
 
 	private void CastEffect()
 	{
-		Card[] fields = GetForBoth(GetFieldUsed);
+		Creature[] fields = GetBothFieldsUsed();
 		int damage = -GetCastCount(player: Controller, name: this.Name);
 		if(fields.Length > 0 && AskYesNo(player: Controller, question: "Damage creature?"))
 		{
-			Card target = SelectSingleCard(player: Controller, cards: fields, description: "Select target to damage");
+			Creature target = SelectSingleCard(player: Controller, cards: fields, description: "Select target to damage");
 			CreatureChangeLife(target, amount: damage, source: this);
 			if(!target.Location.HasFlag(Location.Field))
 			{

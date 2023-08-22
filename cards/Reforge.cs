@@ -20,7 +20,7 @@ class Reforge : Spell
 
 	private void CastEffect()
 	{
-		Card target = SelectSingleCard(player: Controller, FilterValid(cards: GetFieldUsed(player: Controller), isValid: (card) => !card.Keywords.ContainsKey(Keyword.Token)), description: "Select card to reforge");
+		Creature target = SelectSingleCard(player: Controller, FilterValid(cards: GetFieldUsed(player: Controller), isValid: (card) => !card.Keywords.ContainsKey(Keyword.Token)), description: "Select card to reforge");
 		Creature token = CreateTokenCopy(player: Controller, card: target);
 		MoveToHand(player: Controller, card: target);
 		MoveToField(choosingPlayer: Controller, targetPlayer: Controller, card: token, source: this);

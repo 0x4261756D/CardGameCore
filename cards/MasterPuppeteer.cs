@@ -22,14 +22,14 @@ class MasterPuppeteer : Creature
 
 	private void MoveEffect()
 	{
-		Card target = SelectSingleCard(player: Controller, cards: FilterValid(GetForBoth(GetFieldUsed), FilterMovable), "Select target to move");
+		Creature target = SelectSingleCard(player: Controller, cards: FilterValid(GetBothFieldsUsed(), FilterMovable), "Select target to move");
 		MoveToField(choosingPlayer: Controller, targetPlayer: target.Controller, card: (Creature)target, source: this);
 	}
 
-	private bool FilterMovable(Card card) => !card.Keywords.ContainsKey(Keyword.Immovable);
+	private bool FilterMovable(Card card) => !((Creature)card).Keywords.ContainsKey(Keyword.Immovable);
 
 	private bool MoveCondition()
 	{
-		return ContainsValid(cards: GetForBoth(GetFieldUsed), isValid: FilterMovable);
+		return ContainsValid(cards: GetBothFieldsUsed(), isValid: FilterMovable);
 	}
 }

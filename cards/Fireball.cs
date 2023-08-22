@@ -29,8 +29,9 @@ class Fireball : Spell
 		return ContainsValid(GetFieldUsed(1 - Controller), DamagedFilter);
 	}
 
-	private bool DamagedFilter(Card card)
+	private bool DamagedFilter(Card c)
 	{
+		Creature card = (Creature)c;
 		return card.BaseLife != card.Life;
 	}
 

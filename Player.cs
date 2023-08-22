@@ -13,6 +13,7 @@ class Player
 	public int number;
 	public string name;
 	public bool passed;
+	public bool abilityUsable = true;
 	public GameConstants.PlayerClass playerClass;
 	public Card ability;
 	public Quest quest;

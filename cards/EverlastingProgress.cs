@@ -19,7 +19,7 @@ class EverlastingProgress : Quest
 
 	private bool ProgressCondition(Card destroyedCard)
 	{
-		return destroyedCard.Controller == Controller && destroyedCard.Keywords.ContainsKey(Keyword.Brittle);
+		return destroyedCard.Controller == Controller && ((Creature)destroyedCard).Keywords.ContainsKey(Keyword.Brittle);
 	}
 
 	private void ProgressEffect(Card destroyedCard)
@@ -34,7 +34,7 @@ class EverlastingProgress : Quest
 
 	private void RewardEffect(Card target)
 	{
-		foreach(Card card in GetFieldUsed(Controller))
+		foreach(Creature card in GetFieldUsed(Controller))
 		{
 			if(card.Keywords.Remove(Keyword.Brittle))
 			{
@@ -43,8 +43,9 @@ class EverlastingProgress : Quest
 		}
 	}
 
-	private void BuffEffect(Card target)
+	private void BuffEffect(Card t)
 	{
+		Creature target = (Creature)t;
 		target.Life += 2;
 		target.Power++;
 	}
