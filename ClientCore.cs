@@ -109,8 +109,13 @@ class ClientCore : Core
 					{
 						return;
 					}
-					CardGameUtils.Structs.CardStruct[] list = DeserializeJson<ServerPackets.AdditionalCardsResponse>(response).cards;
-					foreach(CardGameUtils.Structs.CardStruct card in list)
+					ServerPackets.AdditionalCardsResponse data = DeserializeJson<ServerPackets.AdditionalCardsResponse>(response);
+					if(data.time < Program.versionTime)
+					{
+						Log($"Did not apply additional cards as they were older (client: {Program.versionTime}, server: {data.time})");
+						return;
+					}
+					foreach(CardGameUtils.Structs.CardStruct card in data.cards)
 					{
 						cards.Remove(card);
 						cards.Add(card);

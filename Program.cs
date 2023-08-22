@@ -13,10 +13,12 @@ class Program
 	public static CoreConfig config = new CoreConfig(-1, CoreConfig.CoreMode.Client);
 	public static Replay? replay;
 	public static int seed;
+	public static DateTime versionTime;
 	public static void Main(string[] args)
 	{
 		seed = new Random().Next();
 		string? configPath = null;
+		versionTime = GenerateVersionTime();
 		for(int i = 0; i < args.Length; i++)
 		{
 			string[] parts = args[i].Split('=');
@@ -38,7 +40,7 @@ class Program
 						break;
 					case "--additional_cards_path":
 						GenerateAdditionalCards(path);
-						Log("Done generating new additional cards");
+						Log($"Done generating new additional cards referring to {versionTime}");
 						return;
 				}
 			}
@@ -174,20 +176,35 @@ class Program
 		}
 	}
 
+	private static DateTime GenerateVersionTime()
+	{
+		foreach(string file in Directory.EnumerateFiles(baseDir))
+		{
+			if(Path.GetFileName(file) == "CardGameCore.dll")
+			{
+				return File.GetCreationTime(file);
+			}
+		}
+		throw new Exception($"Could not find executable in {baseDir} to generate version hash");
+	}
+
 	public static void GenerateAdditionalCards(string path)
 	{
-		if(!File.Exists(path) || File.GetLastWriteTime(path) < Directory.GetLastWriteTime(baseDir))
+		DateTime? time = JsonSerializer.Deserialize<NetworkingStructs.ServerPackets.AdditionalCardsResponse>(File.ReadAllText(path), NetworkingConstants.jsonIncludeOption)?.time;
+		Log($"Additional card times: (own: {Program.versionTime}, additional: {time})");
+		if(!File.Exists(path) || time < Program.versionTime)
 		{
-			Log($"Creating a new additional cards file ({File.GetLastWriteTime(path)} is before {Directory.GetLastWriteTime(baseDir)})");
+			Log("Generating new additional cards");
 			List<CardStruct> cards = new List<CardStruct>();
 			foreach(Type card in Assembly.GetExecutingAssembly().GetTypes().Where(Program.IsCardSubclass))
 			{
 				Card c = (Card)Activator.CreateInstance(card)!;
-				cards.Add(c.ToStruct(true));
+				cards.Add(c.ToStruct(client: true));
 			}
 			File.WriteAllText(path, JsonSerializer.Serialize(new NetworkingStructs.ServerPackets.AdditionalCardsResponse
 			{
-				cards = cards.ToArray()
+				cards = cards.ToArray(),
+				time = versionTime,
 			}, NetworkingConstants.jsonIncludeOption));
 		}
 	}
