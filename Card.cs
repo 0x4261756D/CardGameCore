@@ -70,7 +70,7 @@ public abstract class Card
 	public static RegisterGenericDeathTriggerDelegate RegisterGenericDeathTrigger = (_, _) => { };
 	public static RegisterDealsDamageTriggerDelegate RegisterDealsDamageTrigger = (_, _) => { };
 	public static RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
-	public static RegisterTemporaryLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => {};
+	public static RegisterTemporaryLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => { };
 	public static RegisterActivatedEffectDelegate RegisterActivatedEffect = (_) => { };
 	public static GetCardsInLocationDelegate GetGrave = (_) => new Card[0];
 	public static GetWholeFieldDelegate GetField = (_) => new Creature?[0];
@@ -231,7 +231,7 @@ public abstract class Creature : Card
 		int OriginalPower)
 	: base(CardType: GameConstants.CardType.Creature,
 		CardClass: CardClass,
-		Name: Name,	
+		Name: Name,
 		Text: Text,
 		OriginalCost: OriginalCost)
 	{
@@ -367,7 +367,7 @@ public abstract class Quest : Card
 			can_be_class_ability: false,
 			controller: Controller,
 			base_controller: BaseController);
-	}	
+	}
 }
 
 public class Token : Creature
