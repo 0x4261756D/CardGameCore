@@ -16,7 +16,7 @@ class TreasureChest : Creature
 
 	public override void Init()
 	{
-		RegisterDeathTrigger(trigger: new TargetingTrigger(effect: DeathEffect), referrer: this);
+		RegisterDeathTrigger(trigger: new CreatureTargetingTrigger(effect: DeathEffect), referrer: this);
 		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect), referrer: this);
 	}
 
@@ -25,7 +25,7 @@ class TreasureChest : Creature
 		Reveal(player: Controller, damage: 2);
 	}
 
-	public void DeathEffect(Card _)
+	public void DeathEffect(Creature _)
 	{
 		Draw(player: Controller, amount: 2);
 	}

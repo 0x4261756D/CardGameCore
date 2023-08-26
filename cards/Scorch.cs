@@ -21,12 +21,11 @@ class Scorch : Spell
 	public void CastEffect()
 	{
 		Creature target = SelectSingleCard(player: Controller, cards: GetBothFieldsUsed(), description: "Target creature to scorch");
-		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: ScorchEffect, referrer: target));
+		RegisterTemporaryLingeringEffect(info: LingeringEffectInfo.Create(effect: ScorchEffect, referrer: target));
 	}
 
-	public void ScorchEffect(Card t)
+	public void ScorchEffect(Creature target)
 	{
-		Creature target = (Creature)t;
 		target.Power = 0;
 		target.RegisterKeyword(Keyword.Decaying);
 	}

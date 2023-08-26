@@ -17,7 +17,7 @@ class MechanicalTitan : Creature
 	public override void Init()
 	{
 		RegisterKeyword(Keyword.Colossal, 1);
-		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: CostReductionEffect, referrer: this, influenceLocation: Location.Hand));
+		RegisterLingeringEffect(info: LingeringEffectInfo.Create(effect: CostReductionEffect, referrer: this, influenceLocation: Location.Hand));
 		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: GainLifeEffect), referrer: this);
 	}
 
@@ -26,7 +26,7 @@ class MechanicalTitan : Creature
 		PlayerChangeLife(player: Controller, amount: 3, source: this);
 	}
 
-	private void CostReductionEffect(Card target)
+	private void CostReductionEffect(Creature target)
 	{
 		this.Cost -= GetDeathCountXTurnsAgo(player: Controller, turns: 1);
 	}

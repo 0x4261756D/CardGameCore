@@ -42,8 +42,8 @@ class DuelCore : Core
 	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
 	private Dictionary<int, List<Trigger>> victoriousTriggers = new Dictionary<int, List<Trigger>>();
 	private Dictionary<int, List<Trigger>> attackTriggers = new Dictionary<int, List<Trigger>>();
-	private Dictionary<int, List<TargetingTrigger>> deathTriggers = new Dictionary<int, List<TargetingTrigger>>();
-	private Dictionary<int, List<GenericDeathTrigger>> genericDeathTriggers = new Dictionary<int, List<GenericDeathTrigger>>();
+	private Dictionary<int, List<CreatureTargetingTrigger>> deathTriggers = new Dictionary<int, List<CreatureTargetingTrigger>>();
+	private Dictionary<int, List<CreatureTargetingTrigger>> genericDeathTriggers = new Dictionary<int, List<CreatureTargetingTrigger>>();
 	private Dictionary<int, List<DiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<DiscardTrigger>>();
 	private Dictionary<int, List<DiscardTrigger>> discardTriggers = new Dictionary<int, List<DiscardTrigger>>();
 	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new Dictionary<int, List<StateReachedTrigger>>();
@@ -404,6 +404,19 @@ class DuelCore : Core
 			}
 		}
 	}
+	private void ProcessCreatureTargetingTriggers(Dictionary<int, List<CreatureTargetingTrigger>> triggers, Creature target)
+	{
+		if(triggers.ContainsKey(target.uid))
+		{
+			foreach(CreatureTargetingTrigger trigger in triggers[target.uid])
+			{
+				if(trigger.condition(target))
+				{
+					trigger.effect(target);
+				}
+			}
+		}
+	}
 
 	public void ProcessTriggers<T>(Dictionary<int, List<T>> triggers, int uid) where T : Trigger
 	{
@@ -605,7 +618,7 @@ class DuelCore : Core
 								}
 								if(c.Keywords.ContainsKey(Keyword.Decaying))
 								{
-									RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => c.Life -= 1, referrer: c));
+									RegisterTemporaryLingeringEffectImpl(info: LingeringEffectInfo.Create(effect: (tg) => tg.Life -= 1, referrer: c));
 									EvaluateLingeringEffects();
 									if(c.Life == 0 && c.Location.HasFlag(GameConstants.Location.Field))
 									{
@@ -737,13 +750,13 @@ class DuelCore : Core
 		{
 			players[source.Controller].dealtSpellDamages[turn] -= amount;
 		}
-		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => target.Life += amount, referrer: target));
+		RegisterTemporaryLingeringEffectImpl(info: LingeringEffectInfo.Create(effect: (tg) => tg.Life += amount, referrer: target));
 		EvaluateLingeringEffects();
 	}
 	public void CreatureChangePowerImpl(Creature target, int amount, Card source)
 	{
 		if(amount == 0) return;
-		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (_) => target.Power += amount, referrer: target));
+		RegisterTemporaryLingeringEffectImpl(info: LingeringEffectInfo.Create(effect: (tg) => tg.Power += amount, referrer: target));
 		EvaluateLingeringEffects();
 	}
 
@@ -1326,7 +1339,7 @@ class DuelCore : Core
 						}
 					}
 				}
-				foreach(Card possiblyTriggeringCard in p.field.GetUsed())
+				foreach(Creature possiblyTriggeringCard in p.field.GetUsed())
 				{
 					if(genericEnterFieldTriggers.ContainsKey(possiblyTriggeringCard.uid))
 					{
@@ -1365,7 +1378,7 @@ class DuelCore : Core
 							}
 						}
 					}
-					foreach(Card possiblyTriggeringCard in p.field.GetUsed())
+					foreach(Creature possiblyTriggeringCard in p.field.GetUsed())
 					{
 						if(tokenCreationTriggers.ContainsKey(possiblyTriggeringCard.uid))
 						{
@@ -1585,19 +1598,19 @@ class DuelCore : Core
 		}
 		attackTriggers[referrer.uid].Add(info);
 	}
-	public void RegisterDeathTriggerImpl(TargetingTrigger info, Card referrer)
+	public void RegisterDeathTriggerImpl(CreatureTargetingTrigger info, Card referrer)
 	{
 		if(!deathTriggers.ContainsKey(referrer.uid))
 		{
-			deathTriggers[referrer.uid] = new List<TargetingTrigger>();
+			deathTriggers[referrer.uid] = new List<CreatureTargetingTrigger>();
 		}
 		deathTriggers[referrer.uid].Add(info);
 	}
-	public void RegisterGenericDeathTriggerImpl(GenericDeathTrigger info, Card referrer)
+	public void RegisterGenericDeathTriggerImpl(CreatureTargetingTrigger info, Card referrer)
 	{
 		if(!genericDeathTriggers.ContainsKey(referrer.uid))
 		{
-			genericDeathTriggers[referrer.uid] = new List<GenericDeathTrigger>();
+			genericDeathTriggers[referrer.uid] = new List<CreatureTargetingTrigger>();
 		}
 		genericDeathTriggers[referrer.uid].Add(info);
 	}
@@ -1709,7 +1722,7 @@ class DuelCore : Core
 	}
 	private void RegisterControllerChange(Card card, GameConstants.Location influenceLocation = ~(GameConstants.Location.Grave | GameConstants.Location.Deck))
 	{
-		RegisterTemporaryLingeringEffectImpl(info: new LingeringEffectInfo(effect: (target) => target.Controller = 1 - target.Controller, referrer: card, influenceLocation: influenceLocation));
+		RegisterTemporaryLingeringEffectImpl(info: LingeringEffectInfo.Create(effect: (target) => target.Controller = 1 - target.Controller, referrer: card, influenceLocation: influenceLocation));
 	}
 	public void DestroyImpl(Creature card)
 	{
@@ -1734,7 +1747,7 @@ class DuelCore : Core
 			players[card.BaseController].brittleDeathCounts[turn]++;
 		}
 		players[card.BaseController].deathCounts[turn]++;
-		ProcessTargetingTriggers(deathTriggers, card);
+		ProcessCreatureTargetingTriggers(deathTriggers, card);
 		SendFieldUpdates();
 		foreach(Player player in players)
 		{
@@ -1742,7 +1755,7 @@ class DuelCore : Core
 			{
 				if(genericDeathTriggers.ContainsKey(fieldCard.uid))
 				{
-					foreach(GenericDeathTrigger trigger in genericDeathTriggers[fieldCard.uid])
+					foreach(CreatureTargetingTrigger trigger in genericDeathTriggers[fieldCard.uid])
 					{
 						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: card))
 						{
@@ -1755,7 +1768,7 @@ class DuelCore : Core
 			{
 				if(genericDeathTriggers.ContainsKey(graveCard.uid))
 				{
-					foreach(GenericDeathTrigger trigger in genericDeathTriggers[graveCard.uid])
+					foreach(CreatureTargetingTrigger trigger in genericDeathTriggers[graveCard.uid])
 					{
 						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Grave) && trigger.condition(target: card))
 						{
@@ -1768,7 +1781,7 @@ class DuelCore : Core
 			{
 				if(genericDeathTriggers.ContainsKey(handCard.uid))
 				{
-					foreach(GenericDeathTrigger trigger in genericDeathTriggers[handCard.uid])
+					foreach(CreatureTargetingTrigger trigger in genericDeathTriggers[handCard.uid])
 					{
 						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition(target: card))
 						{
@@ -1782,7 +1795,7 @@ class DuelCore : Core
 		{
 			if(genericDeathTriggers.ContainsKey(player.quest.uid))
 			{
-				foreach(GenericDeathTrigger trigger in genericDeathTriggers[player.quest.uid])
+				foreach(CreatureTargetingTrigger trigger in genericDeathTriggers[player.quest.uid])
 				{
 					if(trigger.condition(target: card))
 					{

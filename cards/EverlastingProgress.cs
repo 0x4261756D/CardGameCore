@@ -14,38 +14,37 @@ class EverlastingProgress : Quest
 
 	public override void Init()
 	{
-		RegisterGenericDeathTrigger(trigger: new GenericDeathTrigger(effect: ProgressEffect, condition: ProgressCondition), referrer: this);
+		RegisterGenericDeathTrigger(trigger: new CreatureTargetingTrigger(effect: ProgressEffect, condition: ProgressCondition), referrer: this);
 	}
 
-	private bool ProgressCondition(Card destroyedCard)
+	private bool ProgressCondition(Creature destroyedCard)
 	{
-		return destroyedCard.Controller == Controller && ((Creature)destroyedCard).Keywords.ContainsKey(Keyword.Brittle);
+		return destroyedCard.Controller == Controller && destroyedCard.Keywords.ContainsKey(Keyword.Brittle);
 	}
 
-	private void ProgressEffect(Card destroyedCard)
+	private void ProgressEffect(Card _)
 	{
 		Progress++;
 	}
 
 	public override void Reward()
 	{
-		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: RewardEffect, referrer: this, influenceLocation: Location.Quest));
+		RegisterLingeringEffect(info: LingeringEffectInfo.Create(effect: RewardEffect, referrer: this, influenceLocation: Location.Quest));
 	}
 
-	private void RewardEffect(Card target)
+	private void RewardEffect(Card _)
 	{
 		foreach(Creature card in GetFieldUsed(Controller))
 		{
 			if(card.Keywords.Remove(Keyword.Brittle))
 			{
-				RegisterTemporaryLingeringEffect(new LingeringEffectInfo(effect: BuffEffect, referrer: card));
+				RegisterTemporaryLingeringEffect(LingeringEffectInfo.Create(effect: BuffEffect, referrer: card));
 			}
 		}
 	}
 
-	private void BuffEffect(Card t)
+	private void BuffEffect(Creature target)
 	{
-		Creature target = (Creature)t;
 		target.Life += 2;
 		target.Power++;
 	}

@@ -31,14 +31,13 @@ class CurseofSugoma : Spell
 	public void CastEffect()
 	{
 		Creature target = SelectSingleCard(player: Controller, cards: GetBothFieldsUsed(), description: "Target creature to curse");
-		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: CurseEffect, referrer: target));
+		RegisterTemporaryLingeringEffect(info: LingeringEffectInfo.Create(effect: CurseEffect, referrer: target));
 	}
 
-	public void CurseEffect(Card target)
+	public void CurseEffect(Creature target)
 	{
-		Creature t = (Creature)target;
-		t.Power += 2;
-		t.Life -= 1;
+		target.Power += 2;
+		target.Life -= 1;
 	}
 
 	private bool CastCondition()

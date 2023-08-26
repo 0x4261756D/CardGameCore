@@ -17,15 +17,15 @@ class RottenMummy : Creature
 	public override void Init()
 	{
 		RegisterKeyword(Keyword.Decaying);
-		RegisterDeathTrigger(trigger: new TargetingTrigger(effect: DeathEffect, condition: DeathCondition), referrer: this);
+		RegisterDeathTrigger(trigger: new CreatureTargetingTrigger(effect: DeathEffect, condition: DeathCondition), referrer: this);
 	}
 
-	public void DeathEffect(Card _)
+	public void DeathEffect(Creature _)
 	{
 		DiscardAmount(player: Controller, amount: 1);
 	}
 
-	public bool DeathCondition(Card _)
+	public bool DeathCondition(Creature _)
 	{
 		return GetDiscardable(Controller, ignore: null).Length > 0;
 	}

@@ -168,19 +168,19 @@ public class TokenCreationTrigger : Trigger
 	}
 }
 
-public class GenericDeathTrigger : Trigger
+public class CreatureTargetingTrigger : Trigger
 {
 	public new CreatureTargetingCondition condition;
 	public new CreatureTargetingEffect effect;
 	public GameConstants.Location influenceLocation;
 
-	public GenericDeathTrigger(CreatureTargetingEffect effect, CreatureTargetingCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public CreatureTargetingTrigger(CreatureTargetingEffect effect, CreatureTargetingCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
 		this.effect = effect;
 		this.condition = condition;
 		this.influenceLocation = influenceLocation;
 	}
-	public GenericDeathTrigger(CreatureTargetingEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field) : this(effect, (_) => true, influenceLocation) { }
+	public CreatureTargetingTrigger(CreatureTargetingEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field) : this(effect, (_) => true, influenceLocation) { }
 }
 
 public class LingeringEffectInfo
@@ -191,7 +191,12 @@ public class LingeringEffectInfo
 	public Card referrer;
 	public GameConstants.Location influenceLocation;
 
-	public LingeringEffectInfo(TargetingEffect effect, Card referrer, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public delegate void SpecificTargetingEffect<T>(T target);
+	public static LingeringEffectInfo Create<T>(SpecificTargetingEffect<T> effect, T referrer, GameConstants.Location influenceLocation = GameConstants.Location.Field) where T : Card
+	{
+		return new LingeringEffectInfo(effect: (target) => effect((T)target), referrer: referrer, influenceLocation: influenceLocation);
+	}
+	private LingeringEffectInfo(TargetingEffect effect, Card referrer, GameConstants.Location influenceLocation)
 	{
 		this.effect = effect;
 		this.referrer = referrer;
@@ -233,7 +238,6 @@ public delegate bool CreatureTargetingCondition(Creature target);
 public delegate void CreatureTargetingEffect(Creature target);
 public delegate void TokenCreationEffect(Creature token, Card source);
 public delegate bool TokenCreationCondition(Creature token, Card source);
-
 public delegate void RegisterCastTriggerDelegate(CastTrigger trigger, Card referrer);
 public delegate void RegisterGenericCastTriggerDelegate(GenericCastTrigger trigger, Card referrer);
 public delegate void RegisterTokenCreationTriggerDelegate(TokenCreationTrigger trigger, Card referrer);
@@ -242,8 +246,8 @@ public delegate void RegisterDiscardTriggerDelegate(DiscardTrigger trigger, Card
 public delegate void RegisterStateReachedTriggerDelegate(StateReachedTrigger trigger, Card referrer);
 public delegate void RegisterVictoriousTriggerDelegate(Trigger trigger, Card referrer);
 public delegate void RegisterAttackTriggerDelegate(Trigger trigger, Card referrer);
-public delegate void RegisterDeathTriggerDelegate(TargetingTrigger trigger, Card referrer);
-public delegate void RegisterGenericDeathTriggerDelegate(GenericDeathTrigger trigger, Card referrer);
+public delegate void RegisterDeathTriggerDelegate(CreatureTargetingTrigger trigger, Card referrer);
+public delegate void RegisterGenericDeathTriggerDelegate(CreatureTargetingTrigger trigger, Card referrer);
 public delegate void RegisterDealsDamageTriggerDelegate(Trigger trigger, Card referrer);
 public delegate void RegisterLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate void RegisterTemporaryLingeringEffectDelegate(LingeringEffectInfo info);

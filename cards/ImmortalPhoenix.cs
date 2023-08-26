@@ -16,29 +16,28 @@ class ImmortalPhoenix : Creature
 
 	public override void Init()
 	{
-		RegisterDeathTrigger(trigger: new TargetingTrigger(effect: DeathEffect), referrer: this);
+		RegisterDeathTrigger(trigger: new CreatureTargetingTrigger(effect: DeathEffect), referrer: this);
 	}
 
-	private void DeathEffect(Card target)
+	private void DeathEffect(Creature target)
 	{
 		MoveToHand(player: Controller, card: target);
-		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: PhoenixEffect, referrer: target, influenceLocation: Location.ALL));
+		RegisterLingeringEffect(info: LingeringEffectInfo.Create(effect: PhoenixEffect, referrer: target, influenceLocation: Location.ALL));
 	}
 
-	private void PhoenixEffect(Card target)
+	private void PhoenixEffect(Creature target)
 	{
-		foreach(Card card in GetFieldUsed(player: Controller))
+		foreach(Creature card in GetFieldUsed(player: Controller))
 		{
-			if(card.Name == this.Name)
+			if(card.Name == target.Name)
 			{
 				BuffEffect(card);
 			}
 		}
 	}
 
-	private void BuffEffect(Card t)
+	private void BuffEffect(Creature target)
 	{
-		Creature target = (Creature)t;
 		target.Life++;
 		target.Power++;
 	}

@@ -25,11 +25,11 @@ class LivingBomb : Spell
 	private void CastEffect()
 	{
 		Creature target = SelectSingleCard(player: Controller, cards: GetBothFieldsUsed(), description: "Select target");
-		RegisterDeathTrigger(trigger: new TargetingTrigger(effect: ExplosionEffect), referrer: target);
+		RegisterDeathTrigger(trigger: new CreatureTargetingTrigger(effect: ExplosionEffect), referrer: target);
 	}
 
-	private void ExplosionEffect(Card target)
+	private void ExplosionEffect(Creature target)
 	{
-		ChangeLifeOfAnyTarget(player: target.Controller, amount: -((Creature)target).BaseLife, source: target);
+		ChangeLifeOfAnyTarget(player: target.Controller, amount: -target.BaseLife, source: target);
 	}
 }

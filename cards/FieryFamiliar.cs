@@ -16,7 +16,7 @@ class FieryFamiliar : Creature
 
 	public override void Init()
 	{
-		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: BuffEffect, referrer: this));
+		RegisterLingeringEffect(info: LingeringEffectInfo.Create(effect: BuffEffect, referrer: this));
 		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect), referrer: this);
 	}
 
@@ -25,7 +25,7 @@ class FieryFamiliar : Creature
 		MoveToHand(player: Controller, card: this);
 	}
 
-	private void BuffEffect(Card target)
+	private void BuffEffect(Card _)
 	{
 		ChangeIgniteDamageTemporary(player: Controller, amount: 1);
 	}

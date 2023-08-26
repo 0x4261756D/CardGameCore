@@ -16,14 +16,14 @@ class Weaponsmith : Creature
 
 	public override void Init()
 	{
-		RegisterLingeringEffect(new LingeringEffectInfo(BuffEffect, this));
+		RegisterLingeringEffect(LingeringEffectInfo.Create(BuffEffect, this));
 	}
 
-	private void BuffEffect(Card _)
+	private void BuffEffect(Creature target)
 	{
-		foreach(Creature? card in GetField(this.Controller))
+		foreach(Creature? card in GetField(target.Controller))
 		{
-			if(card != null && card != this)
+			if(card != null && card != target)
 			{
 				card.Power += 1;
 				card.Life += 1;

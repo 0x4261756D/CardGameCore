@@ -26,13 +26,13 @@ class BurningImp : Creature
 
 	public void BuffEffect(Card castCard)
 	{
-		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: Buff, referrer: this));
+		RegisterTemporaryLingeringEffect(info: LingeringEffectInfo.Create(effect: Buff, referrer: this));
 	}
 
-	public void Buff(Card _)
+	public void Buff(Creature target)
 	{
-		this.Life += 2;
-		this.Power += 2;
+		target.Life += 2;
+		target.Power += 2;
 	}
 
 }

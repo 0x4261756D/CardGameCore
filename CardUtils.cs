@@ -21,7 +21,7 @@ public class CardUtils
 	}
 
 	public delegate bool IsValid<T>(T card);
-	public static bool ContainsValid<T>(T[] cards, IsValid<T> isValid)
+	public static bool ContainsValid<T>(T[] cards, IsValid<T> isValid) where T : Card
 	{
 		return cards.Any(x => isValid(x));
 	}

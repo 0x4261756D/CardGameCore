@@ -17,7 +17,7 @@ class NovicePyromancer : Creature
 
 	public override void Init()
 	{
-		RegisterGenericDeathTrigger(trigger: new GenericDeathTrigger(effect: DamageEffect), referrer: this);
+		RegisterGenericDeathTrigger(trigger: new CreatureTargetingTrigger(effect: DamageEffect), referrer: this);
 	}
 
 	private void DamageEffect(Card destroyedCard)

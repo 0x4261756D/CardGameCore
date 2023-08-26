@@ -17,7 +17,7 @@ class EnormousTitan : Creature
 	public override void Init()
 	{
 		RegisterKeyword(Keyword.Colossal, 1);
-		RegisterLingeringEffect(info: new LingeringEffectInfo(effect: CostReductionEffect, referrer: this, influenceLocation: Location.Hand));
+		RegisterLingeringEffect(info: LingeringEffectInfo.Create(effect: CostReductionEffect, referrer: this, influenceLocation: Location.Hand));
 		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: GainEffect), referrer: this);
 	}
 
@@ -26,7 +26,7 @@ class EnormousTitan : Creature
 		PlayerChangeLife(player: Controller, amount: 2, source: this);
 	}
 
-	private void CostReductionEffect(Card _)
+	private void CostReductionEffect(Creature _)
 	{
 		this.Cost -= GetFieldUsed(1 - Controller).Length;
 	}

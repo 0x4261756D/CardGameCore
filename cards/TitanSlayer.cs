@@ -27,7 +27,7 @@ class TitanSlayer : Creature
 
 	private void CastEffect()
 	{
-		Creature target = (Creature)SelectSingleCard(player: Controller, cards: GetFieldUsed(1 - Controller), description: "Select target");
+		Creature target = SelectSingleCard(player: Controller, cards: GetFieldUsed(1 - Controller), description: "Select target");
 		CreatureChangePower(target: this, amount: target.Power, source: this);
 		target.RegisterKeyword(Keyword.Immovable);
 	}

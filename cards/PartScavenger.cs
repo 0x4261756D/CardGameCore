@@ -17,22 +17,21 @@ class PartScavenger : Creature
 
 	public override void Init()
 	{
-		RegisterGenericDeathTrigger(trigger: new GenericDeathTrigger(effect: DeathEffect, condition: DeathCondition), referrer: this);
+		RegisterGenericDeathTrigger(trigger: new CreatureTargetingTrigger(effect: DeathEffect, condition: DeathCondition), referrer: this);
 	}
 
-	private bool DeathCondition(Card target)
+	private bool DeathCondition(Creature target)
 	{
 		return target.Controller == Controller;
 	}
 
-	private void DeathEffect(Card target)
+	private void DeathEffect(Creature target)
 	{
-		RegisterTemporaryLingeringEffect(info: new LingeringEffectInfo(effect: BoostEffect, referrer: this));
+		RegisterTemporaryLingeringEffect(info: LingeringEffectInfo.Create(effect: BoostEffect, referrer: this));
 	}
 
-	private void BoostEffect(Card t)
+	private void BoostEffect(Creature target)
 	{
-		Creature target = (Creature)t;
 		target.Life += 2;
 		target.Power += 2;
 	}

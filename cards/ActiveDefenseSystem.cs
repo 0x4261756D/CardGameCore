@@ -23,11 +23,11 @@ class ActiveDefenseSystem : Spell
 	{
 		Token token = CreateToken(player: Controller, power: 1, life: 1, name: "Automaton");
 		token.Text = TokenText;
-		RegisterDeathTrigger(trigger: new TargetingTrigger(effect: TokenDeathEffect), referrer: token);
+		RegisterDeathTrigger(trigger: new CreatureTargetingTrigger(effect: TokenDeathEffect), referrer: token);
 		MoveToField(targetPlayer: Controller, choosingPlayer: Controller, card: token, source: this);
 	}
 
-	private void TokenDeathEffect(Card target)
+	private void TokenDeathEffect(Creature target)
 	{
 		Draw(target.Controller, 1);
 		if(ContainsValid(GetGrave(target.Controller), isValid: (card) => card.Name == this.Name))
