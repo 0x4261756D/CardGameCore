@@ -585,11 +585,11 @@ class DuelCore : Core
 								EvaluateLingeringEffects();
 								CreatureChangeLifeImpl(target: card0, amount: -card1.Power, source: card1);
 								CreatureChangeLifeImpl(target: card1, amount: -card0.Power, source: card0);
-								if(card0.Life == 0 && card1.Life != 0)
+								if(!card0.Location.HasFlag(GameConstants.Location.Field) && card1.Location.HasFlag(GameConstants.Location.Field))
 								{
 									ProcessTriggers(victoriousTriggers, card1.uid);
 								}
-								if(card1.Life == 0 && card0.Life != 0)
+								if(!card1.Location.HasFlag(GameConstants.Location.Field) && card0.Location.HasFlag(GameConstants.Location.Field))
 								{
 									ProcessTriggers(victoriousTriggers, card0.uid);
 								}
