@@ -1744,9 +1744,9 @@ class DuelCore : Core
 		}
 		if(card.Keywords.ContainsKey(Keyword.Brittle))
 		{
-			players[card.BaseController].brittleDeathCounts[turn]++;
+			players[card.Controller].brittleDeathCounts[turn]++;
 		}
-		players[card.BaseController].deathCounts[turn]++;
+		players[card.Controller].deathCounts[turn]++;
 		ProcessCreatureTargetingTriggers(deathTriggers, card);
 		SendFieldUpdates();
 		foreach(Player player in players)
