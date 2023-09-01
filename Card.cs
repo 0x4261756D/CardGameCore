@@ -360,7 +360,7 @@ public abstract class Quest : Card
 			text: Text,
 			card_type: CardType,
 			card_class: CardClass,
-			uid: uid, life: 0, power: 0, cost: Cost,
+			uid: uid, life: 0, power: 0, cost: Goal,
 			base_cost: BaseCost, base_life: 0, base_power: 0,
 			location: Location, position: Progress,
 			is_class_ability: false,
