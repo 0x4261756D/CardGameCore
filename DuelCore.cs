@@ -1,6 +1,5 @@
 using System.IO.Pipes;
 using System.Net.Sockets;
-using System.Security.Cryptography;
 using System.Text;
 using CardGameUtils;
 using static CardGameUtils.Functions;
@@ -24,10 +23,9 @@ class DuelCore : Core
 		}
 	}
 	public static int UIDCount;
-	private SHA384 sha;
 	public Player[] players;
-	public static NetworkStream[] playerStreams = new NetworkStream[0];
-	public static Random rnd = new Random(Program.seed);
+	public static NetworkStream?[] playerStreams = new NetworkStream?[0];
+	public static Random rnd = new(Program.seed);
 	public const int HASH_LEN = 96;
 	public int playersConnected = 0;
 	public int turn, turnPlayer, initPlayer;
@@ -35,35 +33,34 @@ class DuelCore : Core
 	public int momentumBase = GameConstants.START_MOMENTUM;
 	public bool rewardClaimed = false;
 
-	private Dictionary<int, List<CastTrigger>> castTriggers = new Dictionary<int, List<CastTrigger>>();
-	private Dictionary<int, List<GenericCastTrigger>> genericCastTriggers = new Dictionary<int, List<GenericCastTrigger>>();
-	private Dictionary<int, List<TokenCreationTrigger>> tokenCreationTriggers = new Dictionary<int, List<TokenCreationTrigger>>();
-	private Dictionary<int, List<GenericCastTrigger>> genericEnterFieldTriggers = new Dictionary<int, List<GenericCastTrigger>>();
-	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new Dictionary<int, List<RevelationTrigger>>();
-	private Dictionary<int, List<Trigger>> victoriousTriggers = new Dictionary<int, List<Trigger>>();
-	private Dictionary<int, List<Trigger>> attackTriggers = new Dictionary<int, List<Trigger>>();
-	private Dictionary<int, List<CreatureTargetingTrigger>> deathTriggers = new Dictionary<int, List<CreatureTargetingTrigger>>();
-	private Dictionary<int, List<CreatureTargetingTrigger>> genericDeathTriggers = new Dictionary<int, List<CreatureTargetingTrigger>>();
-	private Dictionary<int, List<DiscardTrigger>> youDiscardTriggers = new Dictionary<int, List<DiscardTrigger>>();
-	private Dictionary<int, List<DiscardTrigger>> discardTriggers = new Dictionary<int, List<DiscardTrigger>>();
-	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new Dictionary<int, List<StateReachedTrigger>>();
-	private List<StateReachedTrigger> alwaysActiveStateReachedTriggers = new List<StateReachedTrigger>();
-	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
-	private Dictionary<int, List<LingeringEffectInfo>> temporaryLingeringEffects = new Dictionary<int, List<LingeringEffectInfo>>();
-	private List<LingeringEffectInfo> alwaysActiveLingeringEffects = new List<LingeringEffectInfo>();
-	private Dictionary<int, List<ActivatedEffectInfo>> activatedEffects = new Dictionary<int, List<ActivatedEffectInfo>>();
-	private Dictionary<int, List<Trigger>> dealsDamageTriggers = new Dictionary<int, List<Trigger>>();
+	private Dictionary<int, List<CastTrigger>> castTriggers = new();
+	private Dictionary<int, List<GenericCastTrigger>> genericCastTriggers = new();
+	private Dictionary<int, List<TokenCreationTrigger>> tokenCreationTriggers = new();
+	private Dictionary<int, List<GenericCastTrigger>> genericEnterFieldTriggers = new();
+	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new();
+	private Dictionary<int, List<Trigger>> victoriousTriggers = new();
+	private Dictionary<int, List<Trigger>> attackTriggers = new();
+	private Dictionary<int, List<CreatureTargetingTrigger>> deathTriggers = new();
+	private Dictionary<int, List<CreatureTargetingTrigger>> genericDeathTriggers = new();
+	private Dictionary<int, List<DiscardTrigger>> youDiscardTriggers = new();
+	private Dictionary<int, List<DiscardTrigger>> discardTriggers = new();
+	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new();
+	private List<StateReachedTrigger> alwaysActiveStateReachedTriggers = new();
+	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new();
+	private Dictionary<int, List<LingeringEffectInfo>> temporaryLingeringEffects = new();
+	private List<LingeringEffectInfo> alwaysActiveLingeringEffects = new();
+	private Dictionary<int, List<ActivatedEffectInfo>> activatedEffects = new ();
+	private Dictionary<int, List<Trigger>> dealsDamageTriggers = new();
 
 	public DuelCore()
 	{
 		RegisterScriptingFunctions();
-		sha = SHA384.Create();
 		players = new Player[Program.config.duel_config!.players.Length];
 		playerStreams = new NetworkStream[Program.config.duel_config.players.Length];
 		for(int i = 0; i < players.Length; i++)
 		{
 			Log("Player created. ID: " + Program.config.duel_config.players[i].id);
-			Deck deck = new Deck();
+			Deck deck = new();
 			GameConstants.PlayerClass playerClass = Enum.Parse<GameConstants.PlayerClass>(Program.config.duel_config.players[i].decklist[0]);
 			if(!Program.config.duel_config.players[i].decklist[1].StartsWith("#"))
 			{
@@ -153,13 +150,10 @@ class DuelCore : Core
 		pipeStream?.Close();
 		Log("Listening", severity: LogSeverity.Warning);
 		HandleNetworking();
-		foreach(NetworkStream stream in playerStreams)
+		foreach(NetworkStream? stream in playerStreams)
 		{
-			if(stream != null)
-			{
-				stream.Dispose();
+			stream?.Dispose();
 			}
-		}
 		listener.Stop();
 	}
 
@@ -241,7 +235,7 @@ class DuelCore : Core
 		{
 			player.ClearCardModifications();
 		}
-		SortedList<int, LingeringEffectInfo> infos = new SortedList<int, LingeringEffectInfo>();
+		SortedList<int, LingeringEffectInfo> infos = new();
 		foreach(LingeringEffectInfo info in alwaysActiveLingeringEffects)
 		{
 			if(info.influenceLocation == GameConstants.Location.ALL)
@@ -733,11 +727,11 @@ class DuelCore : Core
 		if(players[player].life <= 0)
 		{
 			SendFieldUpdates();
-			SendPacketToPlayer<DuelPackets.GameResultResponse>(new DuelPackets.GameResultResponse
+			SendPacketToPlayer(new DuelPackets.GameResultResponse
 			{
 				result = GameConstants.GameResult.Lost
 			}, player);
-			SendPacketToPlayer<DuelPackets.GameResultResponse>(new DuelPackets.GameResultResponse
+			SendPacketToPlayer(new DuelPackets.GameResultResponse
 			{
 				result = GameConstants.GameResult.Won
 			}, 1 - player);
@@ -842,9 +836,9 @@ class DuelCore : Core
 	{
 		for(int i = 0; i < players.Length; i++)
 		{
-			if(playerStreams[i].DataAvailable)
+			if(playerStreams[i]!.DataAvailable)
 			{
-				(byte typeByte, byte[]? bytes) = ReceiveRawPacket(playerStreams[i]);
+				(byte typeByte, byte[]? bytes) = ReceiveRawPacket(playerStreams[i]!);
 				if(bytes == null || bytes.Length == 0)
 				{
 					Log("Request was empty, ignoring it", severity: LogSeverity.Warning);
@@ -960,7 +954,7 @@ class DuelCore : Core
 			case NetworkingConstants.PacketType.DuelViewGraveRequest:
 			{
 				bool opponent = DeserializeJson<DuelPackets.ViewGraveRequest>(packet).opponent;
-				SendPacketToPlayer<DuelPackets.ViewCardsResponse>(new DuelPackets.ViewCardsResponse
+				SendPacketToPlayer(new DuelPackets.ViewCardsResponse
 				{
 					cards = Card.ToStruct(players[opponent ? 1 - player : player].grave.GetAll()),
 					message = $"Your {(opponent ? "opponent's" : "")} grave"
@@ -1249,7 +1243,7 @@ class DuelCore : Core
 		do
 		{
 			DuelPackets.CustomSelectCardsIntermediateRequest request;
-			(type, payload) = ReceiveRawPacket(playerStreams[player]);
+			(type, payload) = ReceiveRawPacket(playerStreams[player]!);
 			Log("request received");
 			Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: type, packet: payload, clientToServer: true));
 			if(type == (byte)NetworkingConstants.PacketType.DuelCustomSelectCardsResponse)
@@ -1265,7 +1259,7 @@ class DuelCore : Core
 			Log("deserialized packet");
 			SendPacketToPlayer(new DuelPackets.CustomSelectCardsIntermediateResponse
 			{
-				isValid = isValidSelection(Array.ConvertAll(request.uids, (x => cards.First(y => y.uid == x))))
+				isValid = isValidSelection(Array.ConvertAll(request.uids, x => cards.First(y => y.uid == x)))
 			}, player);
 			Log("sent packet");
 		} while(true);
@@ -1282,7 +1276,7 @@ class DuelCore : Core
 	}
 	private int SelectMovementZone(int player, int position, int momentum)
 	{
-		SendPacketToPlayer<DuelPackets.SelectZoneRequest>(new DuelPackets.SelectZoneRequest
+		SendPacketToPlayer(new DuelPackets.SelectZoneRequest
 		{
 			options = players[player].field.GetMovementOptions(position, momentum),
 		}, player);
@@ -1736,7 +1730,7 @@ class DuelCore : Core
 			break;
 			case GameConstants.Location.UNKNOWN:
 			{
-				Functions.Log($"Destroying {card.Name} at UNKNOWN", severity: Functions.LogSeverity.Warning);
+				Log($"Destroying {card.Name} at UNKNOWN", severity: LogSeverity.Warning);
 			}
 			break;
 			default:
@@ -2045,7 +2039,7 @@ class DuelCore : Core
 		{
 			options = options.Reverse().ToArray();
 		}
-		SendPacketToPlayer<DuelPackets.SelectZoneRequest>(new DuelPackets.SelectZoneRequest
+		SendPacketToPlayer(new DuelPackets.SelectZoneRequest
 		{
 			options = options,
 		}, choosingPlayer);
@@ -2105,14 +2099,14 @@ class DuelCore : Core
 
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent
 	{
-		byte[]? payload = ReceivePacket<T>(playerStreams[player]);
+		byte[]? payload = ReceivePacket<T>(playerStreams[player]!);
 		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: NetworkingConstants.PacketDict[typeof(T)], packet: payload, clientToServer: true));
 		return (payload == null) ? (T)new PacketContent() : DeserializeJson<T>(payload);
 	}
 	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
 	{
-		List<byte> payload = Functions.GeneratePayload<T>(packet);
+		List<byte> payload = GeneratePayload(packet);
 		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: NetworkingConstants.PacketDict[typeof(T)], packet: payload.GetRange(5, payload.Count - 5).ToArray(), clientToServer: false));
-		playerStreams[player].Write(payload.ToArray(), 0, payload.Count);
+		playerStreams[player]!.Write(payload.ToArray(), 0, payload.Count);
 	}
 }
