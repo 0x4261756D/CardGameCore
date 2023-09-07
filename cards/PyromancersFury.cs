@@ -1,5 +1,7 @@
 // Scripted by 0x4261756D
+
 using CardGameCore;
+using CardGameUtils;
 using static CardGameUtils.GameConstants;
 
 class PyromancersFury : Spell
@@ -16,8 +18,14 @@ class PyromancersFury : Spell
 	public override void Init()
 	{
 		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
-		RegisterGenericDeathTrigger(trigger: new CreatureTargetingTrigger(effect: RefreshEffect, condition: (_) => creatureDiedActive, influenceLocation: Location.Grave), referrer: this);
+		RegisterGenericDeathTrigger(trigger: new CreatureTargetingTrigger(effect: RefreshEffect, condition: RefreshCondition, influenceLocation: Location.Grave), referrer: this);
 	}
+
+	private bool RefreshCondition(Creature _)
+	{
+		return creatureDiedActive;
+	}
+
 
 	public void RefreshEffect(Card _)
 	{

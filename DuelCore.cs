@@ -153,7 +153,7 @@ class DuelCore : Core
 		foreach(NetworkStream? stream in playerStreams)
 		{
 			stream?.Dispose();
-			}
+		}
 		listener.Stop();
 	}
 
@@ -1022,6 +1022,7 @@ class DuelCore : Core
 					shownReasons[player] = "Ability";
 					SendFieldUpdates(shownCards: shownCards, shownReasons: shownReasons);
 					players[player].momentum--;
+					players[player].abilityUsable = false;
 					foreach(CastTrigger trigger in castTriggers[players[player].ability.uid])
 					{
 						if(trigger.condition())
@@ -1062,7 +1063,6 @@ class DuelCore : Core
 								}
 							}
 						}
-						players[player].abilityUsable = false;
 					}
 				}
 			}
