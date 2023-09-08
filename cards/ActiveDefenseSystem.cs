@@ -32,7 +32,7 @@ class ActiveDefenseSystem : Spell
 		Draw(target.Controller, 1);
 		if(ContainsValid(GetGrave(target.Controller), isValid: (card) => card.Name == this.Name))
 		{
-			MoveToHand(player: target.Controller, card: SelectSingleCard(player: target.Controller, cards: GetGrave(target.Controller), $"Target \"{this.Name}\" to return to hand"));
+			MoveToHand(player: target.Controller, card: SelectSingleCard(player: target.Controller, cards: FilterValid(GetGrave(target.Controller), EndPhaseFilter), $"Target \"{this.Name}\" to return to hand"));
 		}
 		RegisterStateReachedTrigger(trigger: new StateReachedTrigger(effect: EndPhaseEffect, condition: EndPhaseCondition, state: State.TurnEnd, influenceLocation: Location.ALL, oneshot: true), referrer: target);
 	}
@@ -44,7 +44,7 @@ class ActiveDefenseSystem : Spell
 
 	private void EndPhaseEffect()
 	{
-		SelectSingleCard(Controller, FilterValid(GetHand(Controller), EndPhaseFilter), description: $"Select \"{this.Name}\" to discard");
+		Discard(SelectSingleCard(Controller, FilterValid(GetHand(Controller), EndPhaseFilter), description: $"Select \"{this.Name}\" to discard"));
 	}
 
 	private bool EndPhaseFilter(Card card) => card.Name == this.Name;
