@@ -49,7 +49,7 @@ class DuelCore : Core
 	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new();
 	private Dictionary<int, List<LingeringEffectInfo>> temporaryLingeringEffects = new();
 	private List<LingeringEffectInfo> alwaysActiveLingeringEffects = new();
-	private Dictionary<int, List<ActivatedEffectInfo>> activatedEffects = new ();
+	private Dictionary<int, List<ActivatedEffectInfo>> activatedEffects = new();
 	private Dictionary<int, List<Trigger>> dealsDamageTriggers = new();
 
 	public DuelCore()
