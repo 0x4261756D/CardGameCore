@@ -315,7 +315,7 @@ public abstract class Spell : Card
 			OriginalLocation: OriginalLocation)
 	{
 		this.IsClassAbility = IsClassAbility;
-		this.CanBeClassAbility = IsClassAbility;
+		this.CanBeClassAbility = CanBeClassAbility;
 	}
 	public override CardStruct ToStruct(bool client = false)
 	{
