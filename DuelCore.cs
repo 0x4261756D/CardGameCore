@@ -1703,11 +1703,14 @@ class DuelCore : Core
 			default:
 				throw new Exception($"Cannot add a card from {card.Location} to hand");
 		}
-		if(card.Controller != player)
+		if(card.CardType == GameConstants.CardType.Creature && ((Creature)card).Keywords.ContainsKey(Keyword.Token))
 		{
-			RegisterControllerChange(card);
+			if(card.Controller != player)
+			{
+				RegisterControllerChange(card);
+			}
+			players[player].hand.Add(card);
 		}
-		players[player].hand.Add(card);
 		RemoveOutdatedTemporaryLingeringEffects(card);
 	}
 	public Card[] GetDiscardableImpl(int player, Card? ignore)
