@@ -128,11 +128,11 @@ public class RevelationTrigger : Trigger
 	}
 }
 
-public class GenericCastTrigger : Trigger
+public class GenericCastTrigger
 {
 	public GameConstants.Location influenceLocation;
-	public new TargetingCondition condition;
-	public new TargetingEffect effect;
+	public TargetingCondition condition;
+	public TargetingEffect effect;
 
 	public GenericCastTrigger(TargetingEffect effect, TargetingCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
@@ -148,11 +148,11 @@ public class GenericCastTrigger : Trigger
 	}
 }
 
-public class TokenCreationTrigger : Trigger
+public class TokenCreationTrigger
 {
 	public GameConstants.Location influenceLocation;
-	public new TokenCreationCondition condition;
-	public new TokenCreationEffect effect;
+	public TokenCreationCondition condition;
+	public TokenCreationEffect effect;
 
 	public TokenCreationTrigger(TokenCreationEffect effect, TokenCreationCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
@@ -168,11 +168,11 @@ public class TokenCreationTrigger : Trigger
 	}
 }
 
-public class CreatureTargetingTrigger : Trigger
+public class CreatureTargetingTrigger
 {
-	public new CreatureTargetingCondition condition;
-	public new CreatureTargetingEffect effect;
 	public GameConstants.Location influenceLocation;
+	public CreatureTargetingCondition condition;
+	public CreatureTargetingEffect effect;
 
 	public CreatureTargetingTrigger(CreatureTargetingEffect effect, CreatureTargetingCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
