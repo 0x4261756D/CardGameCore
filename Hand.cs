@@ -5,7 +5,7 @@ namespace CardGameCore;
 
 class Hand
 {
-	private List<Card> cards = new List<Card>();
+	private List<Card> cards = new();
 	public Hand()
 	{
 

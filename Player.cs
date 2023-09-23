@@ -6,9 +6,9 @@ namespace CardGameCore;
 class Player
 {
 	public Deck deck;
-	public Grave grave = new Grave();
-	public Field field = new Field();
-	public Hand hand = new Hand();
+	public Grave grave = new();
+	public Field field = new();
+	public Hand hand = new();
 	public string id;
 	public int number;
 	public string name;
@@ -18,9 +18,9 @@ class Player
 	public Card ability;
 	public Quest quest;
 	public int life, momentum;
-	public List<int> discardCounts = new List<int>(), dealtDamages = new List<int>(), dealtSpellDamages = new List<int>(), brittleDeathCounts = new List<int>(), deathCounts = new List<int>();
+	public List<int> discardCounts = new(), dealtDamages = new(), dealtSpellDamages = new(), brittleDeathCounts = new(), deathCounts = new();
 	public int baseIgniteDamage = 1, igniteDamage;
-	public Dictionary<string, int> castCounts = new Dictionary<string, int>();
+	public Dictionary<string, int> castCounts = new();
 	public Player(CoreConfig.PlayerConfig config, int number, Deck deck, GameConstants.PlayerClass playerClass, Card ability, Quest quest)
 	{
 		this.deck = deck;

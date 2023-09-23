@@ -75,8 +75,8 @@ class Program
 		{
 			if(s.StartsWith("--"))
 			{
-				string arg = s.Substring(2).Split('=')[0];
-				string parameter = s.Substring(arg.Length + 3);
+				string arg = s[2..].Split('=')[0];
+				string parameter = s[(arg.Length + 3)..];
 				switch(arg)
 				{
 					case "mode":

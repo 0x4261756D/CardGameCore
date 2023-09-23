@@ -12,13 +12,13 @@ namespace CardGameCore;
 
 class ClientCore : Core
 {
-	readonly static List<CardGameUtils.Structs.CardStruct> cards = new List<CardGameUtils.Structs.CardStruct>();
+	readonly static List<CardStruct> cards = new List<CardStruct>();
 	readonly static List<DeckPackets.Deck> decks = new List<DeckPackets.Deck>();
 	public ClientCore()
 	{
 		if(Program.config.deck_config == null)
 		{
-			Functions.Log("Deck config was null when creating a client core", Functions.LogSeverity.Error);
+			Log("Deck config was null when creating a client core", LogSeverity.Error);
 			return;
 		}
 		if(!Directory.Exists(Program.config.deck_config.deck_location))
@@ -45,7 +45,7 @@ class ClientCore : Core
 			{
 				continue;
 			}
-			DeckPackets.Deck deck = new CardGameUtils.Structs.NetworkingStructs.DeckPackets.Deck
+			DeckPackets.Deck deck = new DeckPackets.Deck
 			{
 				player_class = Enum.Parse<GameConstants.PlayerClass>(decklist[0]),
 				name = Path.GetFileNameWithoutExtension(deckfile)
@@ -55,12 +55,12 @@ class ClientCore : Core
 			{
 				if(decklist[0].StartsWith("#"))
 				{
-					deck.ability = cards[cards.FindIndex(x => x.name == decklist[0].Substring(1))];
+					deck.ability = cards[cards.FindIndex(x => x.name == decklist[0][1..])];
 					decklist.RemoveAt(0);
 				}
 				if(decklist[0].StartsWith("|"))
 				{
-					deck.quest = cards[cards.FindIndex(x => x.name == decklist[0].Substring(1))];
+					deck.quest = cards[cards.FindIndex(x => x.name == decklist[0][1..])];
 					decklist.RemoveAt(0);
 				}
 				deck.cards = DecklistToCards(decklist);
@@ -80,9 +80,9 @@ class ClientCore : Core
 	}
 
 	//TODO: This could be more elegant
-	public static CardGameUtils.Structs.CardStruct[] DecklistToCards(List<string> decklist)
+	public static CardStruct[] DecklistToCards(List<string> decklist)
 	{
-		List<CardGameUtils.Structs.CardStruct> c = new List<CardGameUtils.Structs.CardStruct>();
+		List<CardStruct> c = new List<CardStruct>();
 		foreach(string line in decklist)
 		{
 			int index = cards.FindIndex(x => x.name == line);
@@ -101,7 +101,7 @@ class ClientCore : Core
 			{
 				using(NetworkStream stream = client.GetStream())
 				{
-					List<byte> payload = GeneratePayload<ServerPackets.AdditionalCardsRequest>(new ServerPackets.AdditionalCardsRequest());
+					List<byte> payload = GeneratePayload(new ServerPackets.AdditionalCardsRequest());
 					stream.Write(payload.ToArray(), 0, payload.Count);
 
 					byte[]? response = TryReceivePacket<ServerPackets.AdditionalCardsResponse>(stream, 1000);
@@ -115,7 +115,7 @@ class ClientCore : Core
 						Log($"Did not apply additional cards as they were older (client: {Program.versionTime}, server: {data.time})");
 						return;
 					}
-					foreach(CardGameUtils.Structs.CardStruct card in data.cards)
+					foreach(CardStruct card in data.cards)
 					{
 						cards.Remove(card);
 						cards.Add(card);
@@ -134,28 +134,22 @@ class ClientCore : Core
 		while(true)
 		{
 			Log("Waiting for a connection");
-			using(TcpClient client = listener.AcceptTcpClient())
+			using TcpClient client = listener.AcceptTcpClient();
+			using NetworkStream stream = client.GetStream();
+			(byte type, byte[]? bytes) = ReceiveRawPacket(stream);
+			Log("Received a request");
+			if(bytes == null || bytes.Length == 0)
 			{
-				using(NetworkStream stream = client.GetStream())
+				Log("The request was empty, ignoring it", severity: LogSeverity.Warning);
+			}
+			else
+			{
+				if(HandlePacket(type, bytes, stream))
 				{
-					(byte type, byte[]? bytes) = ReceiveRawPacket(stream);
-					Log("Received a request");
-					if(bytes == null || bytes.Length == 0)
-					{
-						Log("The request was empty, ignoring it", severity: LogSeverity.Warning);
-					}
-					else
-					{
-						if(HandlePacket(type, bytes, stream))
-						{
-							Log("Received a package that says the server should close");
-							break;
-						}
-						Log("Sent a response");
-					}
-					stream.Close();
-					client.Close();
+					Log("Received a package that says the server should close");
+					break;
 				}
+				Log("Sent a response");
 			}
 		}
 		listener.Stop();
@@ -176,7 +170,7 @@ class ClientCore : Core
 			case NetworkingConstants.PacketType.DeckNamesRequest:
 			{
 				DeckPackets.NamesRequest request = DeserializeJson<DeckPackets.NamesRequest>(bytes);
-				payload = GeneratePayload<DeckPackets.NamesResponse>(new DeckPackets.NamesResponse
+				payload = GeneratePayload(new DeckPackets.NamesResponse
 				{
 					names = decks.ConvertAll(x => x.name).ToArray()
 				});
@@ -185,7 +179,7 @@ class ClientCore : Core
 			case NetworkingConstants.PacketType.DeckListRequest:
 			{
 				DeckPackets.ListRequest request = DeserializeJson<DeckPackets.ListRequest>(bytes);
-				payload = GeneratePayload<DeckPackets.ListResponse>(new DeckPackets.ListResponse
+				payload = GeneratePayload(new DeckPackets.ListResponse
 				{
 					deck = FindDeckByName(request.name!),
 				});
@@ -194,7 +188,7 @@ class ClientCore : Core
 			case NetworkingConstants.PacketType.DeckSearchRequest:
 			{
 				DeckPackets.SearchRequest request = DeserializeJson<DeckPackets.SearchRequest>(bytes);
-				payload = GeneratePayload<DeckPackets.SearchResponse>(new DeckPackets.SearchResponse
+				payload = GeneratePayload(new DeckPackets.SearchResponse
 				{
 					cards = FilterCards(cards, request.filter!, request.playerClass, request.includeGenericCards)
 				});
@@ -225,7 +219,7 @@ class ClientCore : Core
 						File.Delete(Path.Combine(Program.config.deck_config!.deck_location, deck.name + ".dek"));
 					}
 				}
-				payload = GeneratePayload<DeckPackets.ListUpdateResponse>(new DeckPackets.ListUpdateResponse { should_update = index == -1 });
+				payload = GeneratePayload(new DeckPackets.ListUpdateResponse { should_update = index == -1 });
 			}
 			break;
 			default:

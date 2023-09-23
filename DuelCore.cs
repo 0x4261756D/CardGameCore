@@ -67,13 +67,13 @@ class DuelCore : Core
 				Log($"Player {Program.config.duel_config.players[i].name} has no ability, {Program.config.duel_config.players[i].decklist[1]} is no suitable ability");
 				return;
 			}
-			Card ability = CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[1].Substring(1))!, i);
+			Card ability = CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[1][1..])!, i);
 			if(!Program.config.duel_config.players[i].decklist[2].StartsWith("|"))
 			{
 				Log($"Player {Program.config.duel_config.players[i].name} has no quest, {Program.config.duel_config.players[i].decklist[2]} is no suitable ability");
 				return;
 			}
-			Quest quest = (Quest)CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[2].Substring(1))!, i);
+			Quest quest = (Quest)CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[2][1..])!, i);
 			for(int j = 3; j < Program.config.duel_config.players[i].decklist.Length; j++)
 			{
 				Log($"Creating {Program.config.duel_config.players[i].decklist[j]}");
@@ -576,7 +576,6 @@ class DuelCore : Core
 							}
 							else
 							{
-								EvaluateLingeringEffects();
 								CreatureChangeLifeImpl(target: card0, amount: -card1.Power, source: card1);
 								CreatureChangeLifeImpl(target: card1, amount: -card0.Power, source: card0);
 								if(!card0.Location.HasFlag(GameConstants.Location.Field) && card1.Location.HasFlag(GameConstants.Location.Field))
@@ -871,7 +870,6 @@ class DuelCore : Core
 		}
 		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)typeByte;
 
-		List<byte> payload = new List<byte>();
 		switch(type)
 		{
 			case NetworkingConstants.PacketType.DuelSurrenderRequest:
@@ -1225,7 +1223,7 @@ class DuelCore : Core
 				shownReason = oppShownReason,
 			},
 		};
-		SendPacketToPlayer<DuelPackets.FieldUpdateRequest>(request, player);
+		SendPacketToPlayer(request, player);
 	}
 	public Card[] SelectCardsCustom(int player, string description, Card[] cards, Func<Card[], bool> isValidSelection)
 	{

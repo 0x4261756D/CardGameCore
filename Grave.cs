@@ -4,7 +4,7 @@ namespace CardGameCore;
 
 class Grave
 {
-	private List<Card> cards = new List<Card>();
+	private List<Card> cards = new();
 	public int Size
 	{
 		get => cards.Count;

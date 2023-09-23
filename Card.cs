@@ -150,7 +150,7 @@ public abstract class Card
 			return true;
 		}
 
-		if(ReferenceEquals(obj, null))
+		if(obj is null)
 		{
 			return false;
 		}
@@ -235,8 +235,8 @@ public abstract class Creature : Card
 		Text: Text,
 		OriginalCost: OriginalCost)
 	{
-		this.BaseLife = OriginalLife;
-		this.BasePower = OriginalPower;
+		BaseLife = OriginalLife;
+		BasePower = OriginalPower;
 		ResetToBaseState();
 	}
 	public int CalculateMovementCost()
@@ -351,7 +351,7 @@ public abstract class Quest : Card
 		Name: Name,
 		Text: Text)
 	{
-		this.Goal = ProgressGoal;
+		Goal = ProgressGoal;
 	}
 
 	public override CardStruct ToStruct(bool client = false)

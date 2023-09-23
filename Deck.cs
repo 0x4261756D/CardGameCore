@@ -4,7 +4,7 @@ namespace CardGameCore;
 
 class Deck
 {
-	private List<Card> cards = new List<Card>();
+	private List<Card> cards = new();
 	public Deck()
 	{
 
@@ -61,9 +61,7 @@ class Deck
 		for(int i = cards.Count - 1; i >= 0; i--)
 		{
 			int k = DuelCore.rnd.Next(i);
-			Card tmp = cards[i];
-			cards[i] = cards[k];
-			cards[k] = tmp;
+			(cards[k], cards[i]) = (cards[i], cards[k]);
 		}
 	}
 }
