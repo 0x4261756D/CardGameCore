@@ -30,7 +30,7 @@ class ActiveDefenseSystem : Spell
 	private void TokenDeathEffect(Creature target)
 	{
 		Draw(target.Controller, 1);
-		if(ContainsValid(GetGrave(target.Controller), isValid: (card) => card.Name == this.Name))
+		if(ContainsValid(GetGrave(target.Controller), isValid: EndPhaseFilter))
 		{
 			MoveToHand(player: target.Controller, card: SelectSingleCard(player: target.Controller, cards: FilterValid(GetGrave(target.Controller), EndPhaseFilter), $"Target \"{this.Name}\" to return to hand"));
 		}
