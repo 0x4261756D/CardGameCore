@@ -9,7 +9,7 @@ class Incinerate : Spell
 		Name: "Incinerate",
 		CardClass: PlayerClass.Pyromancer,
 		OriginalCost: 6,
-		Text: "{Cast}: Destroy all creatures."
+		Text: "{Cast}: Destroy all creatures. Deal X damage to your opponent where X is the power of all those creatures."
 		)
 	{ }
 
@@ -20,9 +20,12 @@ class Incinerate : Spell
 
 	private void DestroyEffect()
 	{
+		int damage = 0;
 		foreach(Creature card in GetBothFieldsUsed())
 		{
+			damage += card.Power;
 			Destroy(card);
 		}
+		PlayerChangeLife(player: 1 - Controller, amount: damage, this);
 	}
 }
