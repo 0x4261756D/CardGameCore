@@ -1,3 +1,4 @@
+using System.Collections;
 using System.IO.Pipes;
 using System.Net.Sockets;
 using System.Text;
@@ -46,15 +47,52 @@ class DuelCore : Core
 	private Dictionary<int, List<DiscardTrigger>> discardTriggers = new();
 	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new();
 	private List<StateReachedTrigger> alwaysActiveStateReachedTriggers = new();
-	private Dictionary<int, List<LingeringEffectInfo>> lingeringEffects = new();
-	private Dictionary<int, List<LingeringEffectInfo>> temporaryLingeringEffects = new();
-	private List<LingeringEffectInfo> alwaysActiveLingeringEffects = new();
+	private Dictionary<int, LingeringEffectList> lingeringEffects = new();
+	private Dictionary<int, LingeringEffectList> temporaryLingeringEffects = new();
+	private LingeringEffectList alwaysActiveLingeringEffects;
 	private Dictionary<int, List<ActivatedEffectInfo>> activatedEffects = new();
 	private Dictionary<int, List<Trigger>> dealsDamageTriggers = new();
+
+	private class LingeringEffectList : IEnumerable<LingeringEffectInfo>
+	{
+		private List<LingeringEffectInfo> items = new();
+		private DuelCore core;
+		public LingeringEffectList(DuelCore core)
+		{
+			this.core = core;
+			core.EvaluateLingeringEffects();
+		}
+
+		public void Add(LingeringEffectInfo info)
+		{
+			items.Add(info);
+			Log($"Added lingering effect, now evaluating lingering effects...");
+			core.EvaluateLingeringEffects();
+		}
+
+		public void RemoveAll(Predicate<LingeringEffectInfo> condition)
+		{
+			if(items.RemoveAll(condition) > 0)
+			{
+				core.EvaluateLingeringEffects();
+			}
+		}
+
+		public IEnumerator<LingeringEffectInfo> GetEnumerator()
+		{
+			return items.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return items.GetEnumerator();
+		}
+	}
 
 	public DuelCore()
 	{
 		RegisterScriptingFunctions();
+		alwaysActiveLingeringEffects = new(this);
 		players = new Player[Program.config.duel_config!.players.Length];
 		playerStreams = new NetworkStream[Program.config.duel_config.players.Length];
 		for(int i = 0; i < players.Length; i++)
@@ -612,7 +650,6 @@ class DuelCore : Core
 								if(c.Keywords.ContainsKey(Keyword.Decaying))
 								{
 									RegisterTemporaryLingeringEffectImpl(info: LingeringEffectInfo.Create(effect: (tg) => tg.Life -= 1, referrer: c));
-									EvaluateLingeringEffects();
 									if(c.Life == 0 && c.Location.HasFlag(GameConstants.Location.Field))
 									{
 										DestroyImpl(c);
@@ -744,13 +781,11 @@ class DuelCore : Core
 			players[source.Controller].dealtSpellDamages[turn] -= amount;
 		}
 		RegisterTemporaryLingeringEffectImpl(info: LingeringEffectInfo.Create(effect: (tg) => tg.Life += amount, referrer: target));
-		EvaluateLingeringEffects();
 	}
 	public void CreatureChangePowerImpl(Creature target, int amount, Card source)
 	{
 		if(amount == 0) return;
 		RegisterTemporaryLingeringEffectImpl(info: LingeringEffectInfo.Create(effect: (tg) => tg.Power += amount, referrer: target));
-		EvaluateLingeringEffects();
 	}
 
 	private void DealDamage(int player, int amount, Card source)
@@ -1100,6 +1135,7 @@ class DuelCore : Core
 		{
 			return new string[0];
 		}
+		EvaluateLingeringEffects();
 		List<string> options = new();
 		if(activatedEffects.ContainsKey(uid))
 		{
@@ -1124,6 +1160,7 @@ class DuelCore : Core
 					{
 						foreach(CastTrigger trigger in castTriggers[card.uid])
 						{
+							EvaluateLingeringEffects();
 							canCast = trigger.condition();
 							if(!canCast)
 							{
@@ -1180,6 +1217,7 @@ class DuelCore : Core
 	}
 	private void SendFieldUpdates(GameConstants.Location mask = GameConstants.Location.ALL, Card?[]? shownCards = null, string?[]? shownReasons = null)
 	{
+		EvaluateLingeringEffects();
 		for(int i = 0; i < players.Length; i++)
 		{
 			SendFieldUpdate(i, mask, ownShownCard: shownCards?[i], oppShownCard: shownCards?[1 - i], shownReasons?[i], shownReasons?[1 - i]);
@@ -1552,7 +1590,7 @@ class DuelCore : Core
 		{
 			if(!lingeringEffects.ContainsKey(info.referrer.uid))
 			{
-				lingeringEffects[info.referrer.uid] = new List<LingeringEffectInfo>();
+				lingeringEffects[info.referrer.uid] = new(this);
 			}
 			lingeringEffects[info.referrer.uid].Add(info);
 		}
@@ -1561,10 +1599,9 @@ class DuelCore : Core
 	{
 		if(!temporaryLingeringEffects.ContainsKey(info.referrer.uid))
 		{
-			temporaryLingeringEffects[info.referrer.uid] = new List<LingeringEffectInfo>();
+			temporaryLingeringEffects[info.referrer.uid] = new(this);
 		}
 		temporaryLingeringEffects[info.referrer.uid].Add(info);
-		EvaluateLingeringEffects();
 	}
 	public void RegisterActivatedEffectImpl(ActivatedEffectInfo info)
 	{
@@ -1816,10 +1853,7 @@ class DuelCore : Core
 	{
 		if(temporaryLingeringEffects.ContainsKey(card.uid))
 		{
-			if(temporaryLingeringEffects[card.uid].RemoveAll(x => !x.influenceLocation.HasFlag(card.Location)) > 0)
-			{
-				EvaluateLingeringEffects();
-			}
+			temporaryLingeringEffects[card.uid].RemoveAll(x => !x.influenceLocation.HasFlag(card.Location));
 		}
 	}
 	public bool RemoveCardFromItsLocation(Card card)
