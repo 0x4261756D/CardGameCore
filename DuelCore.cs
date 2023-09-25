@@ -1701,13 +1701,17 @@ class DuelCore : Core
 			default:
 				throw new Exception($"Cannot add a card from {card.Location} to hand");
 		}
-		if(card.CardType == GameConstants.CardType.Creature && ((Creature)card).Keywords.ContainsKey(Keyword.Token))
+		if(!(card.CardType == GameConstants.CardType.Creature && ((Creature)card).Keywords.ContainsKey(Keyword.Token)))
 		{
 			if(card.Controller != player)
 			{
 				RegisterControllerChange(card);
 			}
 			players[player].hand.Add(card);
+		}
+		else
+		{
+			Log($"Tried to add a token to hand", severity: LogSeverity.Warning);
 		}
 		RemoveOutdatedTemporaryLingeringEffects(card);
 	}
