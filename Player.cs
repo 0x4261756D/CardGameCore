@@ -33,6 +33,7 @@ class Player
 		this.quest = quest;
 		this.quest.Location = GameConstants.Location.Quest;
 		this.number = number;
+		ClearCardModifications();
 	}
 
 	internal void Draw(int amount)
