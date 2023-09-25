@@ -269,6 +269,10 @@ class DuelCore : Core
 
 	private void EvaluateLingeringEffects()
 	{
+		if(state == GameConstants.State.UNINITIALIZED)
+		{
+			return;
+		}
 		foreach(Player player in players)
 		{
 			player.ClearCardModifications();
