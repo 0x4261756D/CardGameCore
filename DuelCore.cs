@@ -1100,7 +1100,7 @@ class DuelCore : Core
 		{
 			return new string[0];
 		}
-		List<string> options = new List<string>();
+		List<string> options = new();
 		if(activatedEffects.ContainsKey(uid))
 		{
 			foreach(ActivatedEffectInfo info in activatedEffects[uid])
@@ -1188,7 +1188,7 @@ class DuelCore : Core
 	private void SendFieldUpdate(int player, GameConstants.Location mask, Card? ownShownCard, Card? oppShownCard, string? ownShownReason, string? oppShownReason)
 	{
 		// TODO: actually handle mask if this is too slow
-		DuelPackets.FieldUpdateRequest request = new DuelPackets.FieldUpdateRequest()
+		DuelPackets.FieldUpdateRequest request = new()
 		{
 			turn = turn + 1,
 			hasInitiative = state != GameConstants.State.UNINITIALIZED && initPlayer == player,
@@ -1475,7 +1475,7 @@ class DuelCore : Core
 	{
 		if(!castTriggers.ContainsKey(referrer.uid))
 		{
-			castTriggers[referrer.uid] = new List<CastTrigger>();
+			castTriggers[referrer.uid] = new();
 		}
 		castTriggers[referrer.uid].Add(trigger);
 	}
@@ -1483,7 +1483,7 @@ class DuelCore : Core
 	{
 		if(!dealsDamageTriggers.ContainsKey(referrer.uid))
 		{
-			dealsDamageTriggers[referrer.uid] = new List<Trigger>();
+			dealsDamageTriggers[referrer.uid] = new();
 		}
 		dealsDamageTriggers[referrer.uid].Add(trigger);
 	}
@@ -1491,7 +1491,7 @@ class DuelCore : Core
 	{
 		if(!genericCastTriggers.ContainsKey(referrer.uid))
 		{
-			genericCastTriggers[referrer.uid] = new List<GenericCastTrigger>();
+			genericCastTriggers[referrer.uid] = new();
 		}
 		genericCastTriggers[referrer.uid].Add(trigger);
 	}
@@ -1499,7 +1499,7 @@ class DuelCore : Core
 	{
 		if(!revelationTriggers.ContainsKey(referrer.uid))
 		{
-			revelationTriggers[referrer.uid] = new List<RevelationTrigger>();
+			revelationTriggers[referrer.uid] = new();
 		}
 		revelationTriggers[referrer.uid].Add(trigger);
 	}
@@ -1507,7 +1507,7 @@ class DuelCore : Core
 	{
 		if(!genericEnterFieldTriggers.ContainsKey(referrer.uid))
 		{
-			genericEnterFieldTriggers[referrer.uid] = new List<GenericCastTrigger>();
+			genericEnterFieldTriggers[referrer.uid] = new();
 		}
 		genericEnterFieldTriggers[referrer.uid].Add(trigger);
 	}
@@ -1515,7 +1515,7 @@ class DuelCore : Core
 	{
 		if(!youDiscardTriggers.ContainsKey(referrer.uid))
 		{
-			youDiscardTriggers[referrer.uid] = new List<DiscardTrigger>();
+			youDiscardTriggers[referrer.uid] = new();
 		}
 		youDiscardTriggers[referrer.uid].Add(trigger);
 	}
@@ -1523,7 +1523,7 @@ class DuelCore : Core
 	{
 		if(!discardTriggers.ContainsKey(referrer.uid))
 		{
-			discardTriggers[referrer.uid] = new List<DiscardTrigger>();
+			discardTriggers[referrer.uid] = new();
 		}
 		discardTriggers[referrer.uid].Add(trigger);
 	}
@@ -1570,7 +1570,7 @@ class DuelCore : Core
 	{
 		if(!activatedEffects.ContainsKey(info.referrer.uid))
 		{
-			activatedEffects[info.referrer.uid] = new List<ActivatedEffectInfo>();
+			activatedEffects[info.referrer.uid] = new();
 		}
 		activatedEffects[info.referrer.uid].Add(info);
 	}

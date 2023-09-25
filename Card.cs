@@ -125,12 +125,12 @@ public abstract class Card
 
 	public static bool operator ==(Card? first, Card? second)
 	{
-		if(ReferenceEquals(first, null))
+		if(first is null)
 		{
 			return true;
 		}
 
-		if(ReferenceEquals(second, null))
+		if(second is null)
 		{
 			return false;
 		}
@@ -386,7 +386,7 @@ public class Token : Creature
 			CardClass: GameConstants.PlayerClass.All
 		)
 	{
-		this.BaseController = OriginalController;
+		BaseController = OriginalController;
 		RegisterKeyword(Keyword.Token);
 		ResetToBaseState();
 	}
