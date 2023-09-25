@@ -15,8 +15,8 @@ class UnholySummoning : Spell
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: Condition), referrer: this);
-		RegisterDiscardTrigger(trigger: new DiscardTrigger(effect: DiscardEffect, condition: DiscardCondition), referrer: this);
+		RegisterCastTrigger(trigger: new Trigger(effect: CastEffect, condition: Condition), referrer: this);
+		RegisterDiscardTrigger(trigger: new Trigger(effect: DiscardEffect, condition: DiscardCondition), referrer: this);
 	}
 
 	public bool DiscardCondition()

@@ -15,7 +15,7 @@ class Incinerate : Spell
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: DestroyEffect), referrer: this);
+		RegisterCastTrigger(trigger: new Trigger(effect: DestroyEffect), referrer: this);
 	}
 
 	private void DestroyEffect()

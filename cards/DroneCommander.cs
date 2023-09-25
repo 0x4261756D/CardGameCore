@@ -17,8 +17,8 @@ class DroneCommander : Creature
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
-		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect, condition: RevelationCondition), referrer: this);
+		RegisterCastTrigger(trigger: new Trigger(effect: CastEffect), referrer: this);
+		RegisterRevelationTrigger(trigger: new Trigger(effect: RevelationEffect, condition: RevelationCondition), referrer: this);
 	}
 
 	private bool RevelationCondition()

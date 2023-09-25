@@ -17,7 +17,7 @@ class FieryFamiliar : Creature
 	public override void Init()
 	{
 		RegisterLingeringEffect(info: LingeringEffectInfo.Create(effect: BuffEffect, referrer: this));
-		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect), referrer: this);
+		RegisterRevelationTrigger(trigger: new Trigger(effect: RevelationEffect), referrer: this);
 	}
 
 	private void RevelationEffect()

@@ -56,21 +56,21 @@ public abstract class Card
 		ResetToBaseState();
 	}
 	#region ScriptingFunctions
-	public static RegisterCastTriggerDelegate RegisterCastTrigger = (_, _) => { };
-	public static RegisterGenericCastTriggerDelegate RegisterGenericCastTrigger = (_, _) => { };
+	public static RegisterTriggerDelegate RegisterCastTrigger = (_, _) => { };
+	public static RegisterLocationBasedTargetingTriggerDelegate RegisterGenericCastTrigger = (_, _) => { };
 	public static RegisterTokenCreationTriggerDelegate RegisterTokenCreationTrigger = (_, _) => { };
-	public static RegisterGenericCastTriggerDelegate RegisterGenericEntersFieldTrigger = (_, _) => { };
-	public static RegisterRevelationTriggerDelegate RegisterRevelationTrigger = (_, _) => { };
-	public static RegisterDiscardTriggerDelegate RegisterYouDiscardTrigger = (_, _) => { };
-	public static RegisterDiscardTriggerDelegate RegisterDiscardTrigger = (_, _) => { };
+	public static RegisterLocationBasedTargetingTriggerDelegate RegisterGenericEntersFieldTrigger = (_, _) => { };
+	public static RegisterTriggerDelegate RegisterRevelationTrigger = (_, _) => { };
+	public static RegisterLocationBasedTriggerDelegate RegisterYouDiscardTrigger = (_, _) => { };
+	public static RegisterTriggerDelegate RegisterDiscardTrigger = (_, _) => { };
 	public static RegisterStateReachedTriggerDelegate RegisterStateReachedTrigger = (_, _) => { };
-	public static RegisterVictoriousTriggerDelegate RegisterVictoriousTrigger = (_, _) => { };
-	public static RegisterAttackTriggerDelegate RegisterAttackTrigger = (_, _) => { };
-	public static RegisterDeathTriggerDelegate RegisterDeathTrigger = (_, _) => { };
-	public static RegisterGenericDeathTriggerDelegate RegisterGenericDeathTrigger = (_, _) => { };
-	public static RegisterDealsDamageTriggerDelegate RegisterDealsDamageTrigger = (_, _) => { };
+	public static RegisterTriggerDelegate RegisterVictoriousTrigger = (_, _) => { };
+	public static RegisterTriggerDelegate RegisterAttackTrigger = (_, _) => { };
+	public static RegisterCreatureTargetingTriggerDelegate RegisterDeathTrigger = (_, _) => { };
+	public static RegisterCreatureTargetingTriggerDelegate RegisterGenericDeathTrigger = (_, _) => { };
+	public static RegisterTriggerDelegate RegisterDealsDamageTrigger = (_, _) => { };
 	public static RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
-	public static RegisterTemporaryLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => { };
+	public static RegisterLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => { };
 	public static RegisterActivatedEffectDelegate RegisterActivatedEffect = (_) => { };
 	public static GetCardsInLocationDelegate GetGrave = (_) => new Card[0];
 	public static GetWholeFieldDelegate GetField = (_) => new Creature?[0];

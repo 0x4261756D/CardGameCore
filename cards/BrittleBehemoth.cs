@@ -19,7 +19,7 @@ class BrittleBehemoth : Creature
 	{
 		RegisterKeyword(Keyword.Brittle);
 		RegisterVictoriousTrigger(trigger: new Trigger(effect: VictoriousEffect), referrer: this);
-		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect, condition: RevelationCondition), referrer: this);
+		RegisterRevelationTrigger(trigger: new Trigger(effect: RevelationEffect, condition: RevelationCondition), referrer: this);
 	}
 
 	public void VictoriousEffect()

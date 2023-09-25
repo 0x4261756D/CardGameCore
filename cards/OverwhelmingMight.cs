@@ -15,8 +15,8 @@ class OverwhelmingMight : Spell
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
-		RegisterDiscardTrigger(trigger: new DiscardTrigger(effect: RevelationEffect), referrer: this);
+		RegisterCastTrigger(trigger: new Trigger(effect: CastEffect, condition: CastCondition), referrer: this);
+		RegisterDiscardTrigger(trigger: new Trigger(effect: RevelationEffect), referrer: this);
 	}
 
 	private void RevelationEffect()

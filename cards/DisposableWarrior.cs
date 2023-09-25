@@ -16,7 +16,7 @@ class DisposableWarrior : Creature
 
 	public override void Init()
 	{
-		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect, CastCondition), referrer: this);
+		RegisterRevelationTrigger(trigger: new Trigger(effect: RevelationEffect, CastCondition), referrer: this);
 	}
 
 	public void RevelationEffect()

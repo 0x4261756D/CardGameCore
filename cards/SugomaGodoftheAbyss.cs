@@ -19,7 +19,7 @@ class SugomaGodoftheAbyss : Creature
 	{
 		RegisterKeyword(Keyword.Colossal, 5);
 		RegisterActivatedEffect(info: new ActivatedEffectInfo(name: "Activate", effect: ActivatedEffect, condition: ActivatedCondition, referrer: this));
-		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect), referrer: this);
+		RegisterRevelationTrigger(trigger: new Trigger(effect: RevelationEffect), referrer: this);
 	}
 
 	public void RevelationEffect()

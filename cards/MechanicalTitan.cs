@@ -18,7 +18,7 @@ class MechanicalTitan : Creature
 	{
 		RegisterKeyword(Keyword.Colossal, 1);
 		RegisterLingeringEffect(info: LingeringEffectInfo.Create(effect: CostReductionEffect, referrer: this, influenceLocation: Location.Hand));
-		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: GainLifeEffect), referrer: this);
+		RegisterRevelationTrigger(trigger: new Trigger(effect: GainLifeEffect), referrer: this);
 	}
 
 	private void GainLifeEffect()

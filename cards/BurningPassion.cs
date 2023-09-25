@@ -14,7 +14,7 @@ class BurningPassion : Quest
 
 	public override void Init()
 	{
-		RegisterGenericCastTrigger(trigger: new GenericCastTrigger(effect: ProgressionEffect, condition: Condition), referrer: this);
+		RegisterGenericCastTrigger(trigger: new LocationBasedTargetingTrigger(effect: ProgressionEffect, condition: Condition), referrer: this);
 	}
 
 	public void ProgressionEffect(Card castCard)

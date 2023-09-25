@@ -24,8 +24,8 @@ class Ignite : Spell
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: IgniteEffect), referrer: this);
-		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect), referrer: this);
+		RegisterCastTrigger(trigger: new Trigger(effect: IgniteEffect), referrer: this);
+		RegisterRevelationTrigger(trigger: new Trigger(effect: RevelationEffect), referrer: this);
 	}
 
 	public void IgniteEffect()

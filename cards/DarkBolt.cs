@@ -15,8 +15,8 @@ class DarkBolt : Spell
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
-		RegisterDiscardTrigger(trigger: new DiscardTrigger(effect: DiscardEffect), referrer: this);
+		RegisterCastTrigger(trigger: new Trigger(effect: CastEffect), referrer: this);
+		RegisterDiscardTrigger(trigger: new Trigger(effect: DiscardEffect), referrer: this);
 	}
 
 	private void DiscardEffect()

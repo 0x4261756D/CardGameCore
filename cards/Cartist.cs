@@ -16,6 +16,6 @@ class Cartist : Creature
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: () => Draw(player: Controller, amount: 1)), referrer: this);
+		RegisterCastTrigger(trigger: new Trigger(effect: () => Draw(player: Controller, amount: 1)), referrer: this);
 	}
 }

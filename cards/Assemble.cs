@@ -16,8 +16,8 @@ class Assemble : Spell
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
-		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect, CastCondition), referrer: this);
+		RegisterCastTrigger(trigger: new Trigger(effect: CastEffect, condition: CastCondition), referrer: this);
+		RegisterRevelationTrigger(trigger: new Trigger(effect: RevelationEffect, CastCondition), referrer: this);
 	}
 
 	public void RevelationEffect()

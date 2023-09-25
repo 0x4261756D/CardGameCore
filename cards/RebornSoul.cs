@@ -17,8 +17,8 @@ class RebornSoul : Creature
 
 	public override void Init()
 	{
-		RegisterDiscardTrigger(trigger: new DiscardTrigger(effect: () => Cast(player: Controller, card: this), condition: () => HasEmpty(GetField(Controller))), referrer: this);
-		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: RevelationEffect, condition: () => GetDiscardable(Controller, ignore: null).Length > 0 && HasEmpty(GetField(Controller))), referrer: this);
+		RegisterDiscardTrigger(trigger: new Trigger(effect: () => Cast(player: Controller, card: this), condition: () => HasEmpty(GetField(Controller))), referrer: this);
+		RegisterRevelationTrigger(trigger: new Trigger(effect: RevelationEffect, condition: () => GetDiscardable(Controller, ignore: null).Length > 0 && HasEmpty(GetField(Controller))), referrer: this);
 	}
 
 	public void RevelationEffect()

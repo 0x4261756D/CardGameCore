@@ -14,8 +14,8 @@ class Rekindle : Spell
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
-		RegisterRevelationTrigger(trigger: new RevelationTrigger(() => Draw(player: Controller, amount: 1)), referrer: this);
+		RegisterCastTrigger(trigger: new Trigger(effect: CastEffect), referrer: this);
+		RegisterRevelationTrigger(trigger: new Trigger(() => Draw(player: Controller, amount: 1)), referrer: this);
 	}
 
 	public void CastEffect()

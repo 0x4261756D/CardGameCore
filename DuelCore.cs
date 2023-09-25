@@ -34,17 +34,17 @@ class DuelCore : Core
 	public int momentumBase = GameConstants.START_MOMENTUM;
 	public bool rewardClaimed = false;
 
-	private Dictionary<int, List<CastTrigger>> castTriggers = new();
-	private Dictionary<int, List<GenericCastTrigger>> genericCastTriggers = new();
+	private Dictionary<int, List<Trigger>> castTriggers = new();
+	private Dictionary<int, List<LocationBasedTargetingTrigger>> genericCastTriggers = new();
 	private Dictionary<int, List<TokenCreationTrigger>> tokenCreationTriggers = new();
-	private Dictionary<int, List<GenericCastTrigger>> genericEnterFieldTriggers = new();
-	private Dictionary<int, List<RevelationTrigger>> revelationTriggers = new();
+	private Dictionary<int, List<LocationBasedTargetingTrigger>> genericEnterFieldTriggers = new();
+	private Dictionary<int, List<Trigger>> revelationTriggers = new();
 	private Dictionary<int, List<Trigger>> victoriousTriggers = new();
 	private Dictionary<int, List<Trigger>> attackTriggers = new();
 	private Dictionary<int, List<CreatureTargetingTrigger>> deathTriggers = new();
 	private Dictionary<int, List<CreatureTargetingTrigger>> genericDeathTriggers = new();
-	private Dictionary<int, List<DiscardTrigger>> youDiscardTriggers = new();
-	private Dictionary<int, List<DiscardTrigger>> discardTriggers = new();
+	private Dictionary<int, List<LocationBasedTrigger>> youDiscardTriggers = new();
+	private Dictionary<int, List<Trigger>> discardTriggers = new();
 	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new();
 	private List<StateReachedTrigger> alwaysActiveStateReachedTriggers = new();
 	private Dictionary<int, LingeringEffectList> lingeringEffects = new();
@@ -427,47 +427,184 @@ class DuelCore : Core
 		}
 	}
 
-	private void ProcessTargetingTriggers(Dictionary<int, List<TargetingTrigger>> triggers, Card target)
-	{
-		if(triggers.ContainsKey(target.uid))
-		{
-			foreach(TargetingTrigger trigger in triggers[target.uid])
-			{
-				if(trigger.condition(target))
-				{
-					trigger.effect(target);
-				}
-			}
-		}
-	}
-	private void ProcessCreatureTargetingTriggers(Dictionary<int, List<CreatureTargetingTrigger>> triggers, Creature target)
-	{
-		if(triggers.ContainsKey(target.uid))
-		{
-			foreach(CreatureTargetingTrigger trigger in triggers[target.uid])
-			{
-				if(trigger.condition(target))
-				{
-					trigger.effect(target);
-				}
-			}
-		}
-	}
-
-	public void ProcessTriggers<T>(Dictionary<int, List<T>> triggers, int uid) where T : Trigger
+	private void ProcessCreatureTargetingTriggers(Dictionary<int, List<CreatureTargetingTrigger>> triggers, Creature target, GameConstants.Location location, int uid)
 	{
 		if(triggers.ContainsKey(uid))
 		{
-			foreach(T trigger in triggers[uid])
+			foreach(CreatureTargetingTrigger trigger in triggers[uid])
 			{
-				if(trigger.condition())
+				EvaluateLingeringEffects();
+				if(trigger.influenceLocation.HasFlag(location) && trigger.condition(target))
+				{
+					trigger.effect(target);
+					CheckQuestReward();
+				}
+			}
+			EvaluateLingeringEffects();
+		}
+	}
+	public void ProcessLocationBasedTargetingTriggers(Dictionary<int, List<LocationBasedTargetingTrigger>> triggers, Card target, int uid)
+	{
+		if(triggers.ContainsKey(uid))
+		{
+			foreach(LocationBasedTargetingTrigger trigger in triggers[uid])
+			{
+				EvaluateLingeringEffects();
+				if(trigger.condition(target))
+				{
+					trigger.effect(target);
+					CheckQuestReward();
+				}
+			}
+			EvaluateLingeringEffects();
+		}
+	}
+	public void ProcessLocationBasedTriggers(Dictionary<int, List<LocationBasedTrigger>> triggers, GameConstants.Location location, int uid)
+	{
+		if(triggers.ContainsKey(uid))
+		{
+			foreach(LocationBasedTrigger trigger in triggers[uid])
+			{
+				EvaluateLingeringEffects();
+				if(trigger.influenceLocation.HasFlag(location) && trigger.condition())
 				{
 					trigger.effect();
+					CheckQuestReward();
+				}
+			}
+			EvaluateLingeringEffects();
+		}
+	}
+	private void ProcessStateReachedTriggers()
+	{
+		// TODO: If this is slow, index by state?
+		foreach(StateReachedTrigger trigger in alwaysActiveStateReachedTriggers)
+		{
+			EvaluateLingeringEffects();
+			if(trigger.state == state && trigger.condition())
+			{
+				trigger.effect();
+				trigger.wasTriggered = true;
+				CheckQuestReward();
+			}
+		}
+		alwaysActiveStateReachedTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
+		EvaluateLingeringEffects();
+		if(stateReachedTriggers.Count > 0)
+		{
+			foreach(Player player in players)
+			{
+				if(stateReachedTriggers.ContainsKey(player.quest.uid))
+				{
+					foreach(StateReachedTrigger trigger in stateReachedTriggers[player.quest.uid])
+					{
+						EvaluateLingeringEffects();
+						if(trigger.state == state && trigger.condition())
+						{
+							trigger.effect();
+							trigger.wasTriggered = true;
+							CheckQuestReward();
+						}
+					}
+					EvaluateLingeringEffects();
+					stateReachedTriggers[player.quest.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
+				}
+
+				foreach(Card card in player.hand.GetAll())
+				{
+					if(stateReachedTriggers.ContainsKey(card.uid))
+					{
+						foreach(StateReachedTrigger trigger in stateReachedTriggers[card.uid])
+						{
+							EvaluateLingeringEffects();
+							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
+							{
+								trigger.effect();
+								trigger.wasTriggered = true;
+								CheckQuestReward();
+							}
+							else
+							{
+								trigger.wasTriggered = false;
+							}
+						}
+						stateReachedTriggers[card.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
+						EvaluateLingeringEffects();
+					}
+				}
+				foreach(Card? card in player.field.GetAll())
+				{
+					if(card != null && stateReachedTriggers.ContainsKey(card.uid))
+					{
+						foreach(StateReachedTrigger trigger in stateReachedTriggers[card.uid])
+						{
+							EvaluateLingeringEffects();
+							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition())
+							{
+								trigger.effect();
+								trigger.wasTriggered = true;
+								CheckQuestReward();
+							}
+							else
+							{
+								trigger.wasTriggered = false;
+							}
+						}
+						stateReachedTriggers[card.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
+						EvaluateLingeringEffects();
+					}
 				}
 			}
 		}
 	}
+	public void ProcessTokenCreationTriggers(Dictionary<int, List<TokenCreationTrigger>> triggers, Creature token, Card source, int uid)
+	{
+		if(triggers.ContainsKey(uid))
+		{
+			foreach(TokenCreationTrigger trigger in triggers[uid])
+			{
+				EvaluateLingeringEffects();
+				if(trigger.condition(token: token, source: source))
+				{
+					trigger.effect(token: token, source: source);
+					CheckQuestReward();
+				}
+			}
+			EvaluateLingeringEffects();
+		}
 
+	}
+	public void ProcessTriggers(Dictionary<int, List<Trigger>> triggers, int uid)
+	{
+		if(triggers.ContainsKey(uid))
+		{
+			foreach(Trigger trigger in triggers[uid])
+			{
+				EvaluateLingeringEffects();
+				if(trigger.condition())
+				{
+					trigger.effect();
+					CheckQuestReward();
+				}
+			}
+			EvaluateLingeringEffects();
+		}
+	}
+
+	public void CheckQuestReward()
+	{
+		EvaluateLingeringEffects();
+		foreach(Player p in players)
+		{
+			if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
+			{
+				p.quest.Reward();
+				p.quest.Text += "\nREWARD CLAIMED";
+				rewardClaimed = true;
+				break;
+			}
+		}
+	}
 	private bool HandleGameLogic()
 	{
 		while(!state.HasFlag(GameConstants.State.InitGained))
@@ -685,83 +822,6 @@ class DuelCore : Core
 		return false;
 	}
 
-	private void ProcessStateReachedTriggers()
-	{
-		// TODO: If this is slow, index by state?
-		foreach(StateReachedTrigger trigger in alwaysActiveStateReachedTriggers)
-		{
-			if(trigger.state == state && trigger.condition())
-			{
-				trigger.effect();
-				trigger.wasTriggered = true;
-			}
-		}
-		alwaysActiveStateReachedTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
-		if(stateReachedTriggers.Count > 0)
-		{
-			foreach(Player player in players)
-			{
-				if(stateReachedTriggers.ContainsKey(player.quest.uid))
-				{
-					foreach(StateReachedTrigger trigger in stateReachedTriggers[player.quest.uid])
-					{
-						if(trigger.state == state && trigger.condition())
-						{
-							trigger.effect();
-							trigger.wasTriggered = true;
-							if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
-							{
-								player.quest.Reward();
-								player.quest.Text += "\nREWARD CLAIMED";
-								rewardClaimed = true;
-							}
-						}
-					}
-					stateReachedTriggers[player.quest.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
-				}
-
-				foreach(Card card in player.hand.GetAll())
-				{
-					if(stateReachedTriggers.ContainsKey(card.uid))
-					{
-						foreach(StateReachedTrigger trigger in stateReachedTriggers[card.uid])
-						{
-							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
-							{
-								trigger.effect();
-								trigger.wasTriggered = true;
-							}
-							else
-							{
-								trigger.wasTriggered = false;
-							}
-						}
-						stateReachedTriggers[card.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
-					}
-				}
-				foreach(Card? card in player.field.GetAll())
-				{
-					if(card != null && stateReachedTriggers.ContainsKey(card.uid))
-					{
-						foreach(StateReachedTrigger trigger in stateReachedTriggers[card.uid])
-						{
-							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition())
-							{
-								trigger.effect();
-								trigger.wasTriggered = true;
-							}
-							else
-							{
-								trigger.wasTriggered = false;
-							}
-						}
-						stateReachedTriggers[card.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
-					}
-				}
-			}
-		}
-	}
-
 	private void CheckIfLost(int player)
 	{
 		if(players[player].life <= 0)
@@ -816,16 +876,7 @@ class DuelCore : Core
 			string?[]? shownReasons = new string?[2];
 			shownReasons[player] = "Revealed";
 			SendFieldUpdates(shownCards: shownCards, shownReasons: shownReasons);
-			if(revelationTriggers.ContainsKey(c.uid))
-			{
-				foreach(RevelationTrigger trigger in revelationTriggers[c.uid])
-				{
-					if(trigger.condition())
-					{
-						trigger.effect();
-					}
-				}
-			}
+			ProcessTriggers(revelationTriggers, c.uid);
 			SendFieldUpdates();
 		}
 		players[player].deck.Shuffle();
@@ -1060,45 +1111,13 @@ class DuelCore : Core
 					SendFieldUpdates(shownCards: shownCards, shownReasons: shownReasons);
 					players[player].momentum--;
 					players[player].abilityUsable = false;
-					foreach(CastTrigger trigger in castTriggers[players[player].ability.uid])
-					{
-						if(trigger.condition())
-						{
-							trigger.effect();
-						}
-					}
-					// TODO: Tidy this up and deduplicate with CastImpl
+					ProcessTriggers(castTriggers, players[player].ability.uid);
 					foreach(Player p in players)
 					{
-						if(genericCastTriggers.ContainsKey(p.quest.uid))
-						{
-							foreach(GenericCastTrigger trigger in genericCastTriggers[p.quest.uid])
-							{
-								if(trigger.condition(target: players[player].ability))
-								{
-									trigger.effect(target: players[player].ability);
-									if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
-									{
-										p.quest.Reward();
-										p.quest.Text += "\nREWARD CLAIMED";
-										rewardClaimed = true;
-										break;
-									}
-								}
-							}
-						}
+						ProcessLocationBasedTargetingTriggers(triggers: genericCastTriggers, target: players[player].ability, uid: p.quest.uid);
 						foreach(Card possiblyTriggeringCard in p.field.GetUsed())
 						{
-							if(genericCastTriggers.ContainsKey(possiblyTriggeringCard.uid))
-							{
-								foreach(GenericCastTrigger trigger in genericCastTriggers[possiblyTriggeringCard.uid])
-								{
-									if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: players[player].ability))
-									{
-										trigger.effect(target: players[player].ability);
-									}
-								}
-							}
+							ProcessLocationBasedTargetingTriggers(triggers: genericCastTriggers, target: players[player].ability, uid: possiblyTriggeringCard.uid);
 						}
 					}
 				}
@@ -1162,7 +1181,7 @@ class DuelCore : Core
 					bool canCast = true;
 					if(castTriggers.ContainsKey(card.uid))
 					{
-						foreach(CastTrigger trigger in castTriggers[card.uid])
+						foreach(Trigger trigger in castTriggers[card.uid])
 						{
 							EvaluateLingeringEffects();
 							canCast = trigger.condition();
@@ -1339,94 +1358,37 @@ class DuelCore : Core
 		players[player].Draw(amount);
 		SendFieldUpdates();
 	}
-	private void MoveToFieldImpl(int choosingPlayer, int targetPlayer, Creature card, Card? source)
+	private void MoveToFieldImpl(int choosingPlayer, int targetPlayer, Creature creature, Card? source)
 	{
 		EvaluateLingeringEffects();
-		bool wasAlreadyOnField = card.Location == GameConstants.Location.Field;
-		RemoveCardFromItsLocation(card);
+		bool wasAlreadyOnField = creature.Location == GameConstants.Location.Field;
+		RemoveCardFromItsLocation(creature);
 		int zone = SelectZoneImpl(choosingPlayer: choosingPlayer, targetPlayer: targetPlayer);
-		if(card.Controller != targetPlayer)
+		if(creature.Controller != targetPlayer)
 		{
-			RegisterControllerChange(card);
+			RegisterControllerChange(creature);
 		}
-		players[targetPlayer].field.Add(card, zone);
-		RemoveOutdatedTemporaryLingeringEffects(card);
+		players[targetPlayer].field.Add(creature, zone);
+		RemoveOutdatedTemporaryLingeringEffects(creature);
 		if(!wasAlreadyOnField)
 		{
 			foreach(Player p in players)
 			{
-				if(genericEnterFieldTriggers.ContainsKey(p.quest.uid))
-				{
-					foreach(GenericCastTrigger trigger in genericEnterFieldTriggers[p.quest.uid])
-					{
-						if(trigger.condition(target: card))
-						{
-							trigger.effect(target: card);
-							if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
-							{
-								p.quest.Reward();
-								p.quest.Text += "\nREWARD CLAIMED";
-								rewardClaimed = true;
-								break;
-							}
-
-						}
-					}
-				}
+				ProcessLocationBasedTargetingTriggers(genericEnterFieldTriggers, target: creature, uid: p.quest.uid);
 				foreach(Creature possiblyTriggeringCard in p.field.GetUsed())
 				{
-					if(genericEnterFieldTriggers.ContainsKey(possiblyTriggeringCard.uid))
-					{
-						Log($"Token creation triggers for {possiblyTriggeringCard.Name}:");
-						foreach(GenericCastTrigger trigger in genericEnterFieldTriggers[possiblyTriggeringCard.uid])
-						{
-							Log($"\tlocation: {trigger.influenceLocation}");
-							if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: card))
-							{
-								Log($"triggers");
-								trigger.effect(target: card);
-							}
-						}
-					}
+					ProcessLocationBasedTargetingTriggers(genericEnterFieldTriggers, target: creature, uid: possiblyTriggeringCard.uid);
 				}
-				if(card.Keywords.ContainsKey(Keyword.Token))
+				if(creature.Keywords.ContainsKey(Keyword.Token))
 				{
 					if(source == null)
 					{
-						throw new Exception($"Moving token {card.Name} to field but source was null");
+						throw new Exception($"Moving token {creature.Name} to field but source was null");
 					}
-					if(tokenCreationTriggers.ContainsKey(p.quest.uid))
-					{
-						foreach(TokenCreationTrigger trigger in tokenCreationTriggers[p.quest.uid])
-						{
-							if(trigger.condition(token: card, source: source))
-							{
-								trigger.effect(token: card, source: source);
-								if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
-								{
-									p.quest.Reward();
-									p.quest.Text += "\nREWARD CLAIMED";
-									rewardClaimed = true;
-									break;
-								}
-							}
-						}
-					}
+					ProcessTokenCreationTriggers(tokenCreationTriggers, token: creature, source: source, uid: p.quest.uid);
 					foreach(Creature possiblyTriggeringCard in p.field.GetUsed())
 					{
-						if(tokenCreationTriggers.ContainsKey(possiblyTriggeringCard.uid))
-						{
-							Log($"Token creation triggers for {possiblyTriggeringCard.Name}:");
-							foreach(TokenCreationTrigger trigger in tokenCreationTriggers[possiblyTriggeringCard.uid])
-							{
-								Log($"\tlocation: {trigger.influenceLocation}");
-								if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(token: card, source: source))
-								{
-									Log($"triggers");
-									trigger.effect(token: card, source: source);
-								}
-							}
-						}
+						ProcessTokenCreationTriggers(tokenCreationTriggers, token: creature, source: source, uid: possiblyTriggeringCard.uid);
 					}
 				}
 			}
@@ -1473,38 +1435,12 @@ class DuelCore : Core
 		ProcessTriggers(castTriggers, card.uid);
 		foreach(Player p in players)
 		{
-			if(genericCastTriggers.ContainsKey(p.quest.uid))
-			{
-				foreach(GenericCastTrigger trigger in genericCastTriggers[p.quest.uid])
-				{
-					if(trigger.condition(target: card))
-					{
-						trigger.effect(target: card);
-						if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
-						{
-							p.quest.Reward();
-							p.quest.Text += "\nREWARD CLAIMED";
-							rewardClaimed = true;
-							break;
-						}
-					}
-				}
-			}
+			ProcessLocationBasedTargetingTriggers(genericCastTriggers, target: card, uid: p.quest.uid);
 			foreach(Card possiblyTriggeringCard in p.field.GetUsed())
 			{
-				if(genericCastTriggers.ContainsKey(possiblyTriggeringCard.uid))
-				{
-					foreach(GenericCastTrigger trigger in genericCastTriggers[possiblyTriggeringCard.uid])
-					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: card))
-						{
-							trigger.effect(target: card);
-						}
-					}
-				}
+				ProcessLocationBasedTargetingTriggers(genericCastTriggers, target: card, uid: possiblyTriggeringCard.uid);
 			}
 		}
-		EvaluateLingeringEffects();
 		SendFieldUpdates();
 	}
 
@@ -1513,7 +1449,7 @@ class DuelCore : Core
 		players[player].abilityUsable = true;
 	}
 
-	public void RegisterCastTriggerImpl(CastTrigger trigger, Card referrer)
+	public void RegisterCastTriggerImpl(Trigger trigger, Card referrer)
 	{
 		if(!castTriggers.ContainsKey(referrer.uid))
 		{
@@ -1529,7 +1465,7 @@ class DuelCore : Core
 		}
 		dealsDamageTriggers[referrer.uid].Add(trigger);
 	}
-	public void RegisterGenericCastTriggerImpl(GenericCastTrigger trigger, Card referrer)
+	public void RegisterGenericCastTriggerImpl(LocationBasedTargetingTrigger trigger, Card referrer)
 	{
 		if(!genericCastTriggers.ContainsKey(referrer.uid))
 		{
@@ -1537,7 +1473,7 @@ class DuelCore : Core
 		}
 		genericCastTriggers[referrer.uid].Add(trigger);
 	}
-	public void RegisterRevelationTriggerImpl(RevelationTrigger trigger, Card referrer)
+	public void RegisterRevelationTriggerImpl(Trigger trigger, Card referrer)
 	{
 		if(!revelationTriggers.ContainsKey(referrer.uid))
 		{
@@ -1545,7 +1481,7 @@ class DuelCore : Core
 		}
 		revelationTriggers[referrer.uid].Add(trigger);
 	}
-	public void RegisterGenericEntersFieldTriggerImpl(GenericCastTrigger trigger, Card referrer)
+	public void RegisterGenericEntersFieldTriggerImpl(LocationBasedTargetingTrigger trigger, Card referrer)
 	{
 		if(!genericEnterFieldTriggers.ContainsKey(referrer.uid))
 		{
@@ -1553,7 +1489,7 @@ class DuelCore : Core
 		}
 		genericEnterFieldTriggers[referrer.uid].Add(trigger);
 	}
-	public void RegisterYouDiscardTriggerImpl(DiscardTrigger trigger, Card referrer)
+	public void RegisterYouDiscardTriggerImpl(LocationBasedTrigger trigger, Card referrer)
 	{
 		if(!youDiscardTriggers.ContainsKey(referrer.uid))
 		{
@@ -1561,7 +1497,7 @@ class DuelCore : Core
 		}
 		youDiscardTriggers[referrer.uid].Add(trigger);
 	}
-	public void RegisterDiscardTriggerImpl(DiscardTrigger trigger, Card referrer)
+	public void RegisterDiscardTriggerImpl(Trigger trigger, Card referrer)
 	{
 		if(!discardTriggers.ContainsKey(referrer.uid))
 		{
@@ -1787,71 +1723,27 @@ class DuelCore : Core
 			players[card.Controller].brittleDeathCounts[turn]++;
 		}
 		players[card.Controller].deathCounts[turn]++;
-		ProcessCreatureTargetingTriggers(deathTriggers, card);
+		ProcessCreatureTargetingTriggers(deathTriggers, target: card, uid: card.uid, location: card.Location);
 		SendFieldUpdates();
 		foreach(Player player in players)
 		{
 			foreach(Card fieldCard in player.field.GetUsed())
 			{
-				if(genericDeathTriggers.ContainsKey(fieldCard.uid))
-				{
-					foreach(CreatureTargetingTrigger trigger in genericDeathTriggers[fieldCard.uid])
-					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition(target: card))
-						{
-							trigger.effect(target: card);
-						}
-					}
-				}
+				ProcessCreatureTargetingTriggers(genericDeathTriggers, target: card, uid: fieldCard.uid, location: GameConstants.Location.Field);
 			}
 			foreach(Card graveCard in player.grave.GetAll())
 			{
-				if(genericDeathTriggers.ContainsKey(graveCard.uid))
-				{
-					foreach(CreatureTargetingTrigger trigger in genericDeathTriggers[graveCard.uid])
-					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Grave) && trigger.condition(target: card))
-						{
-							trigger.effect(target: card);
-						}
-					}
-				}
+				ProcessCreatureTargetingTriggers(genericDeathTriggers, target: card, uid: graveCard.uid, location: GameConstants.Location.Grave);
 			}
 			foreach(Card handCard in player.hand.GetAll())
 			{
-				if(genericDeathTriggers.ContainsKey(handCard.uid))
-				{
-					foreach(CreatureTargetingTrigger trigger in genericDeathTriggers[handCard.uid])
-					{
-						if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition(target: card))
-						{
-							trigger.effect(target: card);
-						}
-					}
-				}
+				ProcessCreatureTargetingTriggers(genericDeathTriggers, target: card, uid: handCard.uid, location: GameConstants.Location.Hand);
 			}
 		}
 		foreach(Player player in players)
 		{
-			if(genericDeathTriggers.ContainsKey(player.quest.uid))
-			{
-				foreach(CreatureTargetingTrigger trigger in genericDeathTriggers[player.quest.uid])
-				{
-					if(trigger.condition(target: card))
-					{
-						trigger.effect(target: card);
-						if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
-						{
-							player.quest.Reward();
-							player.quest.Text += "\nREWARD CLAIMED";
-							rewardClaimed = true;
-							break;
-						}
-					}
-				}
-			}
+			ProcessCreatureTargetingTriggers(triggers: genericDeathTriggers, target: card, location: GameConstants.Location.Quest, uid: player.quest.uid);
 		}
-		EvaluateLingeringEffects();
 	}
 	private void RemoveOutdatedTemporaryLingeringEffects(Card card)
 	{
@@ -1974,58 +1866,16 @@ class DuelCore : Core
 		players[card.Controller].hand.Remove(card);
 		AddCardToLocation(card, GameConstants.Location.Grave);
 		players[card.Controller].discardCounts[turn]++;
-		if(discardTriggers.ContainsKey(card.uid))
-		{
-			foreach(DiscardTrigger trigger in discardTriggers[card.uid])
-			{
-				if(trigger.condition())
-				{
-					trigger.effect();
-				}
-			}
-		}
 		Player player = players[card.Controller];
-		if(youDiscardTriggers.ContainsKey(player.quest.uid))
-		{
-			foreach(DiscardTrigger trigger in new List<Trigger>(youDiscardTriggers[player.quest.uid]))
-			{
-				if(trigger.condition())
-				{
-					trigger.effect();
-					if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
-					{
-						player.quest.Reward();
-						player.quest.Text += "\nREWARD CLAIMED";
-						rewardClaimed = true;
-					}
-				}
-			}
-		}
+		ProcessTriggers(discardTriggers, uid: card.uid);
+		ProcessLocationBasedTriggers(youDiscardTriggers, GameConstants.Location.Quest, player.quest.uid);
 		foreach(Card c in player.hand.GetAll())
 		{
-			if(youDiscardTriggers.ContainsKey(c.uid))
-			{
-				foreach(DiscardTrigger trigger in youDiscardTriggers[c.uid])
-				{
-					if(trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
-					{
-						trigger.effect();
-					}
-				}
-			}
+			ProcessLocationBasedTriggers(youDiscardTriggers, GameConstants.Location.Hand, uid: c.uid);
 		}
-		foreach(Card? c in player.field.GetAll())
+		foreach(Creature c in player.field.GetUsed())
 		{
-			if(c != null && youDiscardTriggers.ContainsKey(c.uid))
-			{
-				foreach(DiscardTrigger trigger in youDiscardTriggers[c.uid])
-				{
-					if(trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition())
-					{
-						trigger.effect();
-					}
-				}
-			}
+			ProcessLocationBasedTriggers(youDiscardTriggers, GameConstants.Location.Field, uid: c.uid);
 		}
 	}
 	public void CreateTokenOnFieldImpl(int player, int power, int life, string name, Card source)

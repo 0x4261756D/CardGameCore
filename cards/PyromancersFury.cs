@@ -17,7 +17,7 @@ class PyromancersFury : Spell
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect), referrer: this);
+		RegisterCastTrigger(trigger: new Trigger(effect: CastEffect), referrer: this);
 		RegisterGenericDeathTrigger(trigger: new CreatureTargetingTrigger(effect: RefreshEffect, condition: RefreshCondition, influenceLocation: Location.Grave), referrer: this);
 	}
 

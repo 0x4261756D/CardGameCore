@@ -36,111 +36,63 @@ public class Trigger
 	}
 }
 
-public class TargetingTrigger
+public class LocationBasedTrigger
 {
-	public TargetingCondition condition;
-	public TargetingEffect effect;
-
-	public TargetingTrigger(TargetingEffect effect, TargetingCondition condition)
-	{
-		this.effect = effect;
-		this.condition = condition;
-	}
-
-	public TargetingTrigger(TargetingEffect effect)
-	{
-		this.effect = effect;
-		this.condition = (_) => true;
-	}
-}
-
-public class DiscardTrigger : Trigger
-{
+	public TriggerCondition condition;
+	public Effect effect;
 	public GameConstants.Location influenceLocation;
 
-	public DiscardTrigger(Effect effect, TriggerCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
-		: base(effect, condition)
+	public LocationBasedTrigger(Effect effect, TriggerCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
 		this.influenceLocation = influenceLocation;
+		this.condition = condition;
+		this.effect = effect;
 	}
-	public DiscardTrigger(Effect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field)
-		: base(effect)
+	public LocationBasedTrigger(Effect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
 		this.influenceLocation = influenceLocation;
+		this.effect = effect;
+		this.condition = () => true;
 	}
 }
-public class StateReachedTrigger : Trigger
+public class StateReachedTrigger
 {
 	public GameConstants.Location influenceLocation;
 	public GameConstants.State state;
+	public TriggerCondition condition;
+	public Effect effect;
 	public bool oneshot, wasTriggered;
 
 	public StateReachedTrigger(Effect effect, TriggerCondition condition, GameConstants.State state, GameConstants.Location influenceLocation = GameConstants.Location.Field, bool oneshot = false)
-		: base(effect, condition)
 	{
 		this.influenceLocation = influenceLocation;
 		this.state = state;
 		this.oneshot = oneshot;
+		this.effect = effect;
+		this.condition = condition;
 	}
 	public StateReachedTrigger(Effect effect, GameConstants.State state, GameConstants.Location influenceLocation = GameConstants.Location.Field, bool oneshot = false)
-		: base(effect)
 	{
 		this.influenceLocation = influenceLocation;
 		this.state = state;
 		this.oneshot = oneshot;
+		this.effect = effect;
+		this.condition = () => true;
 	}
 }
-
-public class CastTrigger : Trigger
-{
-	//public Card referrer;
-
-	public CastTrigger(Effect effect, TriggerCondition condition/* , Card referrer */) : base(
-		effect: effect,
-		condition: condition
-	)
-	{
-		//this.referrer = referrer;
-	}
-	public CastTrigger(Effect effect/* , Card referrer */) : base(
-		effect: effect
-	)
-	{
-		//this.referrer = referrer;
-	}
-}
-public class RevelationTrigger : Trigger
-{
-	//public Card referrer;
-
-	public RevelationTrigger(Effect effect, TriggerCondition condition/*, Card referrer*/) : base(
-		effect: effect,
-		condition: condition
-	)
-	{
-		//this.referrer = referrer;
-	}
-	public RevelationTrigger(Effect effect/*, Card referrer*/) : base(
-		effect: effect
-	)
-	{
-		//this.referrer = referrer;
-	}
-}
-
-public class GenericCastTrigger : Trigger
+public class LocationBasedTargetingTrigger
 {
 	public GameConstants.Location influenceLocation;
-	public new TargetingCondition condition;
-	public new TargetingEffect effect;
+	public TargetingCondition condition;
+	public TargetingEffect effect;
 
-	public GenericCastTrigger(TargetingEffect effect, TargetingCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public LocationBasedTargetingTrigger(TargetingEffect effect, TargetingCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
 		this.influenceLocation = influenceLocation;
 		this.condition = condition;
 		this.effect = effect;
 	}
-	public GenericCastTrigger(TargetingEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public LocationBasedTargetingTrigger(TargetingEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
 		this.influenceLocation = influenceLocation;
 		this.condition = (_) => true;
@@ -148,11 +100,11 @@ public class GenericCastTrigger : Trigger
 	}
 }
 
-public class TokenCreationTrigger : Trigger
+public class TokenCreationTrigger
 {
 	public GameConstants.Location influenceLocation;
-	public new TokenCreationCondition condition;
-	public new TokenCreationEffect effect;
+	public TokenCreationCondition condition;
+	public TokenCreationEffect effect;
 
 	public TokenCreationTrigger(TokenCreationEffect effect, TokenCreationCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 	{
@@ -168,10 +120,10 @@ public class TokenCreationTrigger : Trigger
 	}
 }
 
-public class CreatureTargetingTrigger : Trigger
+public class CreatureTargetingTrigger
 {
-	public new CreatureTargetingCondition condition;
-	public new CreatureTargetingEffect effect;
+	public CreatureTargetingCondition condition;
+	public CreatureTargetingEffect effect;
 	public GameConstants.Location influenceLocation;
 
 	public CreatureTargetingTrigger(CreatureTargetingEffect effect, CreatureTargetingCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
@@ -238,19 +190,13 @@ public delegate bool CreatureTargetingCondition(Creature target);
 public delegate void CreatureTargetingEffect(Creature target);
 public delegate void TokenCreationEffect(Creature token, Card source);
 public delegate bool TokenCreationCondition(Creature token, Card source);
-public delegate void RegisterCastTriggerDelegate(CastTrigger trigger, Card referrer);
-public delegate void RegisterGenericCastTriggerDelegate(GenericCastTrigger trigger, Card referrer);
+public delegate void RegisterLocationBasedTargetingTriggerDelegate(LocationBasedTargetingTrigger trigger, Card referrer);
 public delegate void RegisterTokenCreationTriggerDelegate(TokenCreationTrigger trigger, Card referrer);
-public delegate void RegisterRevelationTriggerDelegate(RevelationTrigger trigger, Card referrer);
-public delegate void RegisterDiscardTriggerDelegate(DiscardTrigger trigger, Card referrer);
+public delegate void RegisterTriggerDelegate(Trigger trigger, Card referrer);
+public delegate void RegisterLocationBasedTriggerDelegate(LocationBasedTrigger trigger, Card referrer);
 public delegate void RegisterStateReachedTriggerDelegate(StateReachedTrigger trigger, Card referrer);
-public delegate void RegisterVictoriousTriggerDelegate(Trigger trigger, Card referrer);
-public delegate void RegisterAttackTriggerDelegate(Trigger trigger, Card referrer);
-public delegate void RegisterDeathTriggerDelegate(CreatureTargetingTrigger trigger, Card referrer);
-public delegate void RegisterGenericDeathTriggerDelegate(CreatureTargetingTrigger trigger, Card referrer);
-public delegate void RegisterDealsDamageTriggerDelegate(Trigger trigger, Card referrer);
+public delegate void RegisterCreatureTargetingTriggerDelegate(CreatureTargetingTrigger trigger, Card referrer);
 public delegate void RegisterLingeringEffectDelegate(LingeringEffectInfo info);
-public delegate void RegisterTemporaryLingeringEffectDelegate(LingeringEffectInfo info);
 public delegate void RegisterActivatedEffectDelegate(ActivatedEffectInfo info);
 public delegate void CastDelegate(int player, Card card);
 public delegate void DrawDelegate(int player, int amount);

@@ -18,7 +18,7 @@ class EnormousTitan : Creature
 	{
 		RegisterKeyword(Keyword.Colossal, 1);
 		RegisterLingeringEffect(info: LingeringEffectInfo.Create(effect: CostReductionEffect, referrer: this, influenceLocation: Location.Hand));
-		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: GainEffect), referrer: this);
+		RegisterRevelationTrigger(trigger: new Trigger(effect: GainEffect), referrer: this);
 	}
 
 	private void GainEffect()

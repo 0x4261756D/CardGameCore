@@ -15,8 +15,8 @@ class PreparetheAltar : Spell
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new CastTrigger(effect: CastEffect, condition: CastCondition), referrer: this);
-		RegisterRevelationTrigger(trigger: new RevelationTrigger(effect: GainDiscardEffect), referrer: this);
+		RegisterCastTrigger(trigger: new Trigger(effect: CastEffect, condition: CastCondition), referrer: this);
+		RegisterRevelationTrigger(trigger: new Trigger(effect: GainDiscardEffect), referrer: this);
 	}
 
 
