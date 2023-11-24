@@ -99,8 +99,7 @@ partial class ClientCore : Core
 		{
 			using TcpClient client = new(Program.config.deck_config!.additional_cards_url.address, Program.config.deck_config.additional_cards_url.port);
 			using NetworkStream stream = client.GetStream();
-			List<byte> payload = GeneratePayload(new ServerPackets.AdditionalCardsRequest());
-			stream.Write([.. payload], 0, payload.Count);
+			stream.Write(GeneratePayload(new ServerPackets.AdditionalCardsRequest()));
 
 			byte[]? response = TryReceivePacket<ServerPackets.AdditionalCardsResponse>(stream, 1000);
 			if(response == null)
@@ -160,7 +159,7 @@ partial class ClientCore : Core
 			throw new Exception($"ERROR: Unknown packet type encountered: ({typeByte})");
 		}
 		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)typeByte;
-		List<byte> payload = [];
+		byte[] payload;
 		switch(type)
 		{
 			case NetworkingConstants.PacketType.DeckNamesRequest:
@@ -221,7 +220,7 @@ partial class ClientCore : Core
 			default:
 				throw new Exception($"ERROR: Unable to process this packet: ({type}) | {Encoding.UTF8.GetString(bytes)}");
 		}
-		stream.Write([.. payload], 0, payload.Count);
+		stream.Write(payload);
 		return false;
 	}
 

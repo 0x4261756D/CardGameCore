@@ -2031,8 +2031,8 @@ class DuelCore : Core
 	}
 	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
 	{
-		List<byte> payload = GeneratePayload(packet);
-		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: NetworkingConstants.PacketDict[typeof(T)], packet: [.. payload.GetRange(5, payload.Count - 5)], clientToServer: false));
-		playerStreams[player]!.Write([.. payload], 0, payload.Count);
+		byte[] payload = GeneratePayload(packet);
+		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: NetworkingConstants.PacketDict[typeof(T)], packet: payload[5..(payload.Length - 5)], clientToServer: false));
+		playerStreams[player]!.Write(payload);
 	}
 }
