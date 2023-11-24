@@ -23,9 +23,9 @@ class BrilliantMedic : Creature
 	public void HealEffect()
 	{
 		Creature[] fields = FilterValid(cards: GetBothFieldsUsed(), isValid: (card) => card.Life < card.BaseLife);
-		if(fields.Length == 0 || Card.AskYesNo(player: Controller, question: "Heal a player?"))
+		if(fields.Length == 0 || AskYesNo(player: Controller, question: "Heal a player?"))
 		{
-			PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Heal yourself?") ? Controller : 1 - Controller, amount: 4, source: this);
+			PlayerChangeLife(player: AskYesNo(player: Controller, question: "Heal yourself?") ? Controller : 1 - Controller, amount: 4, source: this);
 		}
 		else
 		{

@@ -13,7 +13,7 @@ public class CardUtils
 
 	public static Card[] GetForBoth(GetCardsInLocationDelegate accessor)
 	{
-		return accessor(0).Concat(accessor(1)).ToArray();
+		return [.. accessor(0), .. accessor(1)];
 	}
 	public static Card?[] GetBothFieldsWhole()
 	{
@@ -31,7 +31,7 @@ public class CardUtils
 	}
 	public static Creature[] GetBothFieldsUsed()
 	{
-		return Card.GetFieldUsed(0).Concat(Card.GetFieldUsed(1)).ToArray();
+		return [.. Card.GetFieldUsed(0), .. Card.GetFieldUsed(1)];
 	}
 
 	public static void ChangeLifeOfAnyTarget(int player, int amount, Card source, string description = "Change life of")

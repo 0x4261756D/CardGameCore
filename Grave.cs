@@ -4,7 +4,7 @@ namespace CardGameCore;
 
 class Grave
 {
-	private List<Card> cards = new();
+	private readonly List<Card> cards = [];
 	public int Size
 	{
 		get => cards.Count;
@@ -28,7 +28,7 @@ class Grave
 
 	internal Card[] GetAll()
 	{
-		return cards.ToArray();
+		return [.. cards];
 	}
 
 	internal void Remove(Card card)

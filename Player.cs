@@ -18,9 +18,9 @@ class Player
 	public Card ability;
 	public Quest quest;
 	public int life, momentum;
-	public List<int> discardCounts = new(), dealtDamages = new(), dealtSpellDamages = new(), brittleDeathCounts = new(), deathCounts = new();
+	public List<int> discardCounts = [], dealtDamages = [], dealtSpellDamages = [], brittleDeathCounts = [], deathCounts = [];
 	public int baseIgniteDamage = 1, igniteDamage;
-	public Dictionary<string, int> castCounts = new();
+	public Dictionary<string, int> castCounts = [];
 	public Player(CoreConfig.PlayerConfig config, int number, Deck deck, GameConstants.PlayerClass playerClass, Card ability, Quest quest)
 	{
 		this.deck = deck;

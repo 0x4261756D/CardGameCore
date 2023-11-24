@@ -6,7 +6,7 @@ namespace CardGameCore;
 
 class Field
 {
-	private Creature?[] cards = new Creature?[GameConstants.FIELD_SIZE];
+	private readonly Creature?[] cards = new Creature?[GameConstants.FIELD_SIZE];
 	public Field()
 	{
 
@@ -14,7 +14,7 @@ class Field
 
 	internal CardStruct?[] ToStruct()
 	{
-		return cards.ToList().ConvertAll(x => x?.ToStruct()).ToArray();
+		return [.. cards.ToList().ConvertAll(x => x?.ToStruct())];
 	}
 
 	internal Creature?[] GetAll()
@@ -66,7 +66,7 @@ class Field
 	}
 	internal bool[] GetPlacementOptions()
 	{
-		return cards.ToList().ConvertAll(x => x == null).ToArray();
+		return [.. cards.ToList().ConvertAll(x => x == null)];
 	}
 
 	internal void ClearCardModifications()

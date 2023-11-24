@@ -32,6 +32,6 @@ class Masterpiece : Spell
 
 	private bool CastCondition()
 	{
-		return ContainsValid(cards: GetGrave(Controller), isValid: (card) => card.CardType == CardType.Creature) && HasEmpty(GetField((Controller)));
+		return ContainsValid(cards: GetGrave(Controller), isValid: (card) => card.CardType == CardType.Creature) && HasEmpty(GetField(Controller));
 	}
 }

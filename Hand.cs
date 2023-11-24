@@ -5,7 +5,7 @@ namespace CardGameCore;
 
 class Hand
 {
-	private List<Card> cards = new();
+	private readonly List<Card> cards = [];
 	public Hand()
 	{
 
@@ -19,12 +19,12 @@ class Hand
 
 	internal CardStruct[] ToStruct()
 	{
-		return cards.ConvertAll(x => x.ToStruct()).ToArray();
+		return [.. cards.ConvertAll(x => x.ToStruct())];
 	}
 
 	internal Card[] GetAll()
 	{
-		return cards.ToArray();
+		return [.. cards];
 	}
 
 	internal void Remove(Card c)
@@ -39,12 +39,12 @@ class Hand
 
 	internal Card[] GetDiscardable(Card? ignore)
 	{
-		return cards.Where(card => card.uid != ignore?.uid && card.CanBeDiscarded()).ToArray();
+		return [.. cards.Where(card => card.uid != ignore?.uid && card.CanBeDiscarded())];
 	}
 
 	internal CardStruct[] ToHiddenStruct()
 	{
-		return cards.ConvertAll(x => new CardStruct()).ToArray();
+		return [.. cards.ConvertAll(x => new CardStruct())];
 	}
 
 	internal Card GetByUID(int uid)

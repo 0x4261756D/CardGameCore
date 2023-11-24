@@ -165,7 +165,7 @@ public abstract class Card
 
 	internal static CardStruct[] ToStruct(Card[] cards)
 	{
-		return cards.ToList().ConvertAll(x => x.ToStruct()).ToArray();
+		return [.. cards.ToList().ConvertAll(x => x.ToStruct())];
 	}
 }
 public class ClientCoreDummyCard : Card
@@ -190,7 +190,7 @@ public class ClientCoreDummyToken : Token
 	}
 }
 
-public abstract class Creature : Card
+public abstract partial class Creature : Card
 {
 	public readonly int BaseLife, BasePower;
 	public int damageCap, baseDamageCap;
@@ -222,7 +222,7 @@ public abstract class Creature : Card
 			if(_power < 0) _power = 0;
 		}
 	}
-	public Dictionary<Keyword, int> Keywords = new Dictionary<Keyword, int>();
+	public Dictionary<Keyword, int> Keywords = [];
 	public Creature(GameConstants.PlayerClass CardClass,
 		string Name,
 		string Text,
@@ -258,7 +258,7 @@ public abstract class Creature : Card
 
 	public override CardStruct ToStruct(bool client = false)
 	{
-		StringBuilder text = new StringBuilder();
+		StringBuilder text = new();
 		if(client)
 		{
 			text.Append(Text);
@@ -281,7 +281,7 @@ public abstract class Creature : Card
 					text.Append('\n');
 				}
 			}
-			text.Append(Regex.Replace(Text, @"(?m:^\[.+\]( \+?\d+)?$)\n?", ""));
+			text.Append(KeywordRegex().Replace(Text, ""));
 		}
 		return new CardStruct(name: Name,
 			text: text.ToString(),
@@ -295,28 +295,26 @@ public abstract class Creature : Card
 			controller: Controller,
 			base_controller: BaseController);
 	}
+
+	[GeneratedRegex(@"(?m:^\[.+\](?: \+?\d+)?$)\n?")]
+	private static partial Regex KeywordRegex();
 }
 
-public abstract class Spell : Card
+public abstract class Spell(GameConstants.PlayerClass CardClass,
+	string Name,
+	string Text,
+	int OriginalCost = 0,
+	GameConstants.Location OriginalLocation = GameConstants.Location.UNKNOWN,
+	bool IsClassAbility = false,
+	bool CanBeClassAbility = false) : Card(CardType: GameConstants.CardType.Spell,
+		CardClass: CardClass,
+		Name: Name,
+		Text: Text,
+		OriginalCost: OriginalCost,
+		OriginalLocation: OriginalLocation)
 {
-	public bool IsClassAbility, CanBeClassAbility;
-	public Spell(GameConstants.PlayerClass CardClass,
-		string Name,
-		string Text,
-		int OriginalCost = 0,
-		GameConstants.Location OriginalLocation = GameConstants.Location.UNKNOWN,
-		bool IsClassAbility = false,
-		bool CanBeClassAbility = false)
-		: base(CardType: GameConstants.CardType.Spell,
-			CardClass: CardClass,
-			Name: Name,
-			Text: Text,
-			OriginalCost: OriginalCost,
-			OriginalLocation: OriginalLocation)
-	{
-		this.IsClassAbility = IsClassAbility;
-		this.CanBeClassAbility = CanBeClassAbility;
-	}
+	public bool IsClassAbility = IsClassAbility, CanBeClassAbility = CanBeClassAbility;
+
 	public override CardStruct ToStruct(bool client = false)
 	{
 		return new CardStruct(name: Name,
@@ -333,26 +331,21 @@ public abstract class Spell : Card
 	}
 }
 
-public abstract class Quest : Card
+public abstract class Quest(string Name, string Text, int ProgressGoal, GameConstants.PlayerClass CardClass) : Card(
+	CardType: GameConstants.CardType.Quest,
+	CardClass: CardClass,
+	Name: Name,
+	Text: Text)
 {
 	private int _progress;
 	public int Progress
 	{
 		get => _progress;
-		set => _progress = Math.Min(value, this.Goal);
+		set => _progress = Math.Min(value, Goal);
 	}
-	public readonly int Goal;
+	public readonly int Goal = ProgressGoal;
 
 	public abstract void Reward();
-
-	public Quest(string Name, string Text, int ProgressGoal, GameConstants.PlayerClass CardClass) : base(
-		CardType: GameConstants.CardType.Quest,
-		CardClass: CardClass,
-		Name: Name,
-		Text: Text)
-	{
-		Goal = ProgressGoal;
-	}
 
 	public override CardStruct ToStruct(bool client = false)
 	{

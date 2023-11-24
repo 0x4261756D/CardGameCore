@@ -10,7 +10,7 @@ namespace CardGameCore;
 class Program
 {
 	public static string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-	public static CoreConfig config = new CoreConfig(-1, CoreConfig.CoreMode.Client);
+	public static CoreConfig config = new(-1, CoreConfig.CoreMode.Client);
 	public static Replay? replay;
 	public static int seed;
 	public static DateTime versionTime;
@@ -92,7 +92,7 @@ class Program
 						break;
 					case "players":
 						string players = Encoding.UTF8.GetString(Convert.FromBase64String(parameter));
-						if(!players.StartsWith("µ") || !players.EndsWith("µ"))
+						if(!players.StartsWith('µ') || !players.EndsWith('µ'))
 						{
 							Log($"Your players string is in a wrong format: {players}", severity: LogSeverity.Error);
 							return;
@@ -103,9 +103,11 @@ class Program
 							Log($"Your players string is in a wrong format: {players}", severity: LogSeverity.Error);
 							return;
 						}
-						CoreConfig.PlayerConfig[] playerConfigs = new CoreConfig.PlayerConfig[2];
-						playerConfigs[0] = new CoreConfig.PlayerConfig(name: playerData[1], id: playerData[2], decklist: playerData[3].Split(';'));
-						playerConfigs[1] = new CoreConfig.PlayerConfig(name: playerData[4], id: playerData[5], decklist: playerData[6].Split(';'));
+						CoreConfig.PlayerConfig[] playerConfigs =
+						[
+							new CoreConfig.PlayerConfig(name: playerData[1], id: playerData[2], decklist: playerData[3].Split(';')),
+							new CoreConfig.PlayerConfig(name: playerData[4], id: playerData[5], decklist: playerData[6].Split(';')),
+						];
 						if(config.duel_config == null)
 						{
 							config.duel_config = new CoreConfig.DuelConfig(players: playerConfigs, noshuffle: false);
@@ -170,7 +172,7 @@ class Program
 		{
 			string replayPath = Path.Combine(baseDir, "replays");
 			Directory.CreateDirectory(replayPath);
-			string filePath = Path.Combine(replayPath, $"{DateTime.UtcNow.ToString("yyyyMMdd_HHmmss")}_{config.duel_config?.players[0].name}_vs_{config.duel_config?.players[1].name}.replay");
+			string filePath = Path.Combine(replayPath, $"{DateTime.UtcNow:yyyyMMdd_HHmmss}_{config.duel_config?.players[0].name}_vs_{config.duel_config?.players[1].name}.replay");
 			File.WriteAllText(filePath, JsonSerializer.Serialize<Replay>(replay, NetworkingConstants.jsonIncludeOption));
 			Log("Wrote replay to " + filePath);
 		}
@@ -191,19 +193,19 @@ class Program
 	public static void GenerateAdditionalCards(string path)
 	{
 		DateTime? time = JsonSerializer.Deserialize<NetworkingStructs.ServerPackets.AdditionalCardsResponse>(File.ReadAllText(path), NetworkingConstants.jsonIncludeOption)?.time;
-		Log($"Additional card times: (own: {Program.versionTime}, additional: {time})");
-		if(!File.Exists(path) || time < Program.versionTime)
+		Log($"Additional card times: (own: {versionTime}, additional: {time})");
+		if(!File.Exists(path) || time < versionTime)
 		{
 			Log("Generating new additional cards");
-			List<CardStruct> cards = new List<CardStruct>();
-			foreach(Type card in Assembly.GetExecutingAssembly().GetTypes().Where(Program.IsCardSubclass))
+			List<CardStruct> cards = [];
+			foreach(Type card in Assembly.GetExecutingAssembly().GetTypes().Where(IsCardSubclass))
 			{
 				Card c = (Card)Activator.CreateInstance(card)!;
 				cards.Add(c.ToStruct(client: true));
 			}
 			File.WriteAllText(path, JsonSerializer.Serialize(new NetworkingStructs.ServerPackets.AdditionalCardsResponse
 			{
-				cards = cards.ToArray(),
+				cards = [.. cards],
 				time = versionTime,
 			}, NetworkingConstants.jsonIncludeOption));
 		}

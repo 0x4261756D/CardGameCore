@@ -36,7 +36,7 @@ class ImmortalPhoenix : Creature
 		}
 	}
 
-	private void BuffEffect(Creature target)
+	private static void BuffEffect(Creature target)
 	{
 		target.Life++;
 		target.Power++;

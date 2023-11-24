@@ -25,7 +25,7 @@ class DuelCore : Core
 	}
 	public static int UIDCount;
 	public Player[] players;
-	public static NetworkStream?[] playerStreams = new NetworkStream?[0];
+	public static NetworkStream?[] playerStreams = [];
 	public static Random rnd = new(Program.seed);
 	public const int HASH_LEN = 96;
 	public int playersConnected = 0;
@@ -34,29 +34,29 @@ class DuelCore : Core
 	public int momentumBase = GameConstants.START_MOMENTUM;
 	public bool rewardClaimed = false;
 
-	private Dictionary<int, List<Trigger>> castTriggers = new();
-	private Dictionary<int, List<LocationBasedTargetingTrigger>> genericCastTriggers = new();
-	private Dictionary<int, List<TokenCreationTrigger>> tokenCreationTriggers = new();
-	private Dictionary<int, List<LocationBasedTargetingTrigger>> genericEnterFieldTriggers = new();
-	private Dictionary<int, List<Trigger>> revelationTriggers = new();
-	private Dictionary<int, List<Trigger>> victoriousTriggers = new();
-	private Dictionary<int, List<Trigger>> attackTriggers = new();
-	private Dictionary<int, List<CreatureTargetingTrigger>> deathTriggers = new();
-	private Dictionary<int, List<CreatureTargetingTrigger>> genericDeathTriggers = new();
-	private Dictionary<int, List<LocationBasedTrigger>> youDiscardTriggers = new();
-	private Dictionary<int, List<Trigger>> discardTriggers = new();
-	private Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = new();
-	private List<StateReachedTrigger> alwaysActiveStateReachedTriggers = new();
-	private Dictionary<int, LingeringEffectList> lingeringEffects = new();
-	private Dictionary<int, LingeringEffectList> temporaryLingeringEffects = new();
-	private LingeringEffectList alwaysActiveLingeringEffects;
-	private Dictionary<int, List<ActivatedEffectInfo>> activatedEffects = new();
-	private Dictionary<int, List<Trigger>> dealsDamageTriggers = new();
+	private readonly Dictionary<int, List<Trigger>> castTriggers = [];
+	private readonly Dictionary<int, List<LocationBasedTargetingTrigger>> genericCastTriggers = [];
+	private readonly Dictionary<int, List<TokenCreationTrigger>> tokenCreationTriggers = [];
+	private readonly Dictionary<int, List<LocationBasedTargetingTrigger>> genericEnterFieldTriggers = [];
+	private readonly Dictionary<int, List<Trigger>> revelationTriggers = [];
+	private readonly Dictionary<int, List<Trigger>> victoriousTriggers = [];
+	private readonly Dictionary<int, List<Trigger>> attackTriggers = [];
+	private readonly Dictionary<int, List<CreatureTargetingTrigger>> deathTriggers = [];
+	private readonly Dictionary<int, List<CreatureTargetingTrigger>> genericDeathTriggers = [];
+	private readonly Dictionary<int, List<LocationBasedTrigger>> youDiscardTriggers = [];
+	private readonly Dictionary<int, List<Trigger>> discardTriggers = [];
+	private readonly Dictionary<int, List<StateReachedTrigger>> stateReachedTriggers = [];
+	private readonly List<StateReachedTrigger> alwaysActiveStateReachedTriggers = [];
+	private readonly Dictionary<int, LingeringEffectList> lingeringEffects = [];
+	private readonly Dictionary<int, LingeringEffectList> temporaryLingeringEffects = [];
+	private readonly LingeringEffectList alwaysActiveLingeringEffects;
+	private readonly Dictionary<int, List<ActivatedEffectInfo>> activatedEffects = [];
+	private readonly Dictionary<int, List<Trigger>> dealsDamageTriggers = [];
 
 	private class LingeringEffectList : IEnumerable<LingeringEffectInfo>
 	{
-		private List<LingeringEffectInfo> items = new();
-		private DuelCore core;
+		private readonly List<LingeringEffectInfo> items = [];
+		private readonly DuelCore core;
 		public LingeringEffectList(DuelCore core)
 		{
 			this.core = core;
@@ -100,13 +100,13 @@ class DuelCore : Core
 			Log("Player created. ID: " + Program.config.duel_config.players[i].id);
 			Deck deck = new();
 			GameConstants.PlayerClass playerClass = Enum.Parse<GameConstants.PlayerClass>(Program.config.duel_config.players[i].decklist[0]);
-			if(!Program.config.duel_config.players[i].decklist[1].StartsWith("#"))
+			if(!Program.config.duel_config.players[i].decklist[1].StartsWith('#'))
 			{
 				Log($"Player {Program.config.duel_config.players[i].name} has no ability, {Program.config.duel_config.players[i].decklist[1]} is no suitable ability");
 				return;
 			}
 			Card ability = CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[1][1..])!, i);
-			if(!Program.config.duel_config.players[i].decklist[2].StartsWith("|"))
+			if(!Program.config.duel_config.players[i].decklist[2].StartsWith('|'))
 			{
 				Log($"Player {Program.config.duel_config.players[i].name} has no quest, {Program.config.duel_config.players[i].decklist[2]} is no suitable ability");
 				return;
@@ -195,7 +195,7 @@ class DuelCore : Core
 		listener.Stop();
 	}
 
-	private Card CreateBasicCard(Type type, int controller)
+	private static Card CreateBasicCard(Type type, int controller)
 	{
 		Card c = (Card)Activator.CreateInstance(type)!;
 		c.BaseController = controller;
@@ -277,7 +277,7 @@ class DuelCore : Core
 		{
 			player.ClearCardModifications();
 		}
-		SortedList<int, LingeringEffectInfo> infos = new();
+		SortedList<int, LingeringEffectInfo> infos = [];
 		foreach(LingeringEffectInfo info in alwaysActiveLingeringEffects)
 		{
 			if(info.influenceLocation == GameConstants.Location.ALL)
@@ -294,9 +294,9 @@ class DuelCore : Core
 		{
 			foreach(Card card in player.hand.GetAll())
 			{
-				if(lingeringEffects.ContainsKey(card.uid))
+				if(lingeringEffects.TryGetValue(card.uid, out LingeringEffectList? handInfos))
 				{
-					foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
+					foreach(LingeringEffectInfo info in handInfos)
 					{
 						if(info.influenceLocation.HasFlag(card.Location))
 						{
@@ -313,9 +313,9 @@ class DuelCore : Core
 						}
 					}
 				}
-				if(temporaryLingeringEffects.ContainsKey(card.uid))
+				if(temporaryLingeringEffects.TryGetValue(card.uid, out LingeringEffectList? handTempInfos))
 				{
-					foreach(LingeringEffectInfo info in temporaryLingeringEffects[card.uid])
+					foreach(LingeringEffectInfo info in handTempInfos)
 					{
 						if(info.influenceLocation.HasFlag(card.Location))
 						{
@@ -335,9 +335,9 @@ class DuelCore : Core
 			}
 			foreach(Card card in player.field.GetUsed())
 			{
-				if(lingeringEffects.ContainsKey(card.uid))
+				if(lingeringEffects.TryGetValue(card.uid, out LingeringEffectList? fieldInfos))
 				{
-					foreach(LingeringEffectInfo info in lingeringEffects[card.uid])
+					foreach(LingeringEffectInfo info in fieldInfos)
 					{
 						if(info.influenceLocation.HasFlag(card.Location))
 						{
@@ -354,9 +354,9 @@ class DuelCore : Core
 						}
 					}
 				}
-				if(temporaryLingeringEffects.ContainsKey(card.uid))
+				if(temporaryLingeringEffects.TryGetValue(card.uid, out LingeringEffectList? fieldTempInfos))
 				{
-					foreach(LingeringEffectInfo info in temporaryLingeringEffects[card.uid])
+					foreach(LingeringEffectInfo info in fieldTempInfos)
 					{
 						if(info.influenceLocation.HasFlag(card.Location))
 						{
@@ -377,9 +377,9 @@ class DuelCore : Core
 		}
 		foreach(Player player in players)
 		{
-			if(lingeringEffects.ContainsKey(player.quest.uid))
+			if(lingeringEffects.TryGetValue(player.quest.uid, out LingeringEffectList? questInfos))
 			{
-				foreach(LingeringEffectInfo info in lingeringEffects[player.quest.uid])
+				foreach(LingeringEffectInfo info in questInfos)
 				{
 					if(info.timestamp == 0)
 					{
@@ -389,9 +389,9 @@ class DuelCore : Core
 					infos.Add(info.timestamp, info);
 				}
 			}
-			if(temporaryLingeringEffects.ContainsKey(player.quest.uid))
+			if(temporaryLingeringEffects.TryGetValue(player.quest.uid, out LingeringEffectList? questTempInfos))
 			{
-				foreach(LingeringEffectInfo info in temporaryLingeringEffects[player.quest.uid])
+				foreach(LingeringEffectInfo info in questTempInfos)
 				{
 					if(info.timestamp == 0)
 					{
@@ -429,9 +429,9 @@ class DuelCore : Core
 
 	private void ProcessCreatureTargetingTriggers(Dictionary<int, List<CreatureTargetingTrigger>> triggers, Creature target, GameConstants.Location location, int uid)
 	{
-		if(triggers.ContainsKey(uid))
+		if(triggers.TryGetValue(uid, out List<CreatureTargetingTrigger>? value))
 		{
-			foreach(CreatureTargetingTrigger trigger in triggers[uid])
+			foreach(CreatureTargetingTrigger trigger in value)
 			{
 				EvaluateLingeringEffects();
 				if(trigger.influenceLocation.HasFlag(location) && trigger.condition(target))
@@ -445,9 +445,9 @@ class DuelCore : Core
 	}
 	public void ProcessLocationBasedTargetingTriggers(Dictionary<int, List<LocationBasedTargetingTrigger>> triggers, Card target, int uid)
 	{
-		if(triggers.ContainsKey(uid))
+		if(triggers.TryGetValue(uid, out List<LocationBasedTargetingTrigger>? matchingTriggers))
 		{
-			foreach(LocationBasedTargetingTrigger trigger in triggers[uid])
+			foreach(LocationBasedTargetingTrigger trigger in matchingTriggers)
 			{
 				EvaluateLingeringEffects();
 				if(trigger.condition(target))
@@ -461,9 +461,9 @@ class DuelCore : Core
 	}
 	public void ProcessLocationBasedTriggers(Dictionary<int, List<LocationBasedTrigger>> triggers, GameConstants.Location location, int uid)
 	{
-		if(triggers.ContainsKey(uid))
+		if(triggers.TryGetValue(uid, out List<LocationBasedTrigger>? matchingTriggers))
 		{
-			foreach(LocationBasedTrigger trigger in triggers[uid])
+			foreach(LocationBasedTrigger trigger in matchingTriggers)
 			{
 				EvaluateLingeringEffects();
 				if(trigger.influenceLocation.HasFlag(location) && trigger.condition())
@@ -494,9 +494,9 @@ class DuelCore : Core
 		{
 			foreach(Player player in players)
 			{
-				if(stateReachedTriggers.ContainsKey(player.quest.uid))
+				if(stateReachedTriggers.TryGetValue(player.quest.uid, out List<StateReachedTrigger>? questTriggers))
 				{
-					foreach(StateReachedTrigger trigger in stateReachedTriggers[player.quest.uid])
+					foreach(StateReachedTrigger trigger in questTriggers)
 					{
 						EvaluateLingeringEffects();
 						if(trigger.state == state && trigger.condition())
@@ -507,14 +507,14 @@ class DuelCore : Core
 						}
 					}
 					EvaluateLingeringEffects();
-					stateReachedTriggers[player.quest.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
+					questTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
 				}
 
 				foreach(Card card in player.hand.GetAll())
 				{
-					if(stateReachedTriggers.ContainsKey(card.uid))
+					if(stateReachedTriggers.TryGetValue(card.uid, out List<StateReachedTrigger>? handTriggers))
 					{
-						foreach(StateReachedTrigger trigger in stateReachedTriggers[card.uid])
+						foreach(StateReachedTrigger trigger in handTriggers)
 						{
 							EvaluateLingeringEffects();
 							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
@@ -528,15 +528,15 @@ class DuelCore : Core
 								trigger.wasTriggered = false;
 							}
 						}
-						stateReachedTriggers[card.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
+						handTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
 						EvaluateLingeringEffects();
 					}
 				}
 				foreach(Card? card in player.field.GetAll())
 				{
-					if(card != null && stateReachedTriggers.ContainsKey(card.uid))
+					if(card != null && stateReachedTriggers.TryGetValue(card.uid, out List<StateReachedTrigger>? fieldTriggers))
 					{
-						foreach(StateReachedTrigger trigger in stateReachedTriggers[card.uid])
+						foreach(StateReachedTrigger trigger in fieldTriggers)
 						{
 							EvaluateLingeringEffects();
 							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition())
@@ -550,7 +550,8 @@ class DuelCore : Core
 								trigger.wasTriggered = false;
 							}
 						}
-						stateReachedTriggers[card.uid].RemoveAll(x => x.oneshot && x.wasTriggered);
+
+						fieldTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
 						EvaluateLingeringEffects();
 					}
 				}
@@ -559,9 +560,9 @@ class DuelCore : Core
 	}
 	public void ProcessTokenCreationTriggers(Dictionary<int, List<TokenCreationTrigger>> triggers, Creature token, Card source, int uid)
 	{
-		if(triggers.ContainsKey(uid))
+		if(triggers.TryGetValue(uid, out List<TokenCreationTrigger>? matchintTriggers))
 		{
-			foreach(TokenCreationTrigger trigger in triggers[uid])
+			foreach(TokenCreationTrigger trigger in matchintTriggers)
 			{
 				EvaluateLingeringEffects();
 				if(trigger.condition(token: token, source: source))
@@ -576,9 +577,9 @@ class DuelCore : Core
 	}
 	public void ProcessTriggers(Dictionary<int, List<Trigger>> triggers, int uid)
 	{
-		if(triggers.ContainsKey(uid))
+		if(triggers.TryGetValue(uid, out List<Trigger>? matchingTriggers))
 		{
-			foreach(Trigger trigger in triggers[uid])
+			foreach(Trigger trigger in matchingTriggers)
 			{
 				EvaluateLingeringEffects();
 				if(trigger.condition())
@@ -1062,9 +1063,9 @@ class DuelCore : Core
 			return;
 		}
 		players[player].passed = false;
-		if(activatedEffects.ContainsKey(uid))
+		if(activatedEffects.TryGetValue(uid, out List<ActivatedEffectInfo>? matchingInfos))
 		{
-			foreach(ActivatedEffectInfo info in activatedEffects[uid])
+			foreach(ActivatedEffectInfo info in matchingInfos)
 			{
 				if(info.influenceLocation.HasFlag(location) && option == info.name)
 				{
@@ -1156,13 +1157,13 @@ class DuelCore : Core
 	{
 		if(player != initPlayer)
 		{
-			return new string[0];
+			return [];
 		}
 		EvaluateLingeringEffects();
-		List<string> options = new();
-		if(activatedEffects.ContainsKey(uid))
+		List<string> options = [];
+		if(activatedEffects.TryGetValue(uid, out List<ActivatedEffectInfo>? matchingInfos))
 		{
-			foreach(ActivatedEffectInfo info in activatedEffects[uid])
+			foreach(ActivatedEffectInfo info in matchingInfos)
 			{
 				if(info.uses < info.maxUses && info.influenceLocation.HasFlag(location) && info.referrer.Location == location && info.condition())
 				{
@@ -1179,9 +1180,9 @@ class DuelCore : Core
 					!(state.HasFlag(GameConstants.State.BattleStart) && card.CardType == GameConstants.CardType.Creature))
 				{
 					bool canCast = true;
-					if(castTriggers.ContainsKey(card.uid))
+					if(castTriggers.TryGetValue(card.uid, out List<Trigger>? matchingTriggers))
 					{
-						foreach(Trigger trigger in castTriggers[card.uid])
+						foreach(Trigger trigger in matchingTriggers)
 						{
 							EvaluateLingeringEffects();
 							canCast = trigger.condition();
@@ -1228,7 +1229,7 @@ class DuelCore : Core
 			default:
 				throw new NotImplementedException($"GetCardActions at {location}");
 		}
-		return options.ToArray();
+		return [.. options];
 	}
 
 	public bool AskYesNoImpl(int player, string question)
@@ -1293,7 +1294,7 @@ class DuelCore : Core
 		{
 			cards = Card.ToStruct(cards),
 			desc = description,
-			initialState = isValidSelection(new Card[0])
+			initialState = isValidSelection([])
 		}, player);
 
 		Log("request sent");
@@ -1427,11 +1428,12 @@ class DuelCore : Core
 					throw new NotImplementedException($"Casting {card.CardType} cards");
 			}
 		}
-		if(!players[player].castCounts.ContainsKey(card.Name))
+		if(!players[player].castCounts.TryGetValue(card.Name, out int value))
 		{
-			players[player].castCounts[card.Name] = 0;
+			value = 0;
+			players[player].castCounts[card.Name] = value;
 		}
-		players[player].castCounts[card.Name]++;
+		players[player].castCounts[card.Name] = ++value;
 		ProcessTriggers(castTriggers, card.uid);
 		foreach(Player p in players)
 		{
@@ -1451,59 +1453,72 @@ class DuelCore : Core
 
 	public void RegisterCastTriggerImpl(Trigger trigger, Card referrer)
 	{
-		if(!castTriggers.ContainsKey(referrer.uid))
+		if(!castTriggers.TryGetValue(referrer.uid, out List<Trigger>? triggers))
 		{
-			castTriggers[referrer.uid] = new();
+			triggers = [];
+			castTriggers[referrer.uid] = triggers;
 		}
-		castTriggers[referrer.uid].Add(trigger);
+		triggers.Add(trigger);
 	}
 	public void RegisterDealsDamageTriggerImpl(Trigger trigger, Card referrer)
 	{
-		if(!dealsDamageTriggers.ContainsKey(referrer.uid))
+		if(!dealsDamageTriggers.TryGetValue(referrer.uid, out List<Trigger>? triggers))
 		{
-			dealsDamageTriggers[referrer.uid] = new();
+			triggers = [];
+			dealsDamageTriggers[referrer.uid] = triggers;
 		}
-		dealsDamageTriggers[referrer.uid].Add(trigger);
+
+		triggers.Add(trigger);
 	}
 	public void RegisterGenericCastTriggerImpl(LocationBasedTargetingTrigger trigger, Card referrer)
 	{
-		if(!genericCastTriggers.ContainsKey(referrer.uid))
+		if(!genericCastTriggers.TryGetValue(referrer.uid, out List<LocationBasedTargetingTrigger>? triggers))
 		{
-			genericCastTriggers[referrer.uid] = new();
+			triggers = [];
+			genericCastTriggers[referrer.uid] = triggers;
 		}
-		genericCastTriggers[referrer.uid].Add(trigger);
+
+		triggers.Add(trigger);
 	}
 	public void RegisterRevelationTriggerImpl(Trigger trigger, Card referrer)
 	{
-		if(!revelationTriggers.ContainsKey(referrer.uid))
+		if(!revelationTriggers.TryGetValue(referrer.uid, out List<Trigger>? triggers))
 		{
-			revelationTriggers[referrer.uid] = new();
+			triggers = [];
+			revelationTriggers[referrer.uid] = triggers;
 		}
-		revelationTriggers[referrer.uid].Add(trigger);
+
+		triggers.Add(trigger);
 	}
 	public void RegisterGenericEntersFieldTriggerImpl(LocationBasedTargetingTrigger trigger, Card referrer)
 	{
-		if(!genericEnterFieldTriggers.ContainsKey(referrer.uid))
+		if(!genericEnterFieldTriggers.TryGetValue(referrer.uid, out List<LocationBasedTargetingTrigger>? triggers))
 		{
-			genericEnterFieldTriggers[referrer.uid] = new();
+			triggers = [];
+			genericEnterFieldTriggers[referrer.uid] = triggers;
 		}
-		genericEnterFieldTriggers[referrer.uid].Add(trigger);
+
+		triggers.Add(trigger);
 	}
 	public void RegisterYouDiscardTriggerImpl(LocationBasedTrigger trigger, Card referrer)
 	{
-		if(!youDiscardTriggers.ContainsKey(referrer.uid))
+		if(!youDiscardTriggers.TryGetValue(referrer.uid, out List<LocationBasedTrigger>? triggers))
 		{
-			youDiscardTriggers[referrer.uid] = new();
+			triggers = [];
+			youDiscardTriggers[referrer.uid] = triggers;
 		}
-		youDiscardTriggers[referrer.uid].Add(trigger);
+
+		triggers.Add(trigger);
 	}
 	public void RegisterDiscardTriggerImpl(Trigger trigger, Card referrer)
 	{
-		if(!discardTriggers.ContainsKey(referrer.uid))
+		if(!discardTriggers.TryGetValue(referrer.uid, out List<Trigger>? triggers))
 		{
-			discardTriggers[referrer.uid] = new();
+			triggers = [];
+			discardTriggers[referrer.uid] = triggers;
 		}
-		discardTriggers[referrer.uid].Add(trigger);
+
+		triggers.Add(trigger);
 	}
 	public void RegisterStateReachedTriggerImpl(StateReachedTrigger trigger, Card referrer)
 	{
@@ -1513,11 +1528,13 @@ class DuelCore : Core
 		}
 		else
 		{
-			if(!stateReachedTriggers.ContainsKey(referrer.uid))
+			if(!stateReachedTriggers.TryGetValue(referrer.uid, out List<StateReachedTrigger>? triggers))
 			{
-				stateReachedTriggers[referrer.uid] = new List<StateReachedTrigger>();
+				triggers = [];
+				stateReachedTriggers[referrer.uid] = triggers;
 			}
-			stateReachedTriggers[referrer.uid].Add(trigger);
+
+			triggers.Add(trigger);
 		}
 	}
 	public void RegisterLingeringEffectImpl(LingeringEffectInfo info)
@@ -1528,68 +1545,84 @@ class DuelCore : Core
 		}
 		else
 		{
-			if(!lingeringEffects.ContainsKey(info.referrer.uid))
+			if(!lingeringEffects.TryGetValue(info.referrer.uid, out LingeringEffectList? infos))
 			{
-				lingeringEffects[info.referrer.uid] = new(this);
+				infos = new(this);
+				lingeringEffects[info.referrer.uid] = infos;
 			}
-			lingeringEffects[info.referrer.uid].Add(info);
+
+			infos.Add(info);
 		}
 	}
 	public void RegisterTemporaryLingeringEffectImpl(LingeringEffectInfo info)
 	{
-		if(!temporaryLingeringEffects.ContainsKey(info.referrer.uid))
+		if(!temporaryLingeringEffects.TryGetValue(info.referrer.uid, out LingeringEffectList? infos))
 		{
-			temporaryLingeringEffects[info.referrer.uid] = new(this);
+			infos = new(this);
+			temporaryLingeringEffects[info.referrer.uid] = infos;
 		}
-		temporaryLingeringEffects[info.referrer.uid].Add(info);
+
+		infos.Add(info);
 	}
 	public void RegisterActivatedEffectImpl(ActivatedEffectInfo info)
 	{
-		if(!activatedEffects.ContainsKey(info.referrer.uid))
+		if(!activatedEffects.TryGetValue(info.referrer.uid, out List<ActivatedEffectInfo>? infos))
 		{
-			activatedEffects[info.referrer.uid] = new();
+			infos = [];
+			activatedEffects[info.referrer.uid] = infos;
 		}
-		activatedEffects[info.referrer.uid].Add(info);
+
+		infos.Add(info);
 	}
 	public void RegisterVictoriousTriggerImpl(Trigger info, Card referrer)
 	{
-		if(!victoriousTriggers.ContainsKey(referrer.uid))
+		if(!victoriousTriggers.TryGetValue(referrer.uid, out List<Trigger>? triggers))
 		{
-			victoriousTriggers[referrer.uid] = new List<Trigger>();
+			triggers = [];
+			victoriousTriggers[referrer.uid] = triggers;
 		}
-		victoriousTriggers[referrer.uid].Add(info);
+
+		triggers.Add(info);
 	}
 	public void RegisterAttackTriggerImpl(Trigger info, Card referrer)
 	{
-		if(!attackTriggers.ContainsKey(referrer.uid))
+		if(!attackTriggers.TryGetValue(referrer.uid, out List<Trigger>? triggers))
 		{
-			attackTriggers[referrer.uid] = new List<Trigger>();
+			triggers = [];
+			attackTriggers[referrer.uid] = triggers;
 		}
-		attackTriggers[referrer.uid].Add(info);
+
+		triggers.Add(info);
 	}
 	public void RegisterDeathTriggerImpl(CreatureTargetingTrigger info, Card referrer)
 	{
-		if(!deathTriggers.ContainsKey(referrer.uid))
+		if(!deathTriggers.TryGetValue(referrer.uid, out List<CreatureTargetingTrigger>? triggers))
 		{
-			deathTriggers[referrer.uid] = new List<CreatureTargetingTrigger>();
+			triggers = [];
+			deathTriggers[referrer.uid] = triggers;
 		}
-		deathTriggers[referrer.uid].Add(info);
+
+		triggers.Add(info);
 	}
 	public void RegisterGenericDeathTriggerImpl(CreatureTargetingTrigger info, Card referrer)
 	{
-		if(!genericDeathTriggers.ContainsKey(referrer.uid))
+		if(!genericDeathTriggers.TryGetValue(referrer.uid, out List<CreatureTargetingTrigger>? triggers))
 		{
-			genericDeathTriggers[referrer.uid] = new List<CreatureTargetingTrigger>();
+			triggers = [];
+			genericDeathTriggers[referrer.uid] = triggers;
 		}
-		genericDeathTriggers[referrer.uid].Add(info);
+
+		triggers.Add(info);
 	}
 	private void RegisterTokenCreationTriggerImpl(TokenCreationTrigger trigger, Card referrer)
 	{
-		if(!tokenCreationTriggers.ContainsKey(referrer.uid))
+		if(!tokenCreationTriggers.TryGetValue(referrer.uid, out List<TokenCreationTrigger>? triggers))
 		{
-			tokenCreationTriggers[referrer.uid] = new List<TokenCreationTrigger>();
+			triggers = [];
+			tokenCreationTriggers[referrer.uid] = triggers;
 		}
-		tokenCreationTriggers[referrer.uid].Add(trigger);
+
+		triggers.Add(trigger);
 	}
 	public Creature?[] GetFieldImpl(int player)
 	{
@@ -1747,9 +1780,9 @@ class DuelCore : Core
 	}
 	private void RemoveOutdatedTemporaryLingeringEffects(Card card)
 	{
-		if(temporaryLingeringEffects.ContainsKey(card.uid))
+		if(temporaryLingeringEffects.TryGetValue(card.uid, out LingeringEffectList? triggers))
 		{
-			temporaryLingeringEffects[card.uid].RemoveAll(x => !x.influenceLocation.HasFlag(card.Location));
+			triggers.RemoveAll(x => !x.influenceLocation.HasFlag(card.Location));
 		}
 	}
 	public bool RemoveCardFromItsLocation(Card card)
@@ -1815,7 +1848,7 @@ class DuelCore : Core
 			throw new Exception($"Selected the wrong amount of cards ({response.uids.Length} != {amount})");
 		}
 		// TODO: Make this nicer?
-		return response.uids.ToList().ConvertAll(x => cards.First(y => y.uid == x)).ToArray();
+		return [.. response.uids.ToList().ConvertAll(x => cards.First(y => y.uid == x))];
 	}
 	public void DiscardAmountImpl(int player, int amount)
 	{
@@ -1888,7 +1921,7 @@ class DuelCore : Core
 		{
 			throw new Exception($"Tried to create a token but the field is full");
 		}
-		Token token = new Token
+		Token token = new
 		(
 			Name: name,
 			Text: "",
@@ -1999,7 +2032,7 @@ class DuelCore : Core
 	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
 	{
 		List<byte> payload = GeneratePayload(packet);
-		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: NetworkingConstants.PacketDict[typeof(T)], packet: payload.GetRange(5, payload.Count - 5).ToArray(), clientToServer: false));
-		playerStreams[player]!.Write(payload.ToArray(), 0, payload.Count);
+		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: NetworkingConstants.PacketDict[typeof(T)], packet: [.. payload.GetRange(5, payload.Count - 5)], clientToServer: false));
+		playerStreams[player]!.Write([.. payload], 0, payload.Count);
 	}
 }

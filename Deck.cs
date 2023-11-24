@@ -4,7 +4,7 @@ namespace CardGameCore;
 
 class Deck
 {
-	private List<Card> cards = new();
+	private readonly List<Card> cards = [];
 	public Deck()
 	{
 
@@ -44,7 +44,7 @@ class Deck
 
 	internal Card[] GetRange(int position, int amount)
 	{
-		return cards.GetRange(position, Math.Min(amount, cards.Count)).ToArray();
+		return [.. cards.GetRange(position, Math.Min(amount, cards.Count))];
 	}
 
 	internal void Remove(Card card)

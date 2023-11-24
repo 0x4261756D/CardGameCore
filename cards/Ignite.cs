@@ -50,7 +50,7 @@ class Ignite : Spell
 	{
 		if(!client)
 		{
-			this.Text = $"{{Cast}}: Deal {GetIgniteDamage(Controller)} damage to any target.\n{{Revelation}}: Cast this.";
+			Text = $"{{Cast}}: Deal {GetIgniteDamage(Controller)} damage to any target.\n{{Revelation}}: Cast this.";
 		}
 		return base.ToStruct(client);
 	}

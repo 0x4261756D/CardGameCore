@@ -21,7 +21,7 @@ class FlashingFire : Spell
 	private void CastEffect()
 	{
 		Creature[] fields = GetBothFieldsUsed();
-		int damage = -GetCastCount(player: Controller, name: this.Name);
+		int damage = -GetCastCount(player: Controller, name: Name);
 		if(fields.Length > 0 && AskYesNo(player: Controller, question: "Damage creature?"))
 		{
 			Creature target = SelectSingleCard(player: Controller, cards: fields, description: "Select target to damage");
@@ -33,7 +33,7 @@ class FlashingFire : Spell
 		}
 		else
 		{
-			PlayerChangeLife(player: Card.AskYesNo(player: Controller, question: "Damage the opponent?") ? 1 - Controller : Controller, amount: damage, source: this);
+			PlayerChangeLife(player: AskYesNo(player: Controller, question: "Damage the opponent?") ? 1 - Controller : Controller, amount: damage, source: this);
 		}
 	}
 }

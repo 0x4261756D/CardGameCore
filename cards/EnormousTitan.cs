@@ -28,7 +28,7 @@ class EnormousTitan : Creature
 
 	private void CostReductionEffect(Creature _)
 	{
-		this.Cost -= GetFieldUsed(1 - Controller).Length;
+		Cost -= GetFieldUsed(1 - Controller).Length;
 	}
 
 }

@@ -10,10 +10,10 @@ using static CardGameUtils.Structs.NetworkingStructs;
 
 namespace CardGameCore;
 
-class ClientCore : Core
+partial class ClientCore : Core
 {
-	readonly static List<CardStruct> cards = new List<CardStruct>();
-	readonly static List<DeckPackets.Deck> decks = new List<DeckPackets.Deck>();
+	readonly static List<CardStruct> cards = [];
+	readonly static List<DeckPackets.Deck> decks = [];
 	public ClientCore()
 	{
 		if(Program.config.deck_config == null)
@@ -45,7 +45,7 @@ class ClientCore : Core
 			{
 				continue;
 			}
-			DeckPackets.Deck deck = new DeckPackets.Deck
+			DeckPackets.Deck deck = new()
 			{
 				player_class = Enum.Parse<GameConstants.PlayerClass>(decklist[0]),
 				name = Path.GetFileNameWithoutExtension(deckfile)
@@ -53,12 +53,12 @@ class ClientCore : Core
 			decklist.RemoveAt(0);
 			if(decklist.Count > 0)
 			{
-				if(decklist[0].StartsWith("#"))
+				if(decklist[0].StartsWith('#'))
 				{
 					deck.ability = cards[cards.FindIndex(x => x.name == decklist[0][1..])];
 					decklist.RemoveAt(0);
 				}
-				if(decklist[0].StartsWith("|"))
+				if(decklist[0].StartsWith('|'))
 				{
 					deck.quest = cards[cards.FindIndex(x => x.name == decklist[0][1..])];
 					decklist.RemoveAt(0);
@@ -67,7 +67,7 @@ class ClientCore : Core
 			}
 			else
 			{
-				deck.cards = new CardStruct[0];
+				deck.cards = [];
 			}
 			decks.Add(deck);
 		}
@@ -82,7 +82,7 @@ class ClientCore : Core
 	//TODO: This could be more elegant
 	public static CardStruct[] DecklistToCards(List<string> decklist)
 	{
-		List<CardStruct> c = new List<CardStruct>();
+		List<CardStruct> c = [];
 		foreach(string line in decklist)
 		{
 			int index = cards.FindIndex(x => x.name == line);
@@ -91,36 +91,32 @@ class ClientCore : Core
 				c.Add(cards[index]);
 			}
 		}
-		return c.ToArray();
+		return [.. c];
 	}
-	public void TryFetchAdditionalCards()
+	public static void TryFetchAdditionalCards()
 	{
 		try
 		{
-			using(TcpClient client = new TcpClient(Program.config.deck_config!.additional_cards_url.address, Program.config.deck_config.additional_cards_url.port))
-			{
-				using(NetworkStream stream = client.GetStream())
-				{
-					List<byte> payload = GeneratePayload(new ServerPackets.AdditionalCardsRequest());
-					stream.Write(payload.ToArray(), 0, payload.Count);
+			using TcpClient client = new(Program.config.deck_config!.additional_cards_url.address, Program.config.deck_config.additional_cards_url.port);
+			using NetworkStream stream = client.GetStream();
+			List<byte> payload = GeneratePayload(new ServerPackets.AdditionalCardsRequest());
+			stream.Write([.. payload], 0, payload.Count);
 
-					byte[]? response = TryReceivePacket<ServerPackets.AdditionalCardsResponse>(stream, 1000);
-					if(response == null)
-					{
-						return;
-					}
-					ServerPackets.AdditionalCardsResponse data = DeserializeJson<ServerPackets.AdditionalCardsResponse>(response);
-					if(data.time < Program.versionTime)
-					{
-						Log($"Did not apply additional cards as they were older (client: {Program.versionTime}, server: {data.time})");
-						return;
-					}
-					foreach(CardStruct card in data.cards)
-					{
-						cards.Remove(card);
-						cards.Add(card);
-					}
-				}
+			byte[]? response = TryReceivePacket<ServerPackets.AdditionalCardsResponse>(stream, 1000);
+			if(response == null)
+			{
+				return;
+			}
+			ServerPackets.AdditionalCardsResponse data = DeserializeJson<ServerPackets.AdditionalCardsResponse>(response);
+			if(data.time < Program.versionTime)
+			{
+				Log($"Did not apply additional cards as they were older (client: {Program.versionTime}, server: {data.time})");
+				return;
+			}
+			foreach(CardStruct card in data.cards)
+			{
+				cards.Remove(card);
+				cards.Add(card);
 			}
 		}
 		catch(Exception e)
@@ -164,7 +160,7 @@ class ClientCore : Core
 			throw new Exception($"ERROR: Unknown packet type encountered: ({typeByte})");
 		}
 		NetworkingConstants.PacketType type = (NetworkingConstants.PacketType)typeByte;
-		List<byte> payload = new List<byte>();
+		List<byte> payload = [];
 		switch(type)
 		{
 			case NetworkingConstants.PacketType.DeckNamesRequest:
@@ -172,7 +168,7 @@ class ClientCore : Core
 				DeckPackets.NamesRequest request = DeserializeJson<DeckPackets.NamesRequest>(bytes);
 				payload = GeneratePayload(new DeckPackets.NamesResponse
 				{
-					names = decks.ConvertAll(x => x.name).ToArray()
+					names = [.. decks.ConvertAll(x => x.name)]
 				});
 			}
 			break;
@@ -197,7 +193,7 @@ class ClientCore : Core
 			case NetworkingConstants.PacketType.DeckListUpdateRequest:
 			{
 				DeckPackets.Deck deck = DeserializeJson<DeckPackets.ListUpdateRequest>(bytes).deck;
-				deck.name = Regex.Replace(deck.name, @"[\./\\]", "");
+				deck.name = DeckNameRegex().Replace(deck.name, "");
 				int index = decks.FindIndex(x => x.name == deck.name);
 				if(deck.cards != null)
 				{
@@ -225,7 +221,7 @@ class ClientCore : Core
 			default:
 				throw new Exception($"ERROR: Unable to process this packet: ({type}) | {Encoding.UTF8.GetString(bytes)}");
 		}
-		stream.Write(payload.ToArray(), 0, payload.Count);
+		stream.Write([.. payload], 0, payload.Count);
 		return false;
 	}
 
@@ -240,12 +236,15 @@ class ClientCore : Core
 	{
 		return cards.Where(x =>
 			(playerClass == GameConstants.PlayerClass.All || (includeGenericCards && x.card_class == GameConstants.PlayerClass.All) || x.card_class == playerClass)
-			&& x.ToString().ToLower().Contains(filter.ToLower())).ToArray();
+			&& x.ToString().Contains(filter, StringComparison.CurrentCultureIgnoreCase)).ToArray();
 	}
 
 	private DeckPackets.Deck FindDeckByName(string name)
 	{
-		name = Regex.Replace(name, @"[\./\\]", "");
+		name = DeckNameRegex().Replace(name, "");
 		return decks[decks.FindIndex(x => x.name == name)];
 	}
+
+	[GeneratedRegex(@"[\./\\]")]
+	private static partial Regex DeckNameRegex();
 }

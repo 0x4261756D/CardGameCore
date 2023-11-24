@@ -157,24 +157,14 @@ public class LingeringEffectInfo
 }
 
 public delegate bool ActivatedEffectCondition();
-public class ActivatedEffectInfo
+public class ActivatedEffectInfo(string name, Effect effect, ActivatedEffectCondition condition, Card referrer, int maxUses = 1, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 {
-	public ActivatedEffectCondition condition;
-	public Effect effect;
-	public string name;
-	public GameConstants.Location influenceLocation;
-	public Card referrer;
-	public int uses = 0, maxUses;
-
-	public ActivatedEffectInfo(string name, Effect effect, ActivatedEffectCondition condition, Card referrer, int maxUses = 1, GameConstants.Location influenceLocation = GameConstants.Location.Field)
-	{
-		this.condition = condition;
-		this.effect = effect;
-		this.name = name;
-		this.influenceLocation = influenceLocation;
-		this.referrer = referrer;
-		this.maxUses = maxUses;
-	}
+	public ActivatedEffectCondition condition = condition;
+	public Effect effect = effect;
+	public string name = name;
+	public GameConstants.Location influenceLocation = influenceLocation;
+	public Card referrer = referrer;
+	public int uses = 0, maxUses = maxUses;
 
 	public ActivatedEffectInfo(string name, Effect effect, Card referrer, int maxUses = 1, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 		: this(name, effect, () => true, referrer, maxUses, influenceLocation)

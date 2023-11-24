@@ -28,6 +28,6 @@ class MechanicalTitan : Creature
 
 	private void CostReductionEffect(Creature target)
 	{
-		this.Cost -= GetDeathCountXTurnsAgo(player: Controller, turns: 1);
+		Cost -= GetDeathCountXTurnsAgo(player: Controller, turns: 1);
 	}
 }

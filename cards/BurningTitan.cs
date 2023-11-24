@@ -29,7 +29,7 @@ class BurningTitan : Creature
 	{
 		if(GetTurn() > 0)
 		{
-			this.Cost -= GetSpellDamageDealtXTurnsAgo(player: Controller, turns: 1);
+			Cost -= GetSpellDamageDealtXTurnsAgo(player: Controller, turns: 1);
 		}
 	}
 

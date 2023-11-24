@@ -19,7 +19,7 @@ class BurningPassion : Quest
 
 	public void ProgressionEffect(Card castCard)
 	{
-		this.Progress++;
+		Progress++;
 	}
 
 	public bool Condition(Card castCard)
