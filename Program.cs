@@ -192,9 +192,7 @@ class Program
 
 	public static void GenerateAdditionalCards(string path)
 	{
-		DateTime? time = JsonSerializer.Deserialize<NetworkingStructs.ServerPackets.AdditionalCardsResponse>(File.ReadAllText(path), NetworkingConstants.jsonIncludeOption)?.time;
-		Log($"Additional card times: (own: {versionTime}, additional: {time})");
-		if(!File.Exists(path) || time < versionTime)
+		if(!File.Exists(path) || JsonSerializer.Deserialize<NetworkingStructs.ServerPackets.AdditionalCardsResponse>(File.ReadAllText(path), NetworkingConstants.jsonIncludeOption)?.time < versionTime)
 		{
 			Log("Generating new additional cards");
 			List<CardStruct> cards = [];
