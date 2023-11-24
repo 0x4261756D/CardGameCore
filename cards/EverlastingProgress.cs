@@ -14,7 +14,7 @@ class EverlastingProgress : Quest
 
 	public override void Init()
 	{
-		RegisterGenericDeathTrigger(trigger: new CreatureTargetingTrigger(effect: ProgressEffect, condition: ProgressCondition), referrer: this);
+		RegisterGenericDeathTrigger(trigger: new CreatureTargetingTrigger(effect: ProgressEffect, condition: ProgressCondition, influenceLocation: Location.Quest), referrer: this);
 	}
 
 	private bool ProgressCondition(Creature destroyedCard)
