@@ -34,8 +34,8 @@ class CallingtheAbyss : Spell
 	public void CastEffect()
 	{
 		PayLife(Controller, 6);
-		CreateToken(player: Controller, power: 6, life: 6, name: "Abyssal");
-		ChangeLifeOfAnyTarget(player: Controller, amount: 6, source: this);
+		CreateTokenOnField(player: Controller, power: 6, life: 6, name: "Abyssal", source: this);
+		ChangeLifeOfAnyTarget(player: Controller, amount: -6, source: this);
 		RegisterStateReachedTrigger(new StateReachedTrigger(effect: BenefitEffect, state: State.TurnStart, influenceLocation: Location.ALL, oneshot: true), this);
 	}
 }
