@@ -23,7 +23,7 @@ class Incinerate : Spell
 		int damage = 0;
 		foreach(Creature card in GetBothFieldsUsed())
 		{
-			damage += card.Power;
+			damage -= card.Power;
 			Destroy(card);
 		}
 		PlayerChangeLife(player: 1 - Controller, amount: damage, this);
