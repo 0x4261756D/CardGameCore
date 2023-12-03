@@ -16,7 +16,7 @@ class ImmortalPhoenix : Creature
 
 	public override void Init()
 	{
-		RegisterDeathTrigger(trigger: new CreatureTargetingTrigger(effect: DeathEffect), referrer: this);
+		RegisterDeathTrigger(trigger: new CreatureTargetingTrigger(effect: DeathEffect, influenceLocation: Location.Grave), referrer: this);
 	}
 
 	private void DeathEffect(Creature target)
