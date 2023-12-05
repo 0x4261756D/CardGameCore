@@ -39,7 +39,7 @@ class PreparetheAltar : Spell
 			effect: () => PlayerChangeMomentum(player: Controller, amount: target.Cost),
 			state: State.TurnStart,
 			influenceLocation: Location.ALL, oneshot: true), referrer: this);
-		
+
 	}
 
 	public bool CastCondition()
