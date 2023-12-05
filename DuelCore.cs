@@ -826,6 +826,7 @@ class DuelCore : Core
 								player.deck.Add(card);
 							}
 							player.deck.Shuffle();
+							SendFieldUpdates();
 						}
 					}
 					turnPlayer = 1 - turnPlayer;
