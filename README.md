@@ -3,7 +3,7 @@ Core of a card game
 
 
 ## Requirements:
-* dotnet 7
+* dotnet 8
 
 ## Setup:
 ```bash
