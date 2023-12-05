@@ -8,7 +8,7 @@ class BurningMemory : Spell
 	public BurningMemory() : base(
 		Name: "Burning Memory",
 		CardClass: PlayerClass.Pyromancer,
-		OriginalCost: 3,
+		OriginalCost: 1,
 		Text: "{Cast}: Create an Afterglow token with Power and Life of target creature in a grave and [Decaying]."
 		)
 	{ }

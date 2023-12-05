@@ -8,7 +8,11 @@ class Hand
 	private readonly List<Card> cards = [];
 	public Hand()
 	{
+	}
 
+	public int Count
+	{
+		get => cards.Count;
 	}
 
 	public void Add(Card c)

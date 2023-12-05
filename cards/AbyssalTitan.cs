@@ -7,7 +7,7 @@ class AbyssalTitan : Creature
 	public AbyssalTitan() : base(
 		Name: "Abyssal Titan",
 		CardClass: PlayerClass.Cultist,
-		OriginalCost: 6,
+		OriginalCost: 7,
 		Text: "[Colossal] +1\nCosts 1 less for each card you discarded this turn.\n{Revelation}: Gain 3 life.",
 		OriginalPower: 7,
 		OriginalLife: 7

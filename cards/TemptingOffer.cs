@@ -7,7 +7,7 @@ class TemptingOffer : Spell
 	public TemptingOffer() : base(
 		Name: "Tempting Offer",
 		CardClass: PlayerClass.Cultist,
-		OriginalCost: 0,
+		OriginalCost: 1,
 		Text: "{Cast}: Discard 2. Gain 2 Momentum. Draw 2."
 		)
 	{ }

@@ -8,7 +8,7 @@ class SugomaGodoftheAbyss : Creature
 	public SugomaGodoftheAbyss() : base(
 		Name: "Sugoma God of the Abyss",
 		CardClass: PlayerClass.Cultist,
-		OriginalCost: 12,
+		OriginalCost: 10,
 		Text: "[Colossal] +5\nCannot be Discarded.\n{Activate}: Discard 1. Destroy target creature.\n{Revelation}: Take 1 damage then draw 1.",
 		OriginalPower: 15,
 		OriginalLife: 15

@@ -33,8 +33,13 @@ class PreparetheAltar : Spell
 	public void CastEffect()
 	{
 		Card target = SelectSingleCard(cards: GetDiscardable(Controller, ignore: this), player: Controller, description: "Select card to discard");
+		PlayerChangeLife(player: Controller, amount: -target.Cost, source: this);
 		Discard(target);
-		PlayerChangeMomentum(player: Controller, amount: target.Cost);
+		RegisterStateReachedTrigger(new StateReachedTrigger(
+			effect: () => PlayerChangeMomentum(player: Controller, amount: target.Cost),
+			state: State.TurnStart,
+			influenceLocation: Location.ALL, oneshot: true), referrer: this);
+		
 	}
 
 	public bool CastCondition()

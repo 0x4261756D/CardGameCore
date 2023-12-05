@@ -806,6 +806,28 @@ class DuelCore : Core
 						player.deathCounts.Add(0);
 					}
 					ProcessStateReachedTriggers();
+					for(int i = 0; i < players.Length; i++)
+					{
+						Player player = players[i];
+						int toDeckCount = player.hand.Count - GameConstants.MAX_HAND_SIZE;
+						if(toDeckCount > 0)
+						{
+							SendPacketToPlayer(new DuelPackets.SelectCardsRequest
+							{
+								amount = toDeckCount,
+								cards = Card.ToStruct(player.hand.GetAll()),
+								desc = "Select cards to shuffle into you deck for hand size",
+							}, i);
+							int[] toHand = ReceivePacketFromPlayer<DuelPackets.SelectCardsResponse>(i).uids;
+							foreach(int uid in toHand)
+							{
+								Card card = player.hand.GetByUID(uid);
+								player.hand.Remove(card);
+								player.deck.Add(card);
+							}
+							player.deck.Shuffle();
+						}
+					}
 					turnPlayer = 1 - turnPlayer;
 					turn++;
 					if(GameConstants.MOMENTUM_INCREMENT_TURNS.Contains(turn))
