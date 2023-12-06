@@ -324,8 +324,8 @@ public abstract class Spell(GameConstants.PlayerClass CardClass,
 			uid: uid, life: 0, power: 0, cost: Cost,
 			base_cost: BaseCost, base_life: 0, base_power: 0,
 			location: Location, position: 0,
-			is_class_ability: false,
-			can_be_class_ability: false,
+			is_class_ability: IsClassAbility,
+			can_be_class_ability: CanBeClassAbility,
 			controller: Controller,
 			base_controller: BaseController);
 	}
