@@ -405,14 +405,7 @@ class DuelCore : Core
 		foreach(KeyValuePair<int, LingeringEffectInfo> info in infos)
 		{
 			info.Value.effect(info.Value.referrer);
-			foreach(Player player in players)
-			{
-				if(!rewardClaimed && player.quest.Progress >= player.quest.Goal)
-				{
-					player.quest.Reward();
-					rewardClaimed = true;
-				}
-			}
+			CheckQuestReward(false);
 		}
 		foreach(Player player in players)
 		{
@@ -592,16 +585,19 @@ class DuelCore : Core
 		}
 	}
 
-	public void CheckQuestReward()
+	public void CheckQuestReward(bool shouldEvaluateLingeringEffects = true)
 	{
-		EvaluateLingeringEffects();
+		if(shouldEvaluateLingeringEffects)
+		{
+			EvaluateLingeringEffects();
+		}
 		foreach(Player p in players)
 		{
 			if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
 			{
+				rewardClaimed = true;
 				p.quest.Reward();
 				p.quest.Text += "\nREWARD CLAIMED";
-				rewardClaimed = true;
 				break;
 			}
 		}
