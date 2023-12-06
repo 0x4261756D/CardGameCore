@@ -9,7 +9,7 @@ class BrilliantMedic : Creature
 		Name: "Brilliant Medic",
 		CardClass: PlayerClass.All,
 		OriginalCost: 2,
-		Text: "{Cast}: Heal target any target by 4.",
+		Text: "{Cast}: Heal any target by 4.",
 		OriginalPower: 2,
 		OriginalLife: 2
 		)
