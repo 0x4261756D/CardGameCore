@@ -17,7 +17,7 @@ class BrilliantMedic : Creature
 
 	public override void Init()
 	{
-		RegisterCastTrigger(trigger: new Trigger(effect: HealEffect, condition: () => true), referrer: this);
+		RegisterCastTrigger(trigger: new Trigger(effect: HealEffect), referrer: this);
 	}
 
 	public void HealEffect()
