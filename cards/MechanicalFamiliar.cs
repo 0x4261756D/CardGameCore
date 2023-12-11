@@ -27,7 +27,7 @@ class MechanicalFamiliar : Creature
 			HasEmpty(GetField(Controller));
 	}
 
-	private void CreationEffect(Creature token, Card source)
+	private void CreationEffect(Creature token, Card _)
 	{
 		if(AskYesNo(player: Controller, question: "Create another one?"))
 		{

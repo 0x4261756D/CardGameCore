@@ -28,6 +28,9 @@ class DuelCore : Core
 	public static NetworkStream?[] playerStreams = [];
 	public static Random rnd = new(Program.seed);
 	public const int HASH_LEN = 96;
+	private const string AbilityUseActionDescription = "Use";
+	private const string CastActionDescription = "Cast";
+	private const string CreatureMoveActionDescription = "Move";
 	public int playersConnected = 0;
 	public int turn, turnPlayer, initPlayer;
 	public int? markedZone = null;
@@ -1101,7 +1104,7 @@ class DuelCore : Core
 			case GameConstants.Location.Hand:
 			{
 				Card card = players[player].hand.GetByUID(uid);
-				if(option == "Cast")
+				if(option == CastActionDescription)
 				{
 					players[player].momentum -= card.Cost;
 					CastImpl(player, card);
@@ -1146,7 +1149,7 @@ class DuelCore : Core
 			case GameConstants.Location.Field:
 			{
 				Creature card = players[player].field.GetByUID(uid);
-				if(option == "Move")
+				if(option == CreatureMoveActionDescription)
 				{
 					if(players[player].field.CanMove(card.Position, players[player].momentum))
 					{
@@ -1220,7 +1223,7 @@ class DuelCore : Core
 					}
 					if(canCast)
 					{
-						options.Add("Cast");
+						options.Add(CastActionDescription);
 					}
 				}
 			}
@@ -1229,7 +1232,7 @@ class DuelCore : Core
 			{
 				if(players[player].abilityUsable && players[player].momentum > 0 && castTriggers.ContainsKey(players[player].ability.uid))
 				{
-					options.Add("Use");
+					options.Add(AbilityUseActionDescription);
 				}
 			}
 			break;
@@ -1238,7 +1241,7 @@ class DuelCore : Core
 				Creature card = players[player].field.GetByUID(uid);
 				if(players[player].field.CanMove(card.Position, players[player].momentum))
 				{
-					options.Add("Move");
+					options.Add(CreatureMoveActionDescription);
 				}
 			}
 			break;
@@ -1427,7 +1430,7 @@ class DuelCore : Core
 		Card?[] shownCards = new Card?[2];
 		shownCards[player] = card;
 		string?[] shownReasons = new string?[2];
-		shownReasons[player] = "Cast";
+		shownReasons[player] = CastActionDescription;
 		SendFieldUpdates(shownCards: shownCards, shownReasons: shownReasons);
 		if(!isNew)
 		{

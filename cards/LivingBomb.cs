@@ -28,7 +28,7 @@ class LivingBomb : Spell
 		RegisterDeathTrigger(trigger: new CreatureTargetingTrigger(effect: ExplosionEffect), referrer: target);
 	}
 
-	private void ExplosionEffect(Creature target)
+	private static void ExplosionEffect(Creature target)
 	{
 		ChangeLifeOfAnyTarget(player: target.Controller, amount: -target.BaseLife, source: target);
 	}

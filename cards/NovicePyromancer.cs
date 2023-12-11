@@ -20,7 +20,7 @@ class NovicePyromancer : Creature
 		RegisterGenericDeathTrigger(trigger: new CreatureTargetingTrigger(effect: DamageEffect), referrer: this);
 	}
 
-	private void DamageEffect(Card destroyedCard)
+	private void DamageEffect(Card _)
 	{
 		ChangeLifeOfAnyTarget(player: Controller, amount: -1, description: "Damage", source: this);
 	}
