@@ -16,7 +16,7 @@ class BlazingArchmage : Creature
 
 	public override void Init()
 	{
-		RegisterGenericCastTrigger(trigger: new LocationBasedTargetingTrigger(effect: CastIgniteEffect, condition: CastIgniteCondition), referrer: this);
+		RegisterGenericCastTrigger(trigger: new LocationBasedTargetingTrigger(effect: CastIgniteEffect, condition: CastIgniteCondition, influenceLocation: Location.Field), referrer: this);
 	}
 
 	public void CastIgniteEffect(Card target)

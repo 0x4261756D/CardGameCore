@@ -17,7 +17,7 @@ class PartScavenger : Creature
 
 	public override void Init()
 	{
-		RegisterGenericDeathTrigger(trigger: new CreatureTargetingTrigger(effect: DeathEffect, condition: DeathCondition), referrer: this);
+		RegisterGenericDeathTrigger(trigger: new CreatureTargetingTrigger(effect: DeathEffect, condition: DeathCondition, influenceLocation: Location.Field), referrer: this);
 	}
 
 	private bool DeathCondition(Creature target)

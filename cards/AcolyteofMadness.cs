@@ -16,7 +16,7 @@ class AcolyteofMadness : Creature
 
 	public override void Init()
 	{
-		RegisterYouDiscardTrigger(trigger: new LocationBasedTrigger(effect: DiscardEffect), referrer: this);
+		RegisterYouDiscardTrigger(trigger: new LocationBasedTrigger(effect: DiscardEffect, influenceLocation: Location.Field), referrer: this);
 	}
 
 	public void DiscardEffect()

@@ -17,7 +17,7 @@ class MechanicalFamiliar : Creature
 
 	public override void Init()
 	{
-		RegisterTokenCreationTrigger(trigger: new TokenCreationTrigger(effect: CreationEffect, condition: CreationCondition), referrer: this);
+		RegisterTokenCreationTrigger(trigger: new TokenCreationTrigger(effect: CreationEffect, condition: CreationCondition, influenceLocation: Location.Field), referrer: this);
 		RegisterRevelationTrigger(trigger: new Trigger(effect: RevelationEffect), referrer: this);
 	}
 

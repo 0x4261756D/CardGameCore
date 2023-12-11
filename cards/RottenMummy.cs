@@ -17,7 +17,7 @@ class RottenMummy : Creature
 	public override void Init()
 	{
 		RegisterKeyword(Keyword.Decaying);
-		RegisterDeathTrigger(trigger: new CreatureTargetingTrigger(effect: DeathEffect, condition: DeathCondition), referrer: this);
+		RegisterDeathTrigger(trigger: new CreatureTargetingTrigger(effect: DeathEffect, condition: DeathCondition, influenceLocation: Location.Grave), referrer: this);
 	}
 
 	public void DeathEffect(Creature _)

@@ -42,13 +42,13 @@ public class LocationBasedTrigger
 	public Effect effect;
 	public GameConstants.Location influenceLocation;
 
-	public LocationBasedTrigger(Effect effect, TriggerCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public LocationBasedTrigger(Effect effect, TriggerCondition condition, GameConstants.Location influenceLocation)
 	{
 		this.influenceLocation = influenceLocation;
 		this.condition = condition;
 		this.effect = effect;
 	}
-	public LocationBasedTrigger(Effect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public LocationBasedTrigger(Effect effect, GameConstants.Location influenceLocation)
 	{
 		this.influenceLocation = influenceLocation;
 		this.effect = effect;
@@ -86,13 +86,13 @@ public class LocationBasedTargetingTrigger
 	public TargetingCondition condition;
 	public TargetingEffect effect;
 
-	public LocationBasedTargetingTrigger(TargetingEffect effect, TargetingCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public LocationBasedTargetingTrigger(TargetingEffect effect, TargetingCondition condition, GameConstants.Location influenceLocation)
 	{
 		this.influenceLocation = influenceLocation;
 		this.condition = condition;
 		this.effect = effect;
 	}
-	public LocationBasedTargetingTrigger(TargetingEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public LocationBasedTargetingTrigger(TargetingEffect effect, GameConstants.Location influenceLocation)
 	{
 		this.influenceLocation = influenceLocation;
 		this.condition = (_) => true;
@@ -106,13 +106,13 @@ public class TokenCreationTrigger
 	public TokenCreationCondition condition;
 	public TokenCreationEffect effect;
 
-	public TokenCreationTrigger(TokenCreationEffect effect, TokenCreationCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public TokenCreationTrigger(TokenCreationEffect effect, TokenCreationCondition condition, GameConstants.Location influenceLocation)
 	{
 		this.influenceLocation = influenceLocation;
 		this.condition = condition;
 		this.effect = effect;
 	}
-	public TokenCreationTrigger(TokenCreationEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field)
+	public TokenCreationTrigger(TokenCreationEffect effect, GameConstants.Location influenceLocation)
 	{
 		this.influenceLocation = influenceLocation;
 		this.condition = (_, _) => true;
@@ -120,19 +120,13 @@ public class TokenCreationTrigger
 	}
 }
 
-public class CreatureTargetingTrigger
+public class CreatureTargetingTrigger(CreatureTargetingEffect effect, CreatureTargetingCondition condition, GameConstants.Location influenceLocation)
 {
-	public CreatureTargetingCondition condition;
-	public CreatureTargetingEffect effect;
-	public GameConstants.Location influenceLocation;
+	public CreatureTargetingCondition condition = condition;
+	public CreatureTargetingEffect effect = effect;
+	public GameConstants.Location influenceLocation = influenceLocation;
 
-	public CreatureTargetingTrigger(CreatureTargetingEffect effect, CreatureTargetingCondition condition, GameConstants.Location influenceLocation = GameConstants.Location.Field)
-	{
-		this.effect = effect;
-		this.condition = condition;
-		this.influenceLocation = influenceLocation;
-	}
-	public CreatureTargetingTrigger(CreatureTargetingEffect effect, GameConstants.Location influenceLocation = GameConstants.Location.Field) : this(effect, (_) => true, influenceLocation) { }
+	public CreatureTargetingTrigger(CreatureTargetingEffect effect, GameConstants.Location influenceLocation) : this(effect, (_) => true, influenceLocation) { }
 }
 
 public class LingeringEffectInfo

@@ -16,7 +16,7 @@ class CourageousKnight : Creature
 
 	public override void Init()
 	{
-		RegisterGenericEntersFieldTrigger(trigger: new LocationBasedTargetingTrigger(effect: BuffEffect), referrer: this);
+		RegisterGenericEntersFieldTrigger(trigger: new LocationBasedTargetingTrigger(effect: BuffEffect, influenceLocation: Location.Field), referrer: this);
 	}
 
 	public void BuffEffect(Card castCard)

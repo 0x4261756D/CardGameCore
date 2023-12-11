@@ -16,7 +16,7 @@ class BurningImp : Creature
 
 	public override void Init()
 	{
-		RegisterGenericCastTrigger(trigger: new LocationBasedTargetingTrigger(condition: BuffCondition, effect: BuffEffect), referrer: this);
+		RegisterGenericCastTrigger(trigger: new LocationBasedTargetingTrigger(condition: BuffCondition, effect: BuffEffect, influenceLocation: Location.Field), referrer: this);
 	}
 
 	public bool BuffCondition(Card castCard)
