@@ -1252,15 +1252,15 @@ class DuelCore : Core
 		Log("Receiving");
 		return ReceivePacketFromPlayer<DuelPackets.YesNoResponse>(player).result;
 	}
-	private void SendFieldUpdates(GameConstants.Location mask = GameConstants.Location.ALL, Dictionary<int, DuelPackets.FieldUpdateRequest.Field.ShownInfo>? shownInfos = null)
+	private void SendFieldUpdates(Dictionary<int, DuelPackets.FieldUpdateRequest.Field.ShownInfo>? shownInfos = null)
 	{
 		EvaluateLingeringEffects();
 		for(int i = 0; i < players.Length; i++)
 		{
-			SendFieldUpdate(i, mask, shownInfos ?? []);
+			SendFieldUpdate(i, shownInfos ?? []);
 		}
 	}
-	private void SendFieldUpdate(int player, GameConstants.Location mask, Dictionary<int, DuelPackets.FieldUpdateRequest.Field.ShownInfo> shownInfos)
+	private void SendFieldUpdate(int player, Dictionary<int, DuelPackets.FieldUpdateRequest.Field.ShownInfo> shownInfos)
 	{
 		// TODO: actually handle mask if this is too slow
 		DuelPackets.FieldUpdateRequest request = new()
