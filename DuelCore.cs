@@ -11,7 +11,7 @@ namespace CardGameCore;
 class DuelCore : Core
 {
 	private static GameConstants.State _state = GameConstants.State.UNINITIALIZED;
-	public static GameConstants.State state
+	public static GameConstants.State State
 	{
 		get
 		{
@@ -272,7 +272,7 @@ class DuelCore : Core
 
 	private void EvaluateLingeringEffects()
 	{
-		if(state == GameConstants.State.UNINITIALIZED)
+		if(State == GameConstants.State.UNINITIALIZED)
 		{
 			return;
 		}
@@ -477,7 +477,7 @@ class DuelCore : Core
 		foreach(StateReachedTrigger trigger in alwaysActiveStateReachedTriggers)
 		{
 			EvaluateLingeringEffects();
-			if(trigger.state == state && trigger.condition())
+			if(trigger.state == State && trigger.condition())
 			{
 				trigger.effect();
 				trigger.wasTriggered = true;
@@ -495,7 +495,7 @@ class DuelCore : Core
 					foreach(StateReachedTrigger trigger in questTriggers)
 					{
 						EvaluateLingeringEffects();
-						if(trigger.state == state && trigger.condition())
+						if(trigger.state == State && trigger.condition())
 						{
 							trigger.effect();
 							trigger.wasTriggered = true;
@@ -513,7 +513,7 @@ class DuelCore : Core
 						foreach(StateReachedTrigger trigger in handTriggers)
 						{
 							EvaluateLingeringEffects();
-							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
+							if(trigger.state == State && trigger.influenceLocation.HasFlag(GameConstants.Location.Hand) && trigger.condition())
 							{
 								trigger.effect();
 								trigger.wasTriggered = true;
@@ -535,7 +535,7 @@ class DuelCore : Core
 						foreach(StateReachedTrigger trigger in fieldTriggers)
 						{
 							EvaluateLingeringEffects();
-							if(trigger.state == state && trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition())
+							if(trigger.state == State && trigger.influenceLocation.HasFlag(GameConstants.Location.Field) && trigger.condition())
 							{
 								trigger.effect();
 								trigger.wasTriggered = true;
@@ -607,9 +607,9 @@ class DuelCore : Core
 	}
 	private bool HandleGameLogic()
 	{
-		while(!state.HasFlag(GameConstants.State.InitGained))
+		while(!State.HasFlag(GameConstants.State.InitGained))
 		{
-			if(state != GameConstants.State.UNINITIALIZED)
+			if(State != GameConstants.State.UNINITIALIZED)
 			{
 				EvaluateLingeringEffects();
 				for(int i = 0; i < players.Length; i++)
@@ -621,7 +621,7 @@ class DuelCore : Core
 					}
 				}
 			}
-			switch(state)
+			switch(State)
 			{
 				case GameConstants.State.UNINITIALIZED:
 				{
@@ -661,7 +661,7 @@ class DuelCore : Core
 							SendFieldUpdates();
 						}
 					}
-					state = GameConstants.State.TurnStart;
+					State = GameConstants.State.TurnStart;
 				}
 				break;
 				case GameConstants.State.TurnStart:
@@ -682,7 +682,7 @@ class DuelCore : Core
 					}
 					initPlayer = turnPlayer;
 					ProcessStateReachedTriggers();
-					state = GameConstants.State.MainInitGained;
+					State = GameConstants.State.MainInitGained;
 				}
 				break;
 				case GameConstants.State.MainInitGained:
@@ -691,7 +691,7 @@ class DuelCore : Core
 				{
 					initPlayer = 1 - initPlayer;
 					players[initPlayer].passed = false;
-					state = GameConstants.State.MainInitGained;
+					State = GameConstants.State.MainInitGained;
 				}
 				break;
 				case GameConstants.State.BattleStart:
@@ -705,7 +705,7 @@ class DuelCore : Core
 						player.passed = false;
 					}
 					ProcessStateReachedTriggers();
-					state = GameConstants.State.BattleInitGained;
+					State = GameConstants.State.BattleInitGained;
 				}
 				break;
 				case GameConstants.State.BattleInitGained:
@@ -714,7 +714,7 @@ class DuelCore : Core
 				{
 					initPlayer = 1 - initPlayer;
 					players[initPlayer].passed = false;
-					state = GameConstants.State.BattleInitGained;
+					State = GameConstants.State.BattleInitGained;
 				}
 				break;
 				case GameConstants.State.DamageCalc:
@@ -834,11 +834,11 @@ class DuelCore : Core
 					{
 						momentumBase++;
 					}
-					state = GameConstants.State.TurnStart;
+					State = GameConstants.State.TurnStart;
 				}
 				break;
 				default:
-					throw new NotImplementedException(state.ToString());
+					throw new NotImplementedException(State.ToString());
 			}
 			SendFieldUpdates();
 		}
@@ -903,7 +903,7 @@ class DuelCore : Core
 	{
 		if(markedZone == null)
 		{
-			state = GameConstants.State.TurnEnd;
+			State = GameConstants.State.TurnEnd;
 			return;
 		}
 		if(turnPlayer == 0)
@@ -923,7 +923,7 @@ class DuelCore : Core
 			}
 		}
 		initPlayer = turnPlayer;
-		state = GameConstants.State.BattleInitGained;
+		State = GameConstants.State.BattleInitGained;
 	}
 	private int GetMarkedZoneForPlayer(int player)
 	{
@@ -1011,13 +1011,13 @@ class DuelCore : Core
 				{
 					TakeAction(player, request.uid, request.location, request.desc!);
 				}
-				state &= ~GameConstants.State.InitGained;
-				state |= GameConstants.State.ActionTaken;
+				State &= ~GameConstants.State.InitGained;
+				State |= GameConstants.State.ActionTaken;
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelPassRequest:
 			{
-				switch(state)
+				switch(State)
 				{
 					case GameConstants.State.MainInitGained:
 					{
@@ -1025,12 +1025,12 @@ class DuelCore : Core
 						{
 							if(players[1 - player].passed)
 							{
-								state = GameConstants.State.BattleStart;
+								State = GameConstants.State.BattleStart;
 							}
 							else
 							{
 								players[player].passed = true;
-								state = GameConstants.State.MainActionTaken;
+								State = GameConstants.State.MainActionTaken;
 							}
 						}
 					}
@@ -1041,18 +1041,18 @@ class DuelCore : Core
 						{
 							if(players[1 - player].passed)
 							{
-								state = GameConstants.State.DamageCalc;
+								State = GameConstants.State.DamageCalc;
 							}
 							else
 							{
 								players[player].passed = true;
-								state = GameConstants.State.BattleActionTaken;
+								State = GameConstants.State.BattleActionTaken;
 							}
 						}
 					}
 					break;
 					default:
-						Log($"Unable to pass in state {state}", severity: LogSeverity.Warning);
+						Log($"Unable to pass in state {State}", severity: LogSeverity.Warning);
 						break;
 				}
 			}
@@ -1190,7 +1190,7 @@ class DuelCore : Core
 			{
 				Card card = players[player].hand.GetByUID(uid);
 				if(card.Cost <= players[player].momentum &&
-					!(state.HasFlag(GameConstants.State.BattleStart) && card.CardType == GameConstants.CardType.Creature))
+					!(State.HasFlag(GameConstants.State.BattleStart) && card.CardType == GameConstants.CardType.Creature))
 				{
 					bool canCast = true;
 					if(castTriggers.TryGetValue(card.uid, out List<Trigger>? matchingTriggers))
@@ -1266,7 +1266,7 @@ class DuelCore : Core
 		DuelPackets.FieldUpdateRequest request = new()
 		{
 			turn = turn + 1,
-			hasInitiative = state != GameConstants.State.UNINITIALIZED && initPlayer == player,
+			hasInitiative = State != GameConstants.State.UNINITIALIZED && initPlayer == player,
 			battleDirectionLeftToRight = player == turnPlayer,
 			markedZone = player == 0 ? markedZone : (GameConstants.FIELD_SIZE - 1 - markedZone),
 			ownField = new DuelPackets.FieldUpdateRequest.Field
