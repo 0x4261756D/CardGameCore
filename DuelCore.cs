@@ -484,7 +484,7 @@ class DuelCore : Core
 				CheckQuestReward();
 			}
 		}
-		alwaysActiveStateReachedTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
+		alwaysActiveStateReachedTriggers.RemoveAll(card => card.oneshot && card.wasTriggered);
 		EvaluateLingeringEffects();
 		if(stateReachedTriggers.Count > 0)
 		{
@@ -1708,10 +1708,7 @@ class DuelCore : Core
 	}
 	private void RemoveOutdatedTemporaryLingeringEffects(Card card)
 	{
-		if(temporaryLingeringEffects.TryGetValue(card.uid, out LingeringEffectList? triggers))
-		{
-			triggers.RemoveAll(x => !x.influenceLocation.HasFlag(card.Location));
-		}
+		temporaryLingeringEffects.GetValueOrDefault(card.uid)?.RemoveAll(info => !info.influenceLocation.HasFlag(card.Location));
 	}
 	public bool RemoveCardFromItsLocation(Card card)
 	{
