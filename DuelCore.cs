@@ -1460,72 +1460,38 @@ class DuelCore : Core
 
 	public void RegisterCastTriggerImpl(Trigger trigger, Card referrer)
 	{
-		if(!castTriggers.TryGetValue(referrer.uid, out List<Trigger>? triggers))
-		{
-			triggers = [];
-			castTriggers[referrer.uid] = triggers;
-		}
-		triggers.Add(trigger);
+		castTriggers.TryAdd(referrer.uid, []);
+		castTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterDealsDamageTriggerImpl(Trigger trigger, Card referrer)
 	{
-		if(!dealsDamageTriggers.TryGetValue(referrer.uid, out List<Trigger>? triggers))
-		{
-			triggers = [];
-			dealsDamageTriggers[referrer.uid] = triggers;
-		}
-
-		triggers.Add(trigger);
+		dealsDamageTriggers.TryAdd(referrer.uid, []);
+		dealsDamageTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterGenericCastTriggerImpl(LocationBasedTargetingTrigger trigger, Card referrer)
 	{
-		if(!genericCastTriggers.TryGetValue(referrer.uid, out List<LocationBasedTargetingTrigger>? triggers))
-		{
-			triggers = [];
-			genericCastTriggers[referrer.uid] = triggers;
-		}
-
-		triggers.Add(trigger);
+		genericCastTriggers.TryAdd(referrer.uid, []);
+		genericCastTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterRevelationTriggerImpl(Trigger trigger, Card referrer)
 	{
-		if(!revelationTriggers.TryGetValue(referrer.uid, out List<Trigger>? triggers))
-		{
-			triggers = [];
-			revelationTriggers[referrer.uid] = triggers;
-		}
-
-		triggers.Add(trigger);
+		revelationTriggers.TryAdd(referrer.uid, []);
+		revelationTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterGenericEntersFieldTriggerImpl(LocationBasedTargetingTrigger trigger, Card referrer)
 	{
-		if(!genericEnterFieldTriggers.TryGetValue(referrer.uid, out List<LocationBasedTargetingTrigger>? triggers))
-		{
-			triggers = [];
-			genericEnterFieldTriggers[referrer.uid] = triggers;
-		}
-
-		triggers.Add(trigger);
+		genericEnterFieldTriggers.TryAdd(referrer.uid, []);
+		genericEnterFieldTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterYouDiscardTriggerImpl(LocationBasedTrigger trigger, Card referrer)
 	{
-		if(!youDiscardTriggers.TryGetValue(referrer.uid, out List<LocationBasedTrigger>? triggers))
-		{
-			triggers = [];
-			youDiscardTriggers[referrer.uid] = triggers;
-		}
-
-		triggers.Add(trigger);
+		youDiscardTriggers.TryAdd(referrer.uid, []);
+		youDiscardTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterDiscardTriggerImpl(Trigger trigger, Card referrer)
 	{
-		if(!discardTriggers.TryGetValue(referrer.uid, out List<Trigger>? triggers))
-		{
-			triggers = [];
-			discardTriggers[referrer.uid] = triggers;
-		}
-
-		triggers.Add(trigger);
+		discardTriggers.TryAdd(referrer.uid, []);
+		discardTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterStateReachedTriggerImpl(StateReachedTrigger trigger, Card referrer)
 	{
@@ -1535,13 +1501,8 @@ class DuelCore : Core
 		}
 		else
 		{
-			if(!stateReachedTriggers.TryGetValue(referrer.uid, out List<StateReachedTrigger>? triggers))
-			{
-				triggers = [];
-				stateReachedTriggers[referrer.uid] = triggers;
-			}
-
-			triggers.Add(trigger);
+			stateReachedTriggers.TryAdd(referrer.uid, []);
+			stateReachedTriggers[referrer.uid].Add(trigger);
 		}
 	}
 	public void RegisterLingeringEffectImpl(LingeringEffectInfo info)
@@ -1552,84 +1513,44 @@ class DuelCore : Core
 		}
 		else
 		{
-			if(!lingeringEffects.TryGetValue(info.referrer.uid, out LingeringEffectList? infos))
-			{
-				infos = new(this);
-				lingeringEffects[info.referrer.uid] = infos;
-			}
-
-			infos.Add(info);
+			lingeringEffects.TryAdd(info.referrer.uid, new(this));
+			lingeringEffects[info.referrer.uid].Add(info);
 		}
 	}
 	public void RegisterTemporaryLingeringEffectImpl(LingeringEffectInfo info)
 	{
-		if(!temporaryLingeringEffects.TryGetValue(info.referrer.uid, out LingeringEffectList? infos))
-		{
-			infos = new(this);
-			temporaryLingeringEffects[info.referrer.uid] = infos;
-		}
-
-		infos.Add(info);
+		temporaryLingeringEffects.TryAdd(info.referrer.uid, new(this));
+		temporaryLingeringEffects[info.referrer.uid].Add(info);
 	}
 	public void RegisterActivatedEffectImpl(ActivatedEffectInfo info)
 	{
-		if(!activatedEffects.TryGetValue(info.referrer.uid, out List<ActivatedEffectInfo>? infos))
-		{
-			infos = [];
-			activatedEffects[info.referrer.uid] = infos;
-		}
-
-		infos.Add(info);
+		activatedEffects.TryAdd(info.referrer.uid, []);
+		activatedEffects[info.referrer.uid].Add(info);
 	}
-	public void RegisterVictoriousTriggerImpl(Trigger info, Card referrer)
+	public void RegisterVictoriousTriggerImpl(Trigger trigger, Card referrer)
 	{
-		if(!victoriousTriggers.TryGetValue(referrer.uid, out List<Trigger>? triggers))
-		{
-			triggers = [];
-			victoriousTriggers[referrer.uid] = triggers;
-		}
-
-		triggers.Add(info);
+		victoriousTriggers.TryAdd(referrer.uid, []);
+		victoriousTriggers[referrer.uid].Add(trigger);
 	}
-	public void RegisterAttackTriggerImpl(Trigger info, Card referrer)
+	public void RegisterAttackTriggerImpl(Trigger trigger, Card referrer)
 	{
-		if(!attackTriggers.TryGetValue(referrer.uid, out List<Trigger>? triggers))
-		{
-			triggers = [];
-			attackTriggers[referrer.uid] = triggers;
-		}
-
-		triggers.Add(info);
+		attackTriggers.TryAdd(referrer.uid, []);
+		attackTriggers[referrer.uid].Add(trigger);
 	}
-	public void RegisterDeathTriggerImpl(CreatureTargetingTrigger info, Card referrer)
+	public void RegisterDeathTriggerImpl(CreatureTargetingTrigger trigger, Card referrer)
 	{
-		if(!deathTriggers.TryGetValue(referrer.uid, out List<CreatureTargetingTrigger>? triggers))
-		{
-			triggers = [];
-			deathTriggers[referrer.uid] = triggers;
-		}
-
-		triggers.Add(info);
+		deathTriggers.TryAdd(referrer.uid, []);
+		deathTriggers[referrer.uid].Add(trigger);
 	}
-	public void RegisterGenericDeathTriggerImpl(CreatureTargetingTrigger info, Card referrer)
+	public void RegisterGenericDeathTriggerImpl(CreatureTargetingTrigger trigger, Card referrer)
 	{
-		if(!genericDeathTriggers.TryGetValue(referrer.uid, out List<CreatureTargetingTrigger>? triggers))
-		{
-			triggers = [];
-			genericDeathTriggers[referrer.uid] = triggers;
-		}
-
-		triggers.Add(info);
+		genericDeathTriggers.TryAdd(referrer.uid, []);
+		genericDeathTriggers[referrer.uid].Add(trigger);
 	}
 	private void RegisterTokenCreationTriggerImpl(TokenCreationTrigger trigger, Card referrer)
 	{
-		if(!tokenCreationTriggers.TryGetValue(referrer.uid, out List<TokenCreationTrigger>? triggers))
-		{
-			triggers = [];
-			tokenCreationTriggers[referrer.uid] = triggers;
-		}
-
-		triggers.Add(trigger);
+		tokenCreationTriggers.TryAdd(referrer.uid, []);
+		tokenCreationTriggers[referrer.uid].Add(trigger);
 	}
 	public Creature?[] GetFieldImpl(int player)
 	{
