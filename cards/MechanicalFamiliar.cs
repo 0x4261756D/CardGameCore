@@ -1,7 +1,7 @@
 // Scripted by 0x4261756D
 using CardGameCore;
-using static CardGameUtils.GameConstants;
 using static CardGameCore.CardUtils;
+using static CardGameUtils.GameConstants;
 
 class MechanicalFamiliar : Creature
 {
@@ -23,8 +23,11 @@ class MechanicalFamiliar : Creature
 
 	private bool CreationCondition(Creature token, Card source)
 	{
-		return source.Name != this.Name && token.Controller == Controller && token.Keywords.ContainsKey(Keyword.Token) && token.Keywords.ContainsKey(Keyword.Brittle) &&
-			HasEmpty(GetField(Controller));
+		return source.Name != this.Name &&
+				token.Controller == Controller &&
+				token.Keywords.ContainsKey(Keyword.Token) &&
+				token.Keywords.ContainsKey(Keyword.Brittle) &&
+				HasEmpty(GetField(Controller));
 	}
 
 	private void CreationEffect(Creature token, Card _)

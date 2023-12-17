@@ -1,7 +1,7 @@
 // Scripted by Dotlof
 using CardGameCore;
-using static CardGameUtils.GameConstants;
 using static CardGameCore.CardUtils;
+using static CardGameUtils.GameConstants;
 
 class PreparetheAltar : Spell
 {

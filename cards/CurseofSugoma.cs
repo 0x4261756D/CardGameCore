@@ -42,7 +42,7 @@ class CurseofSugoma : Spell
 
 	private bool CastCondition()
 	{
-		return GetFieldUsed(Controller).Length > 0;
+		return HasUsed(GetField(Controller));
 	}
 
 }

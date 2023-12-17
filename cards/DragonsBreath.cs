@@ -1,7 +1,7 @@
 //Scripted by Dotlof
 using CardGameCore;
-using static CardGameUtils.GameConstants;
 using static CardGameCore.CardUtils;
+using static CardGameUtils.GameConstants;
 
 class DragonsBreath : Spell
 {
@@ -29,7 +29,7 @@ class DragonsBreath : Spell
 
 	private bool CastCondition()
 	{
-		return GetBothFieldsUsed().Length > 0;
+		return HasUsed(GetBothFieldsWhole());
 	}
 
 }

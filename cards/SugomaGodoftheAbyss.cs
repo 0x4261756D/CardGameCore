@@ -1,7 +1,7 @@
 // Scripted by 0x4261756D
 using CardGameCore;
-using static CardGameUtils.GameConstants;
 using static CardGameCore.CardUtils;
+using static CardGameUtils.GameConstants;
 
 class SugomaGodoftheAbyss : Creature
 {
@@ -40,9 +40,5 @@ class SugomaGodoftheAbyss : Creature
 		return HasUsed(GetBothFieldsWhole()) && GetDiscardable(Controller, ignore: null).Length > 0;
 	}
 
-	public override bool CanBeDiscarded()
-	{
-		return false;
-	}
-
+	public override bool CanBeDiscarded() => false;
 }

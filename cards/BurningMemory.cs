@@ -1,7 +1,7 @@
 // scripted by 0x4261756D
 using CardGameCore;
-using static CardGameUtils.GameConstants;
 using static CardGameCore.CardUtils;
+using static CardGameUtils.GameConstants;
 
 class BurningMemory : Spell
 {

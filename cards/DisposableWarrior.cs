@@ -1,5 +1,6 @@
 // Scripted by Dotlof
 using CardGameCore;
+using static CardGameCore.CardUtils;
 using static CardGameUtils.GameConstants;
 
 class DisposableWarrior : Creature
@@ -16,7 +17,7 @@ class DisposableWarrior : Creature
 
 	public override void Init()
 	{
-		RegisterRevelationTrigger(trigger: new Trigger(effect: RevelationEffect, CastCondition), referrer: this);
+		RegisterRevelationTrigger(trigger: new Trigger(effect: RevelationEffect, condition: CastCondition), referrer: this);
 	}
 
 	public void RevelationEffect()
@@ -26,7 +27,7 @@ class DisposableWarrior : Creature
 
 	private bool CastCondition()
 	{
-		return GetFieldUsed(Controller).Length < FIELD_SIZE;
+		return HasEmpty(GetField(Controller));
 	}
 
 }
