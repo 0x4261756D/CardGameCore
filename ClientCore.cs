@@ -40,7 +40,7 @@ partial class ClientCore : Core
 
 		foreach(string deckfile in deckfiles)
 		{
-			List<string> decklist = File.ReadAllLines(deckfile).ToList();
+			List<string> decklist = [.. File.ReadAllLines(deckfile)];
 			if(decklist.Count == 0)
 			{
 				continue;
