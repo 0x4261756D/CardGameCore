@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using CardGameUtils;
 using static CardGameUtils.Functions;
 using static CardGameUtils.Structs.NetworkingStructs;
@@ -32,7 +35,7 @@ class DuelCore : Core
 	private const string CastActionDescription = "Cast";
 	private const string CreatureMoveActionDescription = "Move";
 	public int playersConnected = 0;
-	public int turn, turnPlayer, initPlayer;
+	public int turn, turnPlayer, initPlayer, nextMomentumIncreaseIndex;
 	public int? markedZone = null;
 	public int momentumBase = GameConstants.START_MOMENTUM;
 	public bool rewardClaimed = false;
@@ -200,12 +203,12 @@ class DuelCore : Core
 
 	private static Card CreateBasicCard(Type type, int controller)
 	{
-		Card c = (Card)Activator.CreateInstance(type)!;
-		c.BaseController = controller;
-		c.ResetToBaseState();
-		c.Init();
-		c.isInitialized = true;
-		return c;
+		Card card = (Card)Activator.CreateInstance(type)!;
+		card.BaseController = controller;
+		card.ResetToBaseState();
+		card.Init();
+		card.isInitialized = true;
+		return card;
 	}
 
 	public override void HandleNetworking()
@@ -830,9 +833,10 @@ class DuelCore : Core
 					}
 					turnPlayer = 1 - turnPlayer;
 					turn++;
-					if(GameConstants.MOMENTUM_INCREMENT_TURNS.Contains(turn))
+					if(nextMomentumIncreaseIndex < GameConstants.MOMENTUM_INCREMENT_TURNS.Length && GameConstants.MOMENTUM_INCREMENT_TURNS[nextMomentumIncreaseIndex] == turn)
 					{
 						momentumBase++;
+						nextMomentumIncreaseIndex++;
 					}
 					State = GameConstants.State.TurnStart;
 				}
@@ -1003,13 +1007,19 @@ class DuelCore : Core
 			case NetworkingConstants.PacketType.DuelSelectOptionRequest:
 			{
 				DuelPackets.SelectOptionRequest request = DeserializeJson<DuelPackets.SelectOptionRequest>(packet);
-				if(!GetCardActions(player, request.uid, request.location).Contains(request.desc))
+				bool found = false;
+				foreach(string desc in GetCardActions(player, request.uid, request.location))
 				{
-					Log("Tried to use an option that is not present for that card");
+					if(desc == request.desc)
+					{
+						TakeAction(player, request.uid, request.location, request.desc);
+						found = true;
+						break;
+					}
 				}
-				else
+				if(!found)
 				{
-					TakeAction(player, request.uid, request.location, request.desc!);
+					Log("Tried to use an option that is not present for that card", severity: LogSeverity.Warning);
 				}
 				State &= ~GameConstants.State.InitGained;
 				State |= GameConstants.State.ActionTaken;
@@ -1280,7 +1290,7 @@ class DuelCore : Core
 				momentum = players[player].momentum,
 				field = players[player].field.ToStruct(),
 				hand = players[player].hand.ToStruct(),
-				shownInfo = shownInfos.GetValueOrDefault(player),
+				shownInfo = shownInfos.GetValueOrDefault(player, new()),
 			},
 			oppField = new DuelPackets.FieldUpdateRequest.Field
 			{
@@ -1293,7 +1303,7 @@ class DuelCore : Core
 				momentum = players[1 - player].momentum,
 				field = players[1 - player].field.ToStruct(),
 				hand = players[1 - player].hand.ToHiddenStruct(),
-				shownInfo = shownInfos.GetValueOrDefault(1 - player),
+				shownInfo = shownInfos.GetValueOrDefault(1 - player, new()),
 			},
 		};
 		SendPacketToPlayer(request, player);
@@ -1330,19 +1340,42 @@ class DuelCore : Core
 			Log("deserialized packet");
 			SendPacketToPlayer(new DuelPackets.CustomSelectCardsIntermediateResponse
 			{
-				isValid = isValidSelection(Array.ConvertAll(request.uids, x => cards.First(y => y.uid == x)))
+				isValid = isValidSelection(Array.ConvertAll(request.uids, x => Array.Find(cards, y => y.uid == x)!))
 			}, player);
 			Log("sent packet");
 		} while(true);
 
 		DuelPackets.CustomSelectCardsResponse response = DeserializePayload<DuelPackets.CustomSelectCardsResponse>(type, payload);
 		Log("final response");
-		Card[] ret = cards.Where(x => response.uids.Contains(x.uid)).ToArray();
+		Card[] ret = UidsToCards(cards, response.uids);
 		if(!isValidSelection(ret))
 		{
 			throw new Exception("Player somethow selected invalid cards");
 		}
 		Log("returning");
+		return ret;
+	}
+
+	public static Card[] UidsToCards(Card[] cards, int[] uids)
+	{
+		Card[] ret = new Card[uids.Length];
+		for(int i = 0; i < ret.Length; i++)
+		{
+			bool found = false;
+			for(int j = 0; j < cards.Length; j++)
+			{
+				if(cards[j].uid == uids[i])
+				{
+					ret[i] = cards[j];
+					found = true;
+					break;
+				}
+			}
+			if(!found)
+			{
+				throw new Exception($"Selected uid {uids[i]} could not be found in the source array");
+			}
+		}
 		return ret;
 	}
 	private int SelectMovementZone(int player, int position, int momentum)
@@ -1773,7 +1806,7 @@ class DuelCore : Core
 			throw new Exception($"Selected the wrong amount of cards ({response.uids.Length} != {amount})");
 		}
 		// TODO: Make this nicer?
-		return [.. response.uids.ToList().ConvertAll(x => cards.First(y => y.uid == x))];
+		return UidsToCards(cards, response.uids);
 	}
 	public void DiscardAmountImpl(int player, int amount)
 	{
@@ -1888,7 +1921,7 @@ class DuelCore : Core
 		bool[] options = players[targetPlayer].field.GetPlacementOptions();
 		if(choosingPlayer != targetPlayer)
 		{
-			options = options.Reverse().ToArray();
+			Array.Reverse(options);
 		}
 		SendPacketToPlayer(new DuelPackets.SelectZoneRequest
 		{

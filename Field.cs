@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
 using CardGameUtils;
 using CardGameUtils.Structs;
@@ -14,7 +17,7 @@ class Field
 
 	internal CardStruct?[] ToStruct()
 	{
-		return [.. cards.ToList().ConvertAll(x => x?.ToStruct())];
+		return Array.ConvertAll(cards, card => card?.ToStruct());
 	}
 
 	internal Creature?[] GetAll()
@@ -23,7 +26,7 @@ class Field
 	}
 	internal Creature[] GetUsed()
 	{
-		return cards.Where(x => x != null).ToArray()!;
+		return Array.FindAll(cards, card => card != null)!;
 	}
 
 	internal void Add(Creature card, int zone)
@@ -66,7 +69,7 @@ class Field
 	}
 	internal bool[] GetPlacementOptions()
 	{
-		return [.. cards.ToList().ConvertAll(x => x == null)];
+		return Array.ConvertAll(cards, x => x == null);
 	}
 
 	internal void ClearCardModifications()
@@ -79,7 +82,7 @@ class Field
 
 	internal bool HasEmpty()
 	{
-		return cards.Any(x => x == null);
+		return Array.Exists(cards, card => card == null);
 	}
 
 	internal Creature GetByUID(int uid)

@@ -1,4 +1,7 @@
-﻿using System.IO.Pipes;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Pipes;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -173,7 +176,7 @@ class Program
 			string replayPath = Path.Combine(baseDir, "replays");
 			Directory.CreateDirectory(replayPath);
 			string filePath = Path.Combine(replayPath, $"{DateTime.UtcNow:yyyyMMdd_HHmmss}_{config.duel_config?.players[0].name}_vs_{config.duel_config?.players[1].name}.replay");
-			File.WriteAllText(filePath, JsonSerializer.Serialize<Replay>(replay, NetworkingConstants.jsonIncludeOption));
+			File.WriteAllText(filePath, JsonSerializer.Serialize(replay, NetworkingConstants.jsonIncludeOption));
 			Log("Wrote replay to " + filePath);
 		}
 	}
@@ -196,7 +199,7 @@ class Program
 		{
 			Log("Generating new additional cards");
 			List<CardStruct> cards = [];
-			foreach(Type card in Assembly.GetExecutingAssembly().GetTypes().Where(IsCardSubclass))
+			foreach(Type card in Array.FindAll(Assembly.GetExecutingAssembly().GetTypes(), IsCardSubclass))
 			{
 				Card c = (Card)Activator.CreateInstance(card)!;
 				cards.Add(c.ToStruct(client: true));
@@ -209,8 +212,8 @@ class Program
 		}
 	}
 
-	public static readonly Func<Type, bool> IsCardSubclass = (x) =>
+	public static readonly Predicate<Type> IsCardSubclass = card =>
 	{
-		return x != typeof(Token) && (x.BaseType == typeof(Spell) || x.BaseType == typeof(Creature) || x.BaseType == typeof(Quest));
+		return card != typeof(Token) && (card.BaseType == typeof(Spell) || card.BaseType == typeof(Creature) || card.BaseType == typeof(Quest));
 	};
 }

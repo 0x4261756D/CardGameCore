@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using CardGameUtils;
@@ -165,7 +167,7 @@ public abstract class Card
 
 	internal static CardStruct[] ToStruct(Card[] cards)
 	{
-		return [.. cards.ToList().ConvertAll(x => x.ToStruct())];
+		return Array.ConvertAll(cards, x => x.ToStruct());
 	}
 }
 public class ClientCoreDummyCard : Card

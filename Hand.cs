@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using CardGameUtils;
 using CardGameUtils.Structs;
 
@@ -23,7 +25,7 @@ class Hand
 
 	internal CardStruct[] ToStruct()
 	{
-		return [.. cards.ConvertAll(x => x.ToStruct())];
+		return [.. cards.ConvertAll(card => card.ToStruct())];
 	}
 
 	internal Card[] GetAll()
@@ -43,7 +45,7 @@ class Hand
 
 	internal Card[] GetDiscardable(Card? ignore)
 	{
-		return [.. cards.Where(card => card.uid != ignore?.uid && card.CanBeDiscarded())];
+		return [.. cards.FindAll(card => card.uid != ignore?.uid && card.CanBeDiscarded())];
 	}
 
 	internal CardStruct[] ToHiddenStruct()

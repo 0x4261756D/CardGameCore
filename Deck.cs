@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using CardGameUtils;
 
 namespace CardGameCore;
@@ -44,7 +46,7 @@ class Deck
 
 	internal Card[] GetRange(int position, int amount)
 	{
-		return [.. cards.GetRange(position, Math.Min(amount, cards.Count))];
+		return [.. cards[position..Math.Min(amount, cards.Count)]];
 	}
 
 	internal void Remove(Card card)

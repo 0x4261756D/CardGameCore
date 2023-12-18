@@ -1,33 +1,35 @@
+using System;
+
 namespace CardGameCore;
 public class CardUtils
 {
 	public static bool HasEmpty(Card?[] cards)
 	{
-		return cards.Any(x => x == null);
+		return Array.Exists(cards, card => card == null);
 	}
 
 	public static bool HasUsed(Card?[] cards)
 	{
-		return cards.Any(x => x != null);
+		return Array.Exists(cards, card => card != null);
 	}
 
 	public static Card[] GetForBoth(GetCardsInLocationDelegate accessor)
 	{
 		return [.. accessor(0), .. accessor(1)];
 	}
-	public static Card?[] GetBothFieldsWhole()
+	public static Creature?[] GetBothFieldsWhole()
 	{
-		return Card.GetField(0).Concat(Card.GetField(1)).ToArray();
+		return [.. Card.GetField(0), .. Card.GetField(1)];
 	}
 
 	public delegate bool IsValid<T>(T card);
 	public static bool ContainsValid<T>(T[] cards, IsValid<T> isValid) where T : Card
 	{
-		return cards.Any(x => isValid(x));
+		return Array.Exists(cards, card => isValid(card));
 	}
 	public static T[] FilterValid<T>(T[] cards, IsValid<T> isValid) where T : Card
 	{
-		return cards.Where(x => isValid(x)).ToArray();
+		return Array.FindAll(cards, card => isValid(card));
 	}
 	public static Creature[] GetBothFieldsUsed()
 	{

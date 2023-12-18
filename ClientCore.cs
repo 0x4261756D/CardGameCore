@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.IO.Pipes;
 using System.Net.Sockets;
 using System.Reflection;
@@ -27,7 +30,7 @@ partial class ClientCore : Core
 			Directory.CreateDirectory(Program.config.deck_config.deck_location);
 		}
 		string[] deckfiles = Directory.GetFiles(Program.config.deck_config.deck_location);
-		foreach(Type card in Assembly.GetExecutingAssembly().GetTypes().Where(Program.IsCardSubclass))
+		foreach(Type card in Array.FindAll(Assembly.GetExecutingAssembly().GetTypes(), Program.IsCardSubclass))
 		{
 			Card c = (Card)Activator.CreateInstance(card)!;
 			cards.Add(c.ToStruct(client: true));
@@ -233,9 +236,9 @@ partial class ClientCore : Core
 
 	private CardStruct[] FilterCards(List<CardStruct> cards, string filter, GameConstants.PlayerClass playerClass, bool includeGenericCards)
 	{
-		return cards.Where(x =>
-			(playerClass == GameConstants.PlayerClass.All || (includeGenericCards && x.card_class == GameConstants.PlayerClass.All) || x.card_class == playerClass)
-			&& x.ToString().Contains(filter, StringComparison.CurrentCultureIgnoreCase)).ToArray();
+		return Array.FindAll(cards.ToArray(), card =>
+			(playerClass == GameConstants.PlayerClass.All || (includeGenericCards && card.card_class == GameConstants.PlayerClass.All) || card.card_class == playerClass)
+			&& card.ToString().Contains(filter, StringComparison.CurrentCultureIgnoreCase));
 	}
 
 	private DeckPackets.Deck FindDeckByName(string name)
