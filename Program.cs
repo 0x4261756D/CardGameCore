@@ -94,30 +94,14 @@ class Program
 						modeSet = true;
 						break;
 					case "players":
-						string players = Encoding.UTF8.GetString(Convert.FromBase64String(parameter));
-						if(!players.StartsWith('µ') || !players.EndsWith('µ'))
-						{
-							Log($"Your players string is in a wrong format: {players}", severity: LogSeverity.Error);
-							return;
-						}
-						string[] playerData = players.Split('µ');
-						if(playerData.Length != 8)
-						{
-							Log($"Your players string is in a wrong format: {players}", severity: LogSeverity.Error);
-							return;
-						}
-						CoreConfig.PlayerConfig[] playerConfigs =
-						[
-							new CoreConfig.PlayerConfig(name: playerData[1], id: playerData[2], decklist: playerData[3].Split(';')),
-							new CoreConfig.PlayerConfig(name: playerData[4], id: playerData[5], decklist: playerData[6].Split(';')),
-						];
+						CoreConfig.PlayerConfig[] players = JsonSerializer.Deserialize<CoreConfig.PlayerConfig[]>(Encoding.UTF8.GetString(Convert.FromBase64String(parameter)), options: NetworkingConstants.jsonIncludeOption)!;
 						if(config.duel_config == null)
 						{
-							config.duel_config = new CoreConfig.DuelConfig(players: playerConfigs, noshuffle: false);
+							config.duel_config = new CoreConfig.DuelConfig(players: players, noshuffle: false);
 						}
 						else
 						{
-							config.duel_config.players = playerConfigs;
+							config.duel_config.players = players;
 						}
 						break;
 					case "noshuffle":

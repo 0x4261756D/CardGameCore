@@ -106,22 +106,24 @@ class DuelCore : Core
 			Log("Player created. ID: " + Program.config.duel_config.players[i].id);
 			Deck deck = new();
 			GameConstants.PlayerClass playerClass = Enum.Parse<GameConstants.PlayerClass>(Program.config.duel_config.players[i].decklist[0]);
-			if(!Program.config.duel_config.players[i].decklist[1].StartsWith('#'))
+			string abilityString = Program.config.duel_config.players[i].decklist[1];
+			if(!abilityString.StartsWith('#'))
 			{
-				Log($"Player {Program.config.duel_config.players[i].name} has no ability, {Program.config.duel_config.players[i].decklist[1]} is no suitable ability");
+				Log($"Player {Program.config.duel_config.players[i].name} has no ability, {abilityString} is no suitable ability");
 				return;
 			}
-			Card ability = CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[1][1..])!, i);
-			if(!Program.config.duel_config.players[i].decklist[2].StartsWith('|'))
+			Card ability = CreateBasicCard(Type.GetType(CardNameToFilename(abilityString[1..]))!, i);
+			string questString = Program.config.duel_config.players[i].decklist[2];
+			if(!questString.StartsWith('|'))
 			{
-				Log($"Player {Program.config.duel_config.players[i].name} has no quest, {Program.config.duel_config.players[i].decklist[2]} is no suitable ability");
+				Log($"Player {Program.config.duel_config.players[i].name} has no quest, {questString} is no suitable ability");
 				return;
 			}
-			Quest quest = (Quest)CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[2][1..])!, i);
-			for(int j = 3; j < Program.config.duel_config.players[i].decklist.Length; j++)
+			Quest quest = (Quest)CreateBasicCard(Type.GetType(CardNameToFilename(questString[1..]))!, i);
+			foreach(string cardString in Program.config.duel_config.players[i].decklist[3..])
 			{
-				Log($"Creating {Program.config.duel_config.players[i].decklist[j]}");
-				deck.Add(CreateBasicCard(Type.GetType(Program.config.duel_config.players[i].decklist[j])!, i));
+				Log($"Creating {cardString}");
+				deck.Add(CreateBasicCard(Type.GetType(CardNameToFilename(cardString))!, i));
 			}
 			players[i] = new Player(Program.config.duel_config.players[i], i, deck, playerClass, ability, quest);
 		}
