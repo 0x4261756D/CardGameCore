@@ -1992,7 +1992,7 @@ class DuelCore : Core
 	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
 	{
 		byte[] payload = GeneratePayload(packet);
-		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: NetworkingConstants.PacketDict[typeof(T)], packet: payload[5..(payload.Length - 5)], clientToServer: false));
+		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: NetworkingConstants.PacketDict[typeof(T)], packet: payload[5..], clientToServer: false));
 		playerStreams[player]!.Write(payload);
 	}
 }
