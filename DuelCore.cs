@@ -897,9 +897,9 @@ class DuelCore : Core
 	}
 	private void RevealImpl(int player, int damage)
 	{
-		for(int i = 0; i < damage; i++)
+		for(int i = 0; i < Math.Min(damage, players[player].deck.Size); i++)
 		{
-			Card c = players[player].deck.GetAt(0);
+			Card c = players[player].deck.GetAt(i);
 			SendFieldUpdates(shownInfos: new() { { player, new() { card = c.ToStruct(), description = "Revealed" } } });
 			ProcessTriggers(revelationTriggers, c.uid);
 			SendFieldUpdates();
