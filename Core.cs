@@ -4,14 +4,9 @@ using System.Net.Sockets;
 
 namespace CardGameCore;
 
-abstract class Core
+abstract class Core(int port)
 {
-	public TcpListener listener;
+	public TcpListener listener = new(IPAddress.Any, port);
 	public abstract void HandleNetworking();
 	public abstract void Init(PipeStream? pipeStream);
-
-	public Core()
-	{
-		listener = new TcpListener(IPAddress.Any, Program.config.port);
-	}
 }

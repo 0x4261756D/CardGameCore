@@ -13,7 +13,6 @@ namespace CardGameCore;
 class Program
 {
 	public static string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-	public static CoreConfig config = new(-1, CoreConfig.CoreMode.Client);
 	public static Replay? replay;
 	public static int seed;
 	public static DateTime versionTime;
@@ -64,6 +63,7 @@ class Program
 			Log("Could not parse a platform config", LogSeverity.Error);
 			return;
 		}
+		CoreConfig config;
 		if(Environment.OSVersion.Platform == PlatformID.Unix)
 		{
 			config = platformConfig.linux!;
@@ -147,11 +147,11 @@ class Program
 		Core core;
 		if(config.mode == CoreConfig.CoreMode.Client)
 		{
-			core = new ClientCore();
+			core = new ClientCore(config.deck_config!, config.port);
 		}
 		else
 		{
-			core = new DuelCore();
+			core = new DuelCore(config.duel_config!, config.port);
 		}
 		core.Init(pipeStream);
 		Log("EXITING");

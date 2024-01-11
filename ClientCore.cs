@@ -15,28 +15,25 @@ namespace CardGameCore;
 
 partial class ClientCore : Core
 {
-	readonly static List<CardStruct> cards = [];
-	readonly static List<DeckPackets.Deck> decks = [];
-	public ClientCore()
+	private readonly List<CardStruct> cards = [];
+	private readonly List<DeckPackets.Deck> decks = [];
+	private readonly CoreConfig.DeckConfig config;
+	public ClientCore(CoreConfig.DeckConfig config, int port) : base(port)
 	{
-		if(Program.config.deck_config == null)
+		this.config = config;
+		if(!Directory.Exists(config.deck_location))
 		{
-			Log("Deck config was null when creating a client core", LogSeverity.Error);
-			return;
+			Log($"Deck folder not found, creating it at {config.deck_location}", LogSeverity.Warning);
+			Directory.CreateDirectory(config.deck_location);
 		}
-		if(!Directory.Exists(Program.config.deck_config.deck_location))
-		{
-			Log($"Deck folder not found, creating it at {Program.config.deck_config.deck_location}", LogSeverity.Warning);
-			Directory.CreateDirectory(Program.config.deck_config.deck_location);
-		}
-		string[] deckfiles = Directory.GetFiles(Program.config.deck_config.deck_location);
+		string[] deckfiles = Directory.GetFiles(config.deck_location);
 		foreach(Type card in Array.FindAll(Assembly.GetExecutingAssembly().GetTypes(), Program.IsCardSubclass))
 		{
 			Card c = (Card)Activator.CreateInstance(card)!;
 			cards.Add(c.ToStruct(client: true));
 		}
 
-		if(Program.config.deck_config.should_fetch_additional_cards)
+		if(config.should_fetch_additional_cards)
 		{
 			TryFetchAdditionalCards();
 		}
@@ -83,7 +80,7 @@ partial class ClientCore : Core
 	}
 
 	//TODO: This could be more elegant
-	public static CardStruct[] DecklistToCards(List<string> decklist)
+	public CardStruct[] DecklistToCards(List<string> decklist)
 	{
 		List<CardStruct> c = [];
 		foreach(string line in decklist)
@@ -96,11 +93,11 @@ partial class ClientCore : Core
 		}
 		return [.. c];
 	}
-	public static void TryFetchAdditionalCards()
+	public void TryFetchAdditionalCards()
 	{
 		try
 		{
-			using TcpClient client = new(Program.config.deck_config!.additional_cards_url.address, Program.config.deck_config.additional_cards_url.port);
+			using TcpClient client = new(config.additional_cards_url.address, config.additional_cards_url.port);
 			using NetworkStream stream = client.GetStream();
 			stream.Write(GeneratePayload(new ServerPackets.AdditionalCardsRequest()));
 
@@ -214,7 +211,7 @@ partial class ClientCore : Core
 					if(index != -1)
 					{
 						decks.RemoveAt(index);
-						File.Delete(Path.Combine(Program.config.deck_config!.deck_location, deck.name + ".dek"));
+						File.Delete(Path.Combine(config.deck_location, deck.name + ".dek"));
 					}
 				}
 				payload = GeneratePayload(new DeckPackets.ListUpdateResponse { should_update = index == -1 });
@@ -231,7 +228,7 @@ partial class ClientCore : Core
 	{
 		string? deckString = deck.ToString();
 		if(deckString == null) return;
-		File.WriteAllText(Path.Combine(Program.config.deck_config!.deck_location, deck.name + ".dek"), deckString);
+		File.WriteAllText(Path.Combine(config.deck_location, deck.name + ".dek"), deckString);
 	}
 
 	private CardStruct[] FilterCards(List<CardStruct> cards, string filter, GameConstants.PlayerClass playerClass, bool includeGenericCards)

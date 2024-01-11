@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using CardGameUtils;
+using CardGameUtils.Structs;
 using static CardGameUtils.Functions;
 using static CardGameUtils.Structs.NetworkingStructs;
 
@@ -39,6 +40,7 @@ class DuelCore : Core
 	public int? markedZone = null;
 	public int momentumBase = GameConstants.START_MOMENTUM;
 	public bool rewardClaimed = false;
+	public CoreConfig.DuelConfig config;
 
 	private readonly Dictionary<int, List<Trigger>> castTriggers = [];
 	private readonly Dictionary<int, List<LocationBasedTargetingTrigger>> genericCastTriggers = [];
@@ -95,37 +97,38 @@ class DuelCore : Core
 		}
 	}
 
-	public DuelCore()
+	public DuelCore(CoreConfig.DuelConfig config, int port) : base(port)
 	{
+		this.config = config;
 		RegisterScriptingFunctions();
 		alwaysActiveLingeringEffects = new(this);
-		players = new Player[Program.config.duel_config!.players.Length];
-		playerStreams = new NetworkStream[Program.config.duel_config.players.Length];
+		players = new Player[config.players.Length];
+		playerStreams = new NetworkStream[config.players.Length];
 		for(int i = 0; i < players.Length; i++)
 		{
-			Log("Player created. ID: " + Program.config.duel_config.players[i].id);
+			Log("Player created. ID: " + config.players[i].id);
 			Deck deck = new();
-			GameConstants.PlayerClass playerClass = Enum.Parse<GameConstants.PlayerClass>(Program.config.duel_config.players[i].decklist[0]);
-			string abilityString = Program.config.duel_config.players[i].decklist[1];
+			GameConstants.PlayerClass playerClass = Enum.Parse<GameConstants.PlayerClass>(config.players[i].decklist[0]);
+			string abilityString = config.players[i].decklist[1];
 			if(!abilityString.StartsWith('#'))
 			{
-				Log($"Player {Program.config.duel_config.players[i].name} has no ability, {abilityString} is no suitable ability");
+				Log($"Player {config.players[i].name} has no ability, {abilityString} is no suitable ability");
 				return;
 			}
 			Card ability = CreateBasicCard(Type.GetType(CardNameToFilename(abilityString[1..]))!, i);
-			string questString = Program.config.duel_config.players[i].decklist[2];
+			string questString = config.players[i].decklist[2];
 			if(!questString.StartsWith('|'))
 			{
-				Log($"Player {Program.config.duel_config.players[i].name} has no quest, {questString} is no suitable ability");
+				Log($"Player {config.players[i].name} has no quest, {questString} is no suitable ability");
 				return;
 			}
 			Quest quest = (Quest)CreateBasicCard(Type.GetType(CardNameToFilename(questString[1..]))!, i);
-			foreach(string cardString in Program.config.duel_config.players[i].decklist[3..])
+			foreach(string cardString in config.players[i].decklist[3..])
 			{
 				Log($"Creating {cardString}");
 				deck.Add(CreateBasicCard(Type.GetType(CardNameToFilename(cardString))!, i));
 			}
-			players[i] = new Player(Program.config.duel_config.players[i], i, deck, playerClass, ability, quest);
+			players[i] = new Player(config.players[i], i, deck, playerClass, ability, quest);
 		}
 	}
 
@@ -632,7 +635,7 @@ class DuelCore : Core
 				{
 					foreach(Player player in players)
 					{
-						if(!Program.config.duel_config!.noshuffle)
+						if(!config.noshuffle)
 						{
 							player.deck.Shuffle();
 						}

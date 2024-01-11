@@ -164,14 +164,6 @@ class Field
 				return;
 			}
 		}
-		if(Program.replay != null)
-		{
-			string replayPath = Path.Combine(Program.baseDir, "replays");
-			Directory.CreateDirectory(replayPath);
-			string filePath = Path.Combine(replayPath, $"{DateTime.UtcNow:yyyyMMdd_HHmmss}_Field_Remove_Bug_{Program.config.duel_config?.players[0].name}_vs_{Program.config.duel_config?.players[1].name}.replay");
-			File.WriteAllText(filePath, JsonSerializer.Serialize(Program.replay, NetworkingConstants.jsonIncludeOption));
-			Functions.Log("Wrote replay to " + filePath);
-		}
 
 		throw new Exception($"Could not remove {card} ({card.uid}) from the field because it was not present (location: {card.Location}, position: {card.Position}, controller. {card.Controller}/{card.BaseController})");
 	}
