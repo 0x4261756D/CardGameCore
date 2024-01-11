@@ -467,8 +467,9 @@ class DuelCore : Core
 	{
 		if(triggers.TryGetValue(uid, out List<LocationBasedTrigger>? matchingTriggers))
 		{
-			foreach(LocationBasedTrigger trigger in matchingTriggers)
+			for(int i = 0; i < matchingTriggers.Count; i++)
 			{
+				LocationBasedTrigger trigger = matchingTriggers[i];
 				EvaluateLingeringEffects();
 				if(trigger.influenceLocation.HasFlag(location) && trigger.condition())
 				{
@@ -899,9 +900,9 @@ class DuelCore : Core
 	}
 	private void RevealImpl(int player, int damage)
 	{
-		for(int i = 0; i < damage; i++)
+		for(int i = 0; i < Math.Min(damage, players[player].deck.Size); i++)
 		{
-			Card c = players[player].deck.GetAt(0);
+			Card c = players[player].deck.GetAt(i);
 			SendFieldUpdates(shownInfos: new() { { player, new() { card = c.ToStruct(), description = "Revealed" } } });
 			ProcessTriggers(revelationTriggers, c.uid);
 			SendFieldUpdates();
