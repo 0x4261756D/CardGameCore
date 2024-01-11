@@ -166,27 +166,27 @@ partial class ClientCore : Core
 			{
 				DeckPackets.NamesRequest request = DeserializeJson<DeckPackets.NamesRequest>(bytes);
 				payload = GeneratePayload(new DeckPackets.NamesResponse
-				{
-					names = [.. decks.ConvertAll(x => x.name)]
-				});
+				(
+					names: [.. decks.ConvertAll(x => x.name)]
+				));
 			}
 			break;
 			case NetworkingConstants.PacketType.DeckListRequest:
 			{
 				DeckPackets.ListRequest request = DeserializeJson<DeckPackets.ListRequest>(bytes);
 				payload = GeneratePayload(new DeckPackets.ListResponse
-				{
-					deck = FindDeckByName(request.name!),
-				});
+				(
+					deck: FindDeckByName(request.name!)
+				));
 			}
 			break;
 			case NetworkingConstants.PacketType.DeckSearchRequest:
 			{
 				DeckPackets.SearchRequest request = DeserializeJson<DeckPackets.SearchRequest>(bytes);
 				payload = GeneratePayload(new DeckPackets.SearchResponse
-				{
-					cards = FilterCards(cards, request.filter!, request.playerClass, request.includeGenericCards)
-				});
+				(
+					cards: FilterCards(cards, request.filter!, request.playerClass, request.includeGenericCards)
+				));
 			}
 			break;
 			case NetworkingConstants.PacketType.DeckListUpdateRequest:
@@ -214,7 +214,7 @@ partial class ClientCore : Core
 						File.Delete(Path.Combine(config.deck_location, deck.name + ".dek"));
 					}
 				}
-				payload = GeneratePayload(new DeckPackets.ListUpdateResponse { should_update = index == -1 });
+				payload = GeneratePayload(new DeckPackets.ListUpdateResponse(shouldUpdate: index == -1));
 			}
 			break;
 			default:

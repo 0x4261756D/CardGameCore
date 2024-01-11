@@ -189,10 +189,10 @@ class Program
 				cards.Add(c.ToStruct(client: true));
 			}
 			File.WriteAllText(path, JsonSerializer.Serialize(new NetworkingStructs.ServerPackets.AdditionalCardsResponse
-			{
-				cards = [.. cards],
-				time = versionTime,
-			}, NetworkingConstants.jsonIncludeOption));
+			(
+				cards: [.. cards],
+				time: versionTime
+			), NetworkingConstants.jsonIncludeOption));
 		}
 	}
 

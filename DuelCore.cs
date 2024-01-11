@@ -821,11 +821,11 @@ class DuelCore : Core
 						if(toDeckCount > 0)
 						{
 							SendPacketToPlayer(new DuelPackets.SelectCardsRequest
-							{
-								amount = toDeckCount,
-								cards = Card.ToStruct(player.hand.GetAll()),
-								desc = "Select cards to shuffle into you deck for hand size",
-							}, i);
+							(
+								amount: toDeckCount,
+								cards: Card.ToStruct(player.hand.GetAll()),
+								desc: "Select cards to shuffle into you deck for hand size"
+							), i);
 							int[] toHand = ReceivePacketFromPlayer<DuelPackets.SelectCardsResponse>(i).uids;
 							foreach(int uid in toHand)
 							{
@@ -860,14 +860,8 @@ class DuelCore : Core
 		if(players[player].life <= 0)
 		{
 			SendFieldUpdates();
-			SendPacketToPlayer(new DuelPackets.GameResultResponse
-			{
-				result = GameConstants.GameResult.Lost
-			}, player);
-			SendPacketToPlayer(new DuelPackets.GameResultResponse
-			{
-				result = GameConstants.GameResult.Won
-			}, 1 - player);
+			SendPacketToPlayer(new DuelPackets.GameResultResponse(GameConstants.GameResult.Lost), player);
+			SendPacketToPlayer(new DuelPackets.GameResultResponse(GameConstants.GameResult.Won), 1 - player);
 		}
 	}
 	public void CreatureChangeLifeImpl(Creature target, int amount, Card source)
@@ -993,9 +987,9 @@ class DuelCore : Core
 			case NetworkingConstants.PacketType.DuelSurrenderRequest:
 			{
 				SendPacketToPlayer(new DuelPackets.GameResultResponse
-				{
-					result = GameConstants.GameResult.Won
-				}, 1 - player);
+				(
+					result: GameConstants.GameResult.Won
+				), 1 - player);
 				Log("Surrender request received");
 				return true;
 			}
@@ -1003,11 +997,11 @@ class DuelCore : Core
 			{
 				DuelPackets.GetOptionsRequest request = DeserializeJson<DuelPackets.GetOptionsRequest>(packet);
 				SendPacketToPlayer(new DuelPackets.GetOptionsResponse
-				{
-					location = request.location,
-					uid = request.uid,
-					options = GetCardActions(player, request.uid, request.location),
-				}, player);
+				(
+					location: request.location,
+					uid: request.uid,
+					options: GetCardActions(player, request.uid, request.location)
+				), player);
 			}
 			break;
 			case NetworkingConstants.PacketType.DuelSelectOptionRequest:
@@ -1077,10 +1071,10 @@ class DuelCore : Core
 			{
 				bool opponent = DeserializeJson<DuelPackets.ViewGraveRequest>(packet).opponent;
 				SendPacketToPlayer(new DuelPackets.ViewCardsResponse
-				{
-					cards = Card.ToStruct(players[opponent ? 1 - player : player].grave.GetAll()),
-					message = $"Your {(opponent ? "opponent's" : "")} grave"
-				}, player);
+				(
+					cards: Card.ToStruct(players[opponent ? 1 - player : player].grave.GetAll()),
+					message: $"Your {(opponent ? "opponent's" : "")} grave"
+				), player);
 			}
 			break;
 			default:
@@ -1264,7 +1258,7 @@ class DuelCore : Core
 	public bool AskYesNoImpl(int player, string question)
 	{
 		Log("Asking yes no");
-		SendPacketToPlayer(new DuelPackets.YesNoRequest { question = question }, player);
+		SendPacketToPlayer(new DuelPackets.YesNoRequest(question), player);
 		Log("Receiving");
 		return ReceivePacketFromPlayer<DuelPackets.YesNoResponse>(player).result;
 	}
@@ -1279,50 +1273,50 @@ class DuelCore : Core
 	private void SendFieldUpdate(int player, Dictionary<int, DuelPackets.FieldUpdateRequest.Field.ShownInfo> shownInfos)
 	{
 		// TODO: actually handle mask if this is too slow
-		DuelPackets.FieldUpdateRequest request = new()
-		{
-			turn = turn + 1,
-			hasInitiative = State != GameConstants.State.UNINITIALIZED && initPlayer == player,
-			battleDirectionLeftToRight = player == turnPlayer,
-			markedZone = player == 0 ? markedZone : (GameConstants.FIELD_SIZE - 1 - markedZone),
-			ownField = new DuelPackets.FieldUpdateRequest.Field
-			{
-				ability = players[player].ability.ToStruct(),
-				quest = players[player].quest.ToStruct(),
-				deckSize = players[player].deck.Size,
-				graveSize = players[player].grave.Size,
-				life = players[player].life,
-				name = players[player].name,
-				momentum = players[player].momentum,
-				field = players[player].field.ToStruct(),
-				hand = players[player].hand.ToStruct(),
-				shownInfo = shownInfos.GetValueOrDefault(player, new()),
-			},
-			oppField = new DuelPackets.FieldUpdateRequest.Field
-			{
-				ability = players[1 - player].ability.ToStruct(),
-				quest = players[1 - player].quest.ToStruct(),
-				deckSize = players[1 - player].deck.Size,
-				graveSize = players[1 - player].grave.Size,
-				life = players[1 - player].life,
-				name = players[1 - player].name,
-				momentum = players[1 - player].momentum,
-				field = players[1 - player].field.ToStruct(),
-				hand = players[1 - player].hand.ToHiddenStruct(),
-				shownInfo = shownInfos.GetValueOrDefault(1 - player, new()),
-			},
-		};
+		DuelPackets.FieldUpdateRequest request = new
+		(
+			turn: turn + 1,
+			hasInitiative: State != GameConstants.State.UNINITIALIZED && initPlayer == player,
+			battleDirectionLeftToRight: player == turnPlayer,
+			markedZone: player == 0 ? markedZone : (GameConstants.FIELD_SIZE - 1 - markedZone),
+			ownField: new DuelPackets.FieldUpdateRequest.Field
+			(
+				ability: players[player].ability.ToStruct(),
+				quest: players[player].quest.ToStruct(),
+				deckSize: players[player].deck.Size,
+				graveSize: players[player].grave.Size,
+				life: players[player].life,
+				name: players[player].name,
+				momentum: players[player].momentum,
+				field: players[player].field.ToStruct(),
+				hand: players[player].hand.ToStruct(),
+				shownInfo: shownInfos.GetValueOrDefault(player, new())
+			),
+			oppField: new DuelPackets.FieldUpdateRequest.Field
+			(
+				ability: players[1 - player].ability.ToStruct(),
+				quest: players[1 - player].quest.ToStruct(),
+				deckSize: players[1 - player].deck.Size,
+				graveSize: players[1 - player].grave.Size,
+				life: players[1 - player].life,
+				name: players[1 - player].name,
+				momentum: players[1 - player].momentum,
+				field: players[1 - player].field.ToStruct(),
+				hand: players[1 - player].hand.ToHiddenStruct(),
+				shownInfo: shownInfos.GetValueOrDefault(1 - player, new())
+			)
+		);
 		SendPacketToPlayer(request, player);
 	}
 	public Card[] SelectCardsCustom(int player, string description, Card[] cards, Func<Card[], bool> isValidSelection)
 	{
 		Log("Select cards custom");
 		SendPacketToPlayer(new DuelPackets.CustomSelectCardsRequest
-		{
-			cards = Card.ToStruct(cards),
-			desc = description,
-			initialState = isValidSelection([])
-		}, player);
+		(
+			cards: Card.ToStruct(cards),
+			desc: description,
+			initialState: isValidSelection([])
+		), player);
 
 		Log("request sent");
 		byte type;
@@ -1345,9 +1339,9 @@ class DuelCore : Core
 			request = DeserializePayload<DuelPackets.CustomSelectCardsIntermediateRequest>(type, payload);
 			Log("deserialized packet");
 			SendPacketToPlayer(new DuelPackets.CustomSelectCardsIntermediateResponse
-			{
-				isValid = isValidSelection(Array.ConvertAll(request.uids, x => Array.Find(cards, y => y.uid == x)!))
-			}, player);
+			(
+				isValid: isValidSelection(Array.ConvertAll(request.uids, x => Array.Find(cards, y => y.uid == x)!))
+			), player);
 			Log("sent packet");
 		} while(true);
 
@@ -1387,9 +1381,9 @@ class DuelCore : Core
 	private int SelectMovementZone(int player, int position, int momentum)
 	{
 		SendPacketToPlayer(new DuelPackets.SelectZoneRequest
-		{
-			options = players[player].field.GetMovementOptions(position, momentum),
-		}, player);
+		(
+			options: players[player].field.GetMovementOptions(position, momentum)
+		), player);
 		return ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(player).zone;
 	}
 	private int GetCastCountImpl(int player, string name)
@@ -1801,11 +1795,11 @@ class DuelCore : Core
 			throw new Exception($"Tried to let a player select from a too small collection ({cards.Length} < {amount})");
 		}
 		SendPacketToPlayer(new DuelPackets.SelectCardsRequest
-		{
-			amount = amount,
-			cards = Card.ToStruct(cards),
-			desc = description,
-		}, player);
+		(
+			amount: amount,
+			cards: Card.ToStruct(cards),
+			desc: description
+		), player);
 		DuelPackets.SelectCardsResponse response = ReceivePacketFromPlayer<DuelPackets.SelectCardsResponse>(player);
 		if(response.uids.Length != amount)
 		{
@@ -1929,10 +1923,7 @@ class DuelCore : Core
 		{
 			Array.Reverse(options);
 		}
-		SendPacketToPlayer(new DuelPackets.SelectZoneRequest
-		{
-			options = options,
-		}, choosingPlayer);
+		SendPacketToPlayer(new DuelPackets.SelectZoneRequest(options), choosingPlayer);
 		int zone = ReceivePacketFromPlayer<DuelPackets.SelectZoneResponse>(choosingPlayer).zone;
 		if(choosingPlayer != targetPlayer)
 		{
