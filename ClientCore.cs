@@ -100,13 +100,11 @@ partial class ClientCore : Core
 			using TcpClient client = new(config.additional_cards_url.address, config.additional_cards_url.port);
 			using NetworkStream stream = client.GetStream();
 			stream.Write(GeneratePayload(new ServerPackets.AdditionalCardsRequest()));
-
-			byte[]? response = TryReceivePacket<ServerPackets.AdditionalCardsResponse>(stream, 1000);
-			if(response == null)
+			ServerPackets.AdditionalCardsResponse? data = TryReceivePacket<ServerPackets.AdditionalCardsResponse>(stream, 1000);
+			if(data == null)
 			{
 				return;
 			}
-			ServerPackets.AdditionalCardsResponse data = DeserializeJson<ServerPackets.AdditionalCardsResponse>(response);
 			if(data.time < Program.versionTime)
 			{
 				Log($"Did not apply additional cards as they were older (client: {Program.versionTime}, server: {data.time})");

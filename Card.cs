@@ -74,11 +74,11 @@ public abstract class Card
 	public static RegisterLingeringEffectDelegate RegisterLingeringEffect = (_) => { };
 	public static RegisterLingeringEffectDelegate RegisterTemporaryLingeringEffect = (_) => { };
 	public static RegisterActivatedEffectDelegate RegisterActivatedEffect = (_) => { };
-	public static GetCardsInLocationDelegate GetGrave = (_) => Array.Empty<Card>();
-	public static GetWholeFieldDelegate GetField = (_) => Array.Empty<Creature?>();
-	public static GetFieldUsedDelegate GetFieldUsed = (_) => Array.Empty<Creature>();
-	public static GetCardsInLocationDelegate GetHand = (_) => Array.Empty<Card>();
-	public static SelectCardsDelegate SelectCards = (_, _, _, _) => Array.Empty<Creature>();
+	public static GetCardsInLocationDelegate GetGrave = (_) => [];
+	public static GetWholeFieldDelegate GetField = (_) => [];
+	public static GetFieldUsedDelegate GetFieldUsed = (_) => [];
+	public static GetCardsInLocationDelegate GetHand = (_) => [];
+	public static SelectCardsDelegate SelectCards = (_, _, _, _) => [];
 	public static DiscardDelegate Discard = (_) => { };
 	public static DiscardAmountDelegate DiscardAmount = (_, _) => { };
 	public static CreateTokenDelegate CreateToken = (_, _, _, _) => new ClientCoreDummyToken();
@@ -110,7 +110,7 @@ public abstract class Card
 	public static GetCastCountDelegate GetCastCount = (_, _) => -1;
 	public static ReturnCardsToDeckDelegate ReturnCardsToDeck = (_) => { };
 	public static RevealDelegate Reveal = (_, _) => { };
-	public static GetDiscardableDelegate GetDiscardable = (_, _) => Array.Empty<Card>();
+	public static GetDiscardableDelegate GetDiscardable = (_, _) => [];
 	public static RefreshAbilityDelegate RefreshAbility = (_) => { };
 	public static CreatureChangeStatDelegate CreatureChangeLife = (_, _, _) => { };
 	public static CreatureChangeStatDelegate CreatureChangePower = (_, _, _) => { };

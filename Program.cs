@@ -57,7 +57,7 @@ class Program
 			Log($"Missing a config at {configPath}.", severity: LogSeverity.Error);
 			return;
 		}
-		PlatformCoreConfig? platformConfig = JsonSerializer.Deserialize<PlatformCoreConfig>(File.ReadAllText(Path.GetFullPath(configPath)), NetworkingConstants.jsonIncludeOption);
+		PlatformCoreConfig? platformConfig = JsonSerializer.Deserialize<PlatformCoreConfig>(File.ReadAllText(Path.GetFullPath(configPath)), GenericConstants.platformCoreConfigSerialization);
 		if(platformConfig == null)
 		{
 			Log("Could not parse a platform config", LogSeverity.Error);
@@ -94,7 +94,7 @@ class Program
 						modeSet = true;
 						break;
 					case "players":
-						CoreConfig.PlayerConfig[] players = JsonSerializer.Deserialize<CoreConfig.PlayerConfig[]>(Encoding.UTF8.GetString(Convert.FromBase64String(parameter)), options: NetworkingConstants.jsonIncludeOption)!;
+						CoreConfig.PlayerConfig[] players = JsonSerializer.Deserialize<CoreConfig.PlayerConfig[]>(Encoding.UTF8.GetString(Convert.FromBase64String(parameter)), options: GenericConstants.platformCoreConfigSerialization)!;
 						if(config.duel_config == null)
 						{
 							config.duel_config = new CoreConfig.DuelConfig(players: players, noshuffle: false);
@@ -160,7 +160,7 @@ class Program
 			string replayPath = Path.Combine(baseDir, "replays");
 			Directory.CreateDirectory(replayPath);
 			string filePath = Path.Combine(replayPath, $"{DateTime.UtcNow:yyyyMMdd_HHmmss}_{config.duel_config?.players[0].name}_vs_{config.duel_config?.players[1].name}.replay");
-			File.WriteAllText(filePath, JsonSerializer.Serialize(replay, NetworkingConstants.jsonIncludeOption));
+			File.WriteAllText(filePath, JsonSerializer.Serialize(replay, GenericConstants.replaySerialization));
 			Log("Wrote replay to " + filePath);
 		}
 	}
@@ -169,7 +169,7 @@ class Program
 	{
 		foreach(string file in Directory.EnumerateFiles(baseDir))
 		{
-			if(Path.GetFileName(file) == "CardGameCore.dll")
+			if(Path.GetFileName(file) == "CardGameCore.dll" || Path.GetFileName(file) == "CardGameCore")
 			{
 				return File.GetCreationTime(file);
 			}
@@ -179,7 +179,7 @@ class Program
 
 	public static void GenerateAdditionalCards(string path)
 	{
-		if(!File.Exists(path) || JsonSerializer.Deserialize<NetworkingStructs.ServerPackets.AdditionalCardsResponse>(File.ReadAllText(path), NetworkingConstants.jsonIncludeOption)?.time < versionTime)
+		if(!File.Exists(path) || JsonSerializer.Deserialize<NetworkingStructs.ServerPackets.AdditionalCardsResponse>(File.ReadAllText(path), GenericConstants.packetSerialization)?.time < versionTime)
 		{
 			Log("Generating new additional cards");
 			List<CardStruct> cards = [];
@@ -192,7 +192,7 @@ class Program
 			(
 				cards: [.. cards],
 				time: versionTime
-			), NetworkingConstants.jsonIncludeOption));
+			), GenericConstants.packetSerialization));
 		}
 	}
 

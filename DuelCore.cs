@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Pipes;
 using System.Net.Sockets;
 using System.Text;
@@ -206,7 +207,7 @@ class DuelCore : Core
 		listener.Stop();
 	}
 
-	private static Card CreateBasicCard(Type type, int controller)
+	private static Card CreateBasicCard([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type type, int controller)
 	{
 		Card card = (Card)Activator.CreateInstance(type)!;
 		card.BaseController = controller;
@@ -1308,7 +1309,7 @@ class DuelCore : Core
 		);
 		SendPacketToPlayer(request, player);
 	}
-	public Card[] SelectCardsCustom(int player, string description, Card[] cards, Func<Card[], bool> isValidSelection)
+	public static Card[] SelectCardsCustom(int player, string description, Card[] cards, Func<Card[], bool> isValidSelection)
 	{
 		Log("Select cards custom");
 		SendPacketToPlayer(new DuelPackets.CustomSelectCardsRequest
@@ -1980,9 +1981,9 @@ class DuelCore : Core
 
 	public static T ReceivePacketFromPlayer<T>(int player) where T : PacketContent
 	{
-		byte[]? payload = ReceivePacket<T>(playerStreams[player]!);
-		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: NetworkingConstants.PacketDict[typeof(T)], packet: payload, clientToServer: true));
-		return (payload == null) ? (T)new PacketContent() : DeserializeJson<T>(payload);
+		T packet = ReceivePacket<T>(playerStreams[player]!);
+		Program.replay?.actions.Add(new Replay.GameAction(player: player, packetType: NetworkingConstants.PacketDict[typeof(T)], packet: GeneratePayload(packet), clientToServer: true));
+		return packet;
 	}
 	public static void SendPacketToPlayer<T>(T packet, int player) where T : PacketContent
 	{
