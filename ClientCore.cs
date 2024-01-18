@@ -232,7 +232,7 @@ partial class ClientCore : Core
 		File.WriteAllText(Path.Combine(config.deck_location, deck.name + ".dek"), deckString);
 	}
 
-	private CardStruct[] FilterCards(List<CardStruct> cards, string filter, GameConstants.PlayerClass playerClass, bool includeGenericCards)
+	private static CardStruct[] FilterCards(List<CardStruct> cards, string filter, GameConstants.PlayerClass playerClass, bool includeGenericCards)
 	{
 		return Array.FindAll(cards.ToArray(), card =>
 			(playerClass == GameConstants.PlayerClass.All || (includeGenericCards && card.card_class == GameConstants.PlayerClass.All) || card.card_class == playerClass)
