@@ -34,7 +34,7 @@ class Grave
 
 	internal void Remove(Card card)
 	{
-		cards.Remove(card);
+		_ = cards.Remove(card);
 		card.Location &= ~GameConstants.Location.Grave;
 	}
 }

@@ -24,7 +24,7 @@ partial class ClientCore : Core
 		if(!Directory.Exists(config.deck_location))
 		{
 			Log($"Deck folder not found, creating it at {config.deck_location}", LogSeverity.Warning);
-			Directory.CreateDirectory(config.deck_location);
+			_ = Directory.CreateDirectory(config.deck_location);
 		}
 		string[] deckfiles = Directory.GetFiles(config.deck_location);
 		foreach(Type card in Array.FindAll(Assembly.GetExecutingAssembly().GetTypes(), Program.IsCardSubclass))
@@ -112,7 +112,7 @@ partial class ClientCore : Core
 			}
 			foreach(CardStruct card in data.cards)
 			{
-				cards.Remove(card);
+				_ = cards.Remove(card);
 				cards.Add(card);
 			}
 		}
@@ -225,7 +225,10 @@ partial class ClientCore : Core
 	private void SaveDeck(DeckPackets.Deck deck)
 	{
 		string? deckString = deck.ToString();
-		if(deckString == null) return;
+		if(deckString == null)
+		{
+			return;
+		}
 		File.WriteAllText(Path.Combine(config.deck_location, deck.name + ".dek"), deckString);
 	}
 

@@ -9,7 +9,7 @@ namespace CardGameCore;
 
 public abstract class Card
 {
-	public bool isInitialized = false;
+	public bool isInitialized;
 	public string Name, Text;
 	public GameConstants.CardType CardType;
 	public GameConstants.PlayerClass CardClass;
@@ -21,7 +21,10 @@ public abstract class Card
 		set
 		{
 			_cost = value;
-			if(_cost < 0) _cost = 0;
+			if(_cost < 0)
+			{
+				_cost = 0;
+			}
 		}
 	}
 	public readonly int BaseCost;
@@ -212,7 +215,10 @@ public abstract partial class Creature : Card
 			{
 				_life = value;
 			}
-			if(_life < 0) _life = 0;
+			if(_life < 0)
+			{
+				_life = 0;
+			}
 		}
 	}
 	public int Power
@@ -221,7 +227,10 @@ public abstract partial class Creature : Card
 		set
 		{
 			_power = value;
-			if(_power < 0) _power = 0;
+			if(_power < 0)
+			{
+				_power = 0;
+			}
 		}
 	}
 	public Dictionary<Keyword, int> Keywords = [];
@@ -263,7 +272,7 @@ public abstract partial class Creature : Card
 		StringBuilder text = new();
 		if(client)
 		{
-			text.Append(Text);
+			_ = text.Append(Text);
 		}
 		else
 		{
@@ -271,19 +280,19 @@ public abstract partial class Creature : Card
 			{
 				foreach(var keyword in Keywords)
 				{
-					text.Append($"[{keyword.Key}] ");
+					_ = text.Append($"[{keyword.Key}] ");
 					if(keyword.Value != 0)
 					{
 						if(keyword.Key == Keyword.Colossal)
 						{
-							text.Append('+');
+							_ = text.Append('+');
 						}
-						text.Append($"{keyword.Value}");
+						_ = text.Append($"{keyword.Value}");
 					}
-					text.Append('\n');
+					_ = text.Append('\n');
 				}
 			}
-			text.Append(KeywordRegex().Replace(Text, ""));
+			_ = text.Append(KeywordRegex().Replace(Text, ""));
 		}
 		return new CardStruct(name: Name,
 			text: text.ToString(),

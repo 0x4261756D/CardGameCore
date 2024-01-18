@@ -1,12 +1,11 @@
 // Scripted by 0x4261756D
 
 using CardGameCore;
-using CardGameUtils;
 using static CardGameUtils.GameConstants;
 
 class PyromancersFury : Spell
 {
-	private bool creatureDiedActive = false;
+	private bool creatureDiedActive;
 	public PyromancersFury() : base(
 		Name: "Pyromancer's Fury",
 		CardClass: PlayerClass.Pyromancer,

@@ -158,7 +158,7 @@ public class ActivatedEffectInfo(string name, Effect effect, ActivatedEffectCond
 	public string name = name;
 	public GameConstants.Location influenceLocation = influenceLocation;
 	public Card referrer = referrer;
-	public int uses = 0, maxUses = maxUses;
+	public int uses, maxUses = maxUses;
 
 	public ActivatedEffectInfo(string name, Effect effect, Card referrer, int maxUses = 1, GameConstants.Location influenceLocation = GameConstants.Location.Field)
 		: this(name, effect, () => true, referrer, maxUses, influenceLocation)

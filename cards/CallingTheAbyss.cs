@@ -27,7 +27,7 @@ class CallingtheAbyss : Spell
 	{
 		PlayerChangeMomentum(Controller, 6);
 		Draw(Controller, 6);
-		Gather(Controller, 6);
+		_ = Gather(Controller, 6);
 		DiscardAmount(Controller, 6);
 	}
 

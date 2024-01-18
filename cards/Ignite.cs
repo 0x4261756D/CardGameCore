@@ -15,7 +15,7 @@ class Ignite : Spell
 		)
 	{ }
 
-	private readonly Creature? forcedTarget = null;
+	private readonly Creature? forcedTarget;
 
 	public Ignite(Creature forcedTarget) : this()
 	{

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using CardGameUtils;
 using CardGameUtils.Structs;
@@ -40,7 +39,7 @@ class Hand
 		{
 			c.Location &= ~GameConstants.Location.Hand;
 		}
-		cards.Remove(c);
+		_ = cards.Remove(c);
 	}
 
 	internal Card[] GetDiscardable(Card? ignore)

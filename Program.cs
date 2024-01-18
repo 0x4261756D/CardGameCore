@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
@@ -158,7 +158,7 @@ class Program
 		if(replay != null)
 		{
 			string replayPath = Path.Combine(baseDir, "replays");
-			Directory.CreateDirectory(replayPath);
+			_ = Directory.CreateDirectory(replayPath);
 			string filePath = Path.Combine(replayPath, $"{DateTime.UtcNow:yyyyMMdd_HHmmss}_{config.duel_config?.players[0].name}_vs_{config.duel_config?.players[1].name}.replay");
 			File.WriteAllText(filePath, JsonSerializer.Serialize(replay, GenericConstants.replaySerialization));
 			Log("Wrote replay to " + filePath);
@@ -169,7 +169,7 @@ class Program
 	{
 		foreach(string file in Directory.EnumerateFiles(baseDir))
 		{
-			if(Path.GetFileName(file) == "CardGameCore.dll" || Path.GetFileName(file) == "CardGameCore")
+			if(Path.GetFileName(file) is "CardGameCore.dll" or "CardGameCore")
 			{
 				return File.GetCreationTime(file);
 			}

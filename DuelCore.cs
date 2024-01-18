@@ -36,11 +36,11 @@ class DuelCore : Core
 	private const string AbilityUseActionDescription = "Use";
 	private const string CastActionDescription = "Cast";
 	private const string CreatureMoveActionDescription = "Move";
-	public int playersConnected = 0;
+	public int playersConnected;
 	public int turn, turnPlayer, initPlayer, nextMomentumIncreaseIndex;
-	public int? markedZone = null;
+	public int? markedZone;
 	public int momentumBase = GameConstants.START_MOMENTUM;
-	public bool rewardClaimed = false;
+	public bool rewardClaimed;
 	public CoreConfig.DuelConfig config;
 
 	private readonly Dictionary<int, List<Trigger>> castTriggers = [];
@@ -494,7 +494,7 @@ class DuelCore : Core
 				CheckQuestReward();
 			}
 		}
-		alwaysActiveStateReachedTriggers.RemoveAll(card => card.oneshot && card.wasTriggered);
+		_ = alwaysActiveStateReachedTriggers.RemoveAll(card => card.oneshot && card.wasTriggered);
 		EvaluateLingeringEffects();
 		if(stateReachedTriggers.Count > 0)
 		{
@@ -513,7 +513,7 @@ class DuelCore : Core
 						}
 					}
 					EvaluateLingeringEffects();
-					questTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
+					_ = questTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
 				}
 
 				foreach(Card card in player.hand.GetAll())
@@ -534,7 +534,7 @@ class DuelCore : Core
 								trigger.wasTriggered = false;
 							}
 						}
-						handTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
+						_ = handTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
 						EvaluateLingeringEffects();
 					}
 				}
@@ -557,7 +557,7 @@ class DuelCore : Core
 							}
 						}
 
-						fieldTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
+						_ = fieldTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
 						EvaluateLingeringEffects();
 					}
 				}
@@ -867,7 +867,10 @@ class DuelCore : Core
 	}
 	public void CreatureChangeLifeImpl(Creature target, int amount, Card source)
 	{
-		if(amount == 0) return;
+		if(amount == 0)
+		{
+			return;
+		}
 		if(amount < 0 && source.CardType == GameConstants.CardType.Spell)
 		{
 			players[source.Controller].dealtSpellDamages[turn] -= amount;
@@ -876,7 +879,10 @@ class DuelCore : Core
 	}
 	public void CreatureChangePowerImpl(Creature target, int amount, Card source)
 	{
-		if(amount == 0) return;
+		if(amount == 0)
+		{
+			return;
+		}
 		RegisterTemporaryLingeringEffectImpl(info: LingeringEffectInfo.Create(effect: (tg) => tg.Power += amount, referrer: target));
 	}
 
@@ -1408,7 +1414,7 @@ class DuelCore : Core
 	{
 		EvaluateLingeringEffects();
 		bool wasAlreadyOnField = creature.Location == GameConstants.Location.Field;
-		RemoveCardFromItsLocation(creature);
+		_ = RemoveCardFromItsLocation(creature);
 		int zone = SelectZoneImpl(choosingPlayer: choosingPlayer, targetPlayer: targetPlayer);
 		if(creature.Controller != targetPlayer)
 		{
@@ -1449,7 +1455,7 @@ class DuelCore : Core
 			card.Init();
 			card.isInitialized = true;
 		}
-		RemoveCardFromItsLocation(card);
+		_ = RemoveCardFromItsLocation(card);
 		SendFieldUpdates(shownInfos: new() { { player, new() { card = card.ToStruct(), description = CastActionDescription } } });
 		if(!isNew)
 		{
@@ -1494,37 +1500,37 @@ class DuelCore : Core
 
 	public void RegisterCastTriggerImpl(Trigger trigger, Card referrer)
 	{
-		castTriggers.TryAdd(referrer.uid, []);
+		_ = castTriggers.TryAdd(referrer.uid, []);
 		castTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterDealsDamageTriggerImpl(Trigger trigger, Card referrer)
 	{
-		dealsDamageTriggers.TryAdd(referrer.uid, []);
+		_ = dealsDamageTriggers.TryAdd(referrer.uid, []);
 		dealsDamageTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterGenericCastTriggerImpl(LocationBasedTargetingTrigger trigger, Card referrer)
 	{
-		genericCastTriggers.TryAdd(referrer.uid, []);
+		_ = genericCastTriggers.TryAdd(referrer.uid, []);
 		genericCastTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterRevelationTriggerImpl(Trigger trigger, Card referrer)
 	{
-		revelationTriggers.TryAdd(referrer.uid, []);
+		_ = revelationTriggers.TryAdd(referrer.uid, []);
 		revelationTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterGenericEntersFieldTriggerImpl(LocationBasedTargetingTrigger trigger, Card referrer)
 	{
-		genericEnterFieldTriggers.TryAdd(referrer.uid, []);
+		_ = genericEnterFieldTriggers.TryAdd(referrer.uid, []);
 		genericEnterFieldTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterYouDiscardTriggerImpl(LocationBasedTrigger trigger, Card referrer)
 	{
-		youDiscardTriggers.TryAdd(referrer.uid, []);
+		_ = youDiscardTriggers.TryAdd(referrer.uid, []);
 		youDiscardTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterDiscardTriggerImpl(Trigger trigger, Card referrer)
 	{
-		discardTriggers.TryAdd(referrer.uid, []);
+		_ = discardTriggers.TryAdd(referrer.uid, []);
 		discardTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterStateReachedTriggerImpl(StateReachedTrigger trigger, Card referrer)
@@ -1535,7 +1541,7 @@ class DuelCore : Core
 		}
 		else
 		{
-			stateReachedTriggers.TryAdd(referrer.uid, []);
+			_ = stateReachedTriggers.TryAdd(referrer.uid, []);
 			stateReachedTriggers[referrer.uid].Add(trigger);
 		}
 	}
@@ -1547,43 +1553,43 @@ class DuelCore : Core
 		}
 		else
 		{
-			lingeringEffects.TryAdd(info.referrer.uid, new(this));
+			_ = lingeringEffects.TryAdd(info.referrer.uid, new(this));
 			lingeringEffects[info.referrer.uid].Add(info);
 		}
 	}
 	public void RegisterTemporaryLingeringEffectImpl(LingeringEffectInfo info)
 	{
-		temporaryLingeringEffects.TryAdd(info.referrer.uid, new(this));
+		_ = temporaryLingeringEffects.TryAdd(info.referrer.uid, new(this));
 		temporaryLingeringEffects[info.referrer.uid].Add(info);
 	}
 	public void RegisterActivatedEffectImpl(ActivatedEffectInfo info)
 	{
-		activatedEffects.TryAdd(info.referrer.uid, []);
+		_ = activatedEffects.TryAdd(info.referrer.uid, []);
 		activatedEffects[info.referrer.uid].Add(info);
 	}
 	public void RegisterVictoriousTriggerImpl(Trigger trigger, Card referrer)
 	{
-		victoriousTriggers.TryAdd(referrer.uid, []);
+		_ = victoriousTriggers.TryAdd(referrer.uid, []);
 		victoriousTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterAttackTriggerImpl(Trigger trigger, Card referrer)
 	{
-		attackTriggers.TryAdd(referrer.uid, []);
+		_ = attackTriggers.TryAdd(referrer.uid, []);
 		attackTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterDeathTriggerImpl(CreatureTargetingTrigger trigger, Card referrer)
 	{
-		deathTriggers.TryAdd(referrer.uid, []);
+		_ = deathTriggers.TryAdd(referrer.uid, []);
 		deathTriggers[referrer.uid].Add(trigger);
 	}
 	public void RegisterGenericDeathTriggerImpl(CreatureTargetingTrigger trigger, Card referrer)
 	{
-		genericDeathTriggers.TryAdd(referrer.uid, []);
+		_ = genericDeathTriggers.TryAdd(referrer.uid, []);
 		genericDeathTriggers[referrer.uid].Add(trigger);
 	}
 	private void RegisterTokenCreationTriggerImpl(TokenCreationTrigger trigger, Card referrer)
 	{
-		tokenCreationTriggers.TryAdd(referrer.uid, []);
+		_ = tokenCreationTriggers.TryAdd(referrer.uid, []);
 		tokenCreationTriggers[referrer.uid].Add(trigger);
 	}
 	public Creature?[] GetFieldImpl(int player)
@@ -1642,7 +1648,10 @@ class DuelCore : Core
 	public void PlayerChangeMomentumImpl(int player, int amount)
 	{
 		players[player].momentum += amount;
-		if(players[player].momentum < 0) players[player].momentum = 0;
+		if(players[player].momentum < 0)
+		{
+			players[player].momentum = 0;
+		}
 	}
 	public void MoveToHandImpl(int player, Card card)
 	{
