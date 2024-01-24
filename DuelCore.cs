@@ -28,14 +28,14 @@ class DuelCore : Core
 			_state = value;
 		}
 	}
-	public static int UIDCount;
+	public static int UIDCount, CardActionUIDCount;
 	public Player[] players;
 	public static NetworkStream?[] playerStreams = [];
 	public static Random rnd = new(Program.seed);
 	public const int HASH_LEN = 96;
-	private const string AbilityUseActionDescription = "Use";
-	private const string CastActionDescription = "Cast";
-	private const string CreatureMoveActionDescription = "Move";
+	private readonly CardAction AbilityUseActionDescription;
+	private readonly CardAction CastActionDescription;
+	private readonly CardAction CreatureMoveActionDescription;
 	public int playersConnected;
 	public int turn, turnPlayer, initPlayer, nextMomentumIncreaseIndex;
 	public int? markedZone;
@@ -100,6 +100,12 @@ class DuelCore : Core
 
 	public DuelCore(CoreConfig.DuelConfig config, int port) : base(port)
 	{
+		AbilityUseActionDescription = new(uid: CardActionUIDCount, description: "Use");
+		CardActionUIDCount += 1;
+		CastActionDescription = new(uid: CardActionUIDCount, description: "Cast");
+		CardActionUIDCount += 1;
+		CreatureMoveActionDescription = new(uid: CardActionUIDCount, description: "Move");
+		CardActionUIDCount += 1;
 		this.config = config;
 		RegisterScriptingFunctions();
 		alwaysActiveLingeringEffects = new(this);
@@ -1015,11 +1021,11 @@ class DuelCore : Core
 			{
 				DuelPackets.SelectOptionRequest request = DeserializeJson<DuelPackets.SelectOptionRequest>(packet);
 				bool found = false;
-				foreach(string desc in GetCardActions(player, request.uid, request.location))
+				foreach(CardAction action in GetCardActions(player, request.uid, request.location))
 				{
-					if(desc == request.desc)
+					if(action.uid == request.cardAction.uid)
 					{
-						TakeAction(player, request.uid, request.location, request.desc);
+						TakeAction(player, request.uid, request.location, request.cardAction.uid);
 						found = true;
 						break;
 					}
@@ -1090,7 +1096,7 @@ class DuelCore : Core
 		return false;
 	}
 
-	private void TakeAction(int player, int uid, GameConstants.Location location, string option)
+	private void TakeAction(int player, int uid, GameConstants.Location location, int cardActionUid)
 	{
 		if(player != initPlayer)
 		{
@@ -1101,7 +1107,7 @@ class DuelCore : Core
 		{
 			foreach(ActivatedEffectInfo info in matchingInfos)
 			{
-				if(info.influenceLocation.HasFlag(location) && option == info.name)
+				if(info.influenceLocation.HasFlag(location) && cardActionUid == info.cardActionUid)
 				{
 					info.effect();
 					info.uses++;
@@ -1116,14 +1122,14 @@ class DuelCore : Core
 			case GameConstants.Location.Hand:
 			{
 				Card card = players[player].hand.GetByUID(uid);
-				if(option == CastActionDescription)
+				if(cardActionUid == CastActionDescription.uid)
 				{
 					players[player].momentum -= card.Cost;
 					CastImpl(player, card);
 				}
 				else
 				{
-					throw new NotImplementedException($"Scripted action {option}");
+					throw new NotImplementedException($"Scripted action {cardActionUid}");
 				}
 			}
 			break;
@@ -1157,7 +1163,7 @@ class DuelCore : Core
 			case GameConstants.Location.Field:
 			{
 				Creature card = players[player].field.GetByUID(uid);
-				if(option == CreatureMoveActionDescription)
+				if(cardActionUid == CreatureMoveActionDescription.uid)
 				{
 					if(players[player].field.CanMove(card.Position, players[player].momentum))
 					{
@@ -1168,7 +1174,7 @@ class DuelCore : Core
 				}
 				else
 				{
-					throw new NotImplementedException($"Scripted onfield option {option}");
+					throw new NotImplementedException($"Scripted onfield option {cardActionUid}");
 				}
 			}
 			break;
@@ -1183,21 +1189,21 @@ class DuelCore : Core
 		SendFieldUpdates();
 	}
 
-	private string[] GetCardActions(int player, int uid, GameConstants.Location location)
+	private CardAction[] GetCardActions(int player, int uid, GameConstants.Location location)
 	{
 		if(player != initPlayer)
 		{
 			return [];
 		}
 		EvaluateLingeringEffects();
-		List<string> options = [];
+		List<CardAction> options = [];
 		if(activatedEffects.TryGetValue(uid, out List<ActivatedEffectInfo>? matchingInfos))
 		{
 			foreach(ActivatedEffectInfo info in matchingInfos)
 			{
 				if(info.uses < info.maxUses && info.influenceLocation.HasFlag(location) && info.referrer.Location == location && info.condition())
 				{
-					options.Add(info.name);
+					options.Add(new(uid: info.cardActionUid, description: info.name));
 				}
 			}
 		}
@@ -1456,7 +1462,7 @@ class DuelCore : Core
 			card.isInitialized = true;
 		}
 		_ = RemoveCardFromItsLocation(card);
-		SendFieldUpdates(shownInfos: new() { { player, new() { card = card.ToStruct(), description = CastActionDescription } } });
+		SendFieldUpdates(shownInfos: new() { { player, new() { card = card.ToStruct(), description = CastActionDescription.description } } });
 		if(!isNew)
 		{
 			switch(card.CardType)
@@ -1564,6 +1570,12 @@ class DuelCore : Core
 	}
 	public void RegisterActivatedEffectImpl(ActivatedEffectInfo info)
 	{
+		if(info.name == AbilityUseActionDescription.description ||
+			info.name == CastActionDescription.description ||
+			info.name == CreatureMoveActionDescription.description)
+		{
+			throw new Exception($"Activated Effects should not be named {info.name}, this is a reserved name.");
+		}
 		_ = activatedEffects.TryAdd(info.referrer.uid, []);
 		activatedEffects[info.referrer.uid].Add(info);
 	}
