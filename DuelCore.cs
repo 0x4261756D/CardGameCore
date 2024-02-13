@@ -1107,7 +1107,7 @@ class DuelCore : Core
 		{
 			foreach(ActivatedEffectInfo info in matchingInfos)
 			{
-				if(info.influenceLocation.HasFlag(location) && cardActionUid == info.cardActionUid)
+				if(info.CanActivate(location) && cardActionUid == info.cardActionUid)
 				{
 					info.effect();
 					info.uses++;
@@ -1201,7 +1201,7 @@ class DuelCore : Core
 		{
 			foreach(ActivatedEffectInfo info in matchingInfos)
 			{
-				if(info.uses < info.maxUses && info.influenceLocation.HasFlag(location) && info.referrer.Location == location && info.condition())
+				if(info.CanActivate(location))
 				{
 					options.Add(new(uid: info.cardActionUid, description: info.name));
 				}

@@ -177,6 +177,11 @@ public class ActivatedEffectInfo
 		: this(name, effect, () => true, referrer, maxUses, influenceLocation)
 	{
 	}
+
+	public bool CanActivate(GameConstants.Location location)
+	{
+		return uses < maxUses && influenceLocation.HasFlag(location) && referrer.Location == location && condition();
+	}
 }
 
 public delegate bool TriggerCondition();
