@@ -1336,7 +1336,7 @@ class DuelCore : Core
 		Log("request sent");
 		byte type;
 		byte[]? payload = null;
-		do
+		while(true)
 		{
 			DuelPackets.CustomSelectCardsIntermediateRequest request;
 			(type, payload) = ReceiveRawPacket(playerStreams[player]!);
@@ -1358,7 +1358,7 @@ class DuelCore : Core
 				isValid: isValidSelection(Array.ConvertAll(request.uids, x => Array.Find(cards, y => y.uid == x)!))
 			), player);
 			Log("sent packet");
-		} while(true);
+		}
 
 		DuelPackets.CustomSelectCardsResponse response = DeserializePayload<DuelPackets.CustomSelectCardsResponse>(type, payload);
 		Log("final response");
