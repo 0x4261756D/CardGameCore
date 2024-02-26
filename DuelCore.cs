@@ -604,17 +604,21 @@ class DuelCore : Core
 
 	public void CheckQuestReward(bool shouldEvaluateLingeringEffects = true)
 	{
+		if(rewardClaimed)
+		{
+			return;
+		}
 		if(shouldEvaluateLingeringEffects)
 		{
 			EvaluateLingeringEffects();
 		}
-		foreach(Player p in players)
+		foreach(Player player in players)
 		{
-			if(!rewardClaimed && p.quest.Progress >= p.quest.Goal)
+			if(player.quest.Progress >= player.quest.Goal)
 			{
 				rewardClaimed = true;
-				p.quest.Reward();
-				p.quest.Text += "\nREWARD CLAIMED";
+				player.quest.Reward();
+				player.quest.Text += "\nREWARD CLAIMED";
 				break;
 			}
 		}
