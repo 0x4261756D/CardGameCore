@@ -225,25 +225,24 @@ class DuelCore : Core
 
 	public override void HandleNetworking()
 	{
-		while(true)
+		while(playersConnected < players.Length)
 		{
-			// Connect the players if they aren't yet
-			if(playersConnected < players.Length && listener.Pending())
+			if(listener.Pending())
 			{
 				ConnectNewPlayer();
 			}
-			if(playersConnected == players.Length)
+		}
+		while(true)
+		{
+			if(HandleGameLogic())
 			{
-				if(HandleGameLogic())
-				{
-					Log("Game ends by game logic");
-					break;
-				}
-				if(HandlePlayerActions())
-				{
-					Log("Game ends by player action");
-					break;
-				}
+				Log("Game ends by game logic");
+				break;
+			}
+			if(HandlePlayerActions())
+			{
+				Log("Game ends by player action");
+				break;
 			}
 		}
 	}
