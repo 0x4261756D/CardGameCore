@@ -279,7 +279,6 @@ class DuelCore : Core
 		if(!foundPlayer)
 		{
 			Log("Found no player", severity: LogSeverity.Error);
-			//FIXME: Be more nice, see above
 			stream.Close();
 		}
 	}
