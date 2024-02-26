@@ -517,7 +517,7 @@ class DuelCore : Core
 						}
 					}
 					EvaluateLingeringEffects();
-					_ = questTriggers.RemoveAll(x => x.oneshot && x.wasTriggered);
+					_ = questTriggers.RemoveAll(trigger => trigger.oneshot && trigger.wasTriggered);
 				}
 
 				foreach(Card card in player.hand.GetAll())
@@ -795,19 +795,19 @@ class DuelCore : Core
 					{
 						for(int i = 0; i < GameConstants.FIELD_SIZE; i++)
 						{
-							Creature? c = player.field.GetByPosition(i);
-							if(c != null)
+							Creature? creature = player.field.GetByPosition(i);
+							if(creature != null)
 							{
-								if(c.Keywords.ContainsKey(Keyword.Brittle))
+								if(creature.Keywords.ContainsKey(Keyword.Brittle))
 								{
-									DestroyImpl(c);
+									DestroyImpl(creature);
 								}
-								if(c.Keywords.ContainsKey(Keyword.Decaying))
+								if(creature.Keywords.ContainsKey(Keyword.Decaying))
 								{
-									RegisterTemporaryLingeringEffectImpl(info: LingeringEffectInfo.Create(effect: (tg) => tg.Life -= 1, referrer: c));
-									if(c.Life == 0 && c.Location.HasFlag(GameConstants.Location.Field))
+									RegisterTemporaryLingeringEffectImpl(info: LingeringEffectInfo.Create(effect: (target) => target.Life -= 1, referrer: creature));
+									if(creature.Life == 0 && creature.Location.HasFlag(GameConstants.Location.Field))
 									{
-										DestroyImpl(c);
+										DestroyImpl(creature);
 									}
 								}
 							}
@@ -831,8 +831,8 @@ class DuelCore : Core
 								cards: Card.ToStruct(player.hand.GetAll()),
 								desc: "Select cards to shuffle into you deck for hand size"
 							), i);
-							int[] toHand = ReceivePacketFromPlayer<DuelPackets.SelectCardsResponse>(i).uids;
-							foreach(int uid in toHand)
+							int[] toDeck = ReceivePacketFromPlayer<DuelPackets.SelectCardsResponse>(i).uids;
+							foreach(int uid in toDeck)
 							{
 								Card card = player.hand.GetByUID(uid);
 								player.hand.Remove(card);
@@ -1820,13 +1820,13 @@ class DuelCore : Core
 			cards: Card.ToStruct(cards),
 			desc: description
 		), player);
-		DuelPackets.SelectCardsResponse response = ReceivePacketFromPlayer<DuelPackets.SelectCardsResponse>(player);
-		if(response.uids.Length != amount)
+		int[] uids = ReceivePacketFromPlayer<DuelPackets.SelectCardsResponse>(player).uids;
+		if(uids.Length != amount)
 		{
-			throw new Exception($"Selected the wrong amount of cards ({response.uids.Length} != {amount})");
+			throw new Exception($"Selected the wrong amount of cards ({uids.Length} != {amount})");
 		}
 		// TODO: Make this nicer?
-		return UidsToCards(cards, response.uids);
+		return UidsToCards(cards, uids);
 	}
 	public void DiscardAmountImpl(int player, int amount)
 	{
