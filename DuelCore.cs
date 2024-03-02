@@ -49,7 +49,7 @@ class DuelCore : Core
 	private readonly Dictionary<int, List<LocationBasedTargetingTrigger>> genericEnterFieldTriggers = [];
 	private readonly Dictionary<int, List<Trigger>> revelationTriggers = [];
 	private readonly Dictionary<int, List<Trigger>> victoriousTriggers = [];
-	private readonly Dictionary<int, List<Trigger>> attackTriggers = [];
+	private readonly Dictionary<int, List<CreatureTargetingTrigger>> attackTriggers = [];
 	private readonly Dictionary<int, List<CreatureTargetingTrigger>> deathTriggers = [];
 	private readonly Dictionary<int, List<CreatureTargetingTrigger>> genericDeathTriggers = [];
 	private readonly Dictionary<int, List<LocationBasedTrigger>> youDiscardTriggers = [];
@@ -743,11 +743,11 @@ class DuelCore : Core
 						Creature? card1 = players[1].field.GetByPosition(GetMarkedZoneForPlayer(1));
 						if(card0 != null)
 						{
-							ProcessTriggers(attackTriggers, card0.uid);
+							ProcessCreatureTargetingTriggers(triggers: attackTriggers, uid: card0.uid, location: GameConstants.Location.Field, target: card0);
 						}
 						if(card1 != null)
 						{
-							ProcessTriggers(attackTriggers, card1.uid);
+							ProcessCreatureTargetingTriggers(triggers: attackTriggers, uid: card1.uid, location: GameConstants.Location.Field, target: card1);
 						}
 						if(card0 == null)
 						{
@@ -1586,7 +1586,7 @@ class DuelCore : Core
 		_ = victoriousTriggers.TryAdd(referrer.uid, []);
 		victoriousTriggers[referrer.uid].Add(trigger);
 	}
-	public void RegisterAttackTriggerImpl(Trigger trigger, Card referrer)
+	public void RegisterAttackTriggerImpl(CreatureTargetingTrigger trigger, Card referrer)
 	{
 		_ = attackTriggers.TryAdd(referrer.uid, []);
 		attackTriggers[referrer.uid].Add(trigger);

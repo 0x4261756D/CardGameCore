@@ -16,11 +16,11 @@ class FlamingBeast : Creature
 
 	public override void Init()
 	{
-		RegisterAttackTrigger(trigger: new Trigger(effect: AttackEffect), referrer: this);
+		RegisterAttackTrigger(trigger: new CreatureTargetingTrigger(effect: AttackEffect, influenceLocation: Location.Field), referrer: this);
 	}
 
-	private void AttackEffect()
+	private void AttackEffect(Creature target)
 	{
-		Cast(player: Controller, card: new Ignite() { BaseController = this.Controller, Controller = this.Controller });
+		Cast(player: Controller, card: new Ignite() { BaseController = target.Controller, Controller = target.Controller });
 	}
 }
