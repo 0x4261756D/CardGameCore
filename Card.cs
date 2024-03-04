@@ -70,6 +70,7 @@ public abstract class Card
 	public static RegisterTriggerDelegate RegisterDiscardTrigger = (_, _) => { };
 	public static RegisterStateReachedTriggerDelegate RegisterStateReachedTrigger = (_, _) => { };
 	public static RegisterTriggerDelegate RegisterVictoriousTrigger = (_, _) => { };
+	public static RegisterCreatureTargetingTriggerDelegate RegisterGenericVictoriousTrigger = (_, _) => { };
 	public static RegisterCreatureTargetingTriggerDelegate RegisterAttackTrigger = (_, _) => { };
 	public static RegisterCreatureTargetingTriggerDelegate RegisterDeathTrigger = (_, _) => { };
 	public static RegisterCreatureTargetingTriggerDelegate RegisterGenericDeathTrigger = (_, _) => { };
