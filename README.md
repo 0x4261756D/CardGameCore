@@ -1,6 +1,7 @@
 # CardGameCore
 Core of a card game
 
+# Moved [here](https://github.com/0x4261756D/CardGame)
 
 ## Requirements:
 * dotnet 8
